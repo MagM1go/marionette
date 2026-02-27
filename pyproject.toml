@@ -1,0 +1,31 @@
+[project]
+name = "marionette"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.14"
+dependencies = [
+    "alembic>=1.18.4",
+    "celery>=5.6.2",
+    "dishka>=1.8.0",
+    "hikari>=2.5.0",
+    "hikari-crescent>=1.4.0",
+    "mypy>=1.19.1",
+    "psycopg[binary,pool]>=3.3.3",
+    "python-dotenv>=1.2.1",
+    "redis[asyncio]>=7.2.0",
+    "ruff>=0.15.1",
+    "sqlalchemy[asyncio]>=2.0.46",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/marionette"]
+
+[tool.hatch.build.targets.wheel.shared-data]
+"src/marionette/py.typed" = "marionette/py.typed"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff.lint]
+ignore = ["F401"]

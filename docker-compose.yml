@@ -1,0 +1,46 @@
+services:
+  marionette-postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: marionette
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: roleplay
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U marionette -d roleplay"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+        
+  marionette-redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+
+  marionette-migration:
+    build: .
+    command: alembic upgrade head
+    volumes:
+      - ./alembic/versions:/app/alembic/versions
+    working_dir: /app
+    environment:
+      DATABASE_URL: "postgresql+psycopg://marionette:pass@marionette-postgres:5432/roleplay"
+    depends_on:
+      marionette-postgres:
+        condition: service_healthy
+
+  marionette:
+    build: .
+    env_file:
+      - .env
+    depends_on:
+      marionette-migration:
+        condition: service_completed_successfully
+
+volumes:
+  postgres_data:
+  redis_data:
