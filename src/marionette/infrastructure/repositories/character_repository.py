@@ -71,6 +71,15 @@ class CharacterRepository(ICharacterRepository):
         stmt = select(Character).where(Character.user_id == user_id)
         result = await self.session.execute(stmt)
         return result.scalars().all()
+        
+    @t.override
+    async def get_entranced_character_by_user_id(self, user_id: int) -> Character | None:
+        stmt = select(Character).where(
+            Character.user_id == user_id, 
+            Character.entranced_channel_id.is_not(None)
+        )
+        result = await self.session.execute(stmt)
+        return result.scalar_one_or_none()
 
     @t.override
     async def get_all(self) -> Sequence[Character]:

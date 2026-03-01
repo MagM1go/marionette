@@ -95,6 +95,17 @@ class ICharacterRepository(ABC):
         Returns:
             Персонаж или None, если не найден.
         """
+        
+    @abstractmethod
+    async def get_entranced_character_by_user_id(self, user_id: int) -> Character | None:
+        """Возвращает канал, в котором присутствует активный персонаж
+        
+        Args:
+            user_id: Discord ID пользователя.
+        
+        Returns:
+            Персонаж или None, если не найден.
+        """
 
     @abstractmethod
     async def delete_by_name_and_user_id(self, name: str, user_id: int) -> bool:
