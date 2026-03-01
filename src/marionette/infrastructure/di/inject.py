@@ -28,7 +28,7 @@ def inject(
         async def wrapper(*args: Any, **kwargs: Any) -> Any:
             async with get_container() as container:
                 hints = get_type_hints(func, include_extras=True)
-                
+
                 annotations = {
                     name: get_args(hint)[0]
                     for name, hint in hints.items()
