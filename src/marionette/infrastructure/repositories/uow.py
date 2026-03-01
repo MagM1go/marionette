@@ -4,9 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from marionette.domain.uow import IUnitOfWork
 from marionette.infrastructure.repositories.agency_repository import AgencyRepository
-from marionette.infrastructure.repositories.character_repository import (
-    CharacterRepository,
-)
+from marionette.infrastructure.repositories.character_repository import CharacterRepository
 
 
 class UnitOfWork(IUnitOfWork):

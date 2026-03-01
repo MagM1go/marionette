@@ -48,5 +48,5 @@ class RoleplayService:
         if context_channel_id != character.entranced_channel_id:
             raise WrongChannel("Если вы хотите выйти из таймлайна, то нужно вводить команду в нём же!")
             
-        await self.character_repo.set_timeline(character, None)
+        await self.character_repo.set_location(character, None)
         return character
