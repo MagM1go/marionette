@@ -32,7 +32,7 @@ async def _character_autocomplete(
 @plugin.include
 @crescent.command(
     name="entrance",
-    description="Войти в таймлайн",
+    description="Войти в локацию",
     guild=config.MAIN_GUILD_ID,
 )
 class EntranceCommand:
@@ -55,7 +55,7 @@ class EntranceCommand:
 @plugin.include
 @crescent.command(
     name="exit",
-    description="Выйти из таймлайна",
+    description="Выйти с локации",
     guild=config.MAIN_GUILD_ID,
 )
 class ExitCommand:
@@ -84,8 +84,10 @@ async def tabloid_event(
 ) -> None:
     if not event.is_human:
         return
-        
-    entranced_character = await character_repo.get_entranced_character_by_user_id(event.author_id)
+
+    entranced_character = await character_repo.get_entranced_character_by_user_id(
+        event.author_id
+    )
     if not entranced_character:
         return
 

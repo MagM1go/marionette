@@ -43,7 +43,7 @@ class CharacterRepository(ICharacterRepository):
         )
         
     @t.override
-    async def set_timeline(self, character: Character, channel_id: int | None) -> None:
+    async def set_location(self, character: Character, channel_id: int | None) -> None:
         await self.session.execute(
             update(Character)
             .where(Character.id == character.id)

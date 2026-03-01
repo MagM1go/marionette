@@ -52,7 +52,7 @@ class ICharacterRepository(ABC):
         """
 
     @abstractmethod
-    async def set_timeline(self, character: Character, channel_id: int | None) -> None:
+    async def set_location(self, character: Character, channel_id: int | None) -> None:
         """Вход/выход из временной линии (РП-канала)
 
         Args:

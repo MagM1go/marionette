@@ -3,14 +3,14 @@ from marionette.domain.exceptions import CharacterLocked, CharacterNotFound, Cha
 from marionette.domain.repositories import IAgencyRepository, ICharacterRepository
 
 
-class RoleplayService:
+class RoleplayService:    
     def __init__(
         self, character_repo: ICharacterRepository, agency_repo: IAgencyRepository
     ) -> None:
         self.character_repo = character_repo
         self.agency_repo = agency_repo
 
-    async def entrance_timeline(
+    async def entrance_location(
         self, user_id: int, character_name: str, thread_id: int
     ) -> Character | None:
         if not (character := await self.character_repo.get_by_user_id_and_name(user_id, character_name)):
@@ -32,11 +32,11 @@ class RoleplayService:
             raise CharacterLocked(
                 f"У вас уже есть активный персонаж! Вы, что ли, забыли про **{entranced_character.name}**?"
             )
-        
-        await self.character_repo.set_timeline(character, thread_id)
+
+        await self.character_repo.set_location(character, thread_id)
         return character
 
-    async def exit_timeline(self, context_channel_id: int, user_id: int, character_name: str) -> Character:
+    async def exit_location(self, context_channel_id: int, user_id: int, character_name: str) -> Character:
         if not (character := await self.character_repo.get_by_user_id_and_name(user_id, character_name)):
             raise CharacterNotFound(
                 f"У вас нет персонажа с именем **{character_name}**!"
