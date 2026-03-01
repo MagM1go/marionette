@@ -13,7 +13,6 @@ dependencies = [
     "psycopg[binary,pool]>=3.3.3",
     "python-dotenv>=1.2.1",
     "redis[asyncio]>=7.2.0",
-    "ruff>=0.15.1",
     "sqlalchemy[asyncio]>=2.0.46",
 ]
 
