@@ -52,7 +52,7 @@ class CharacterRepository(ICharacterRepository):
 
     @t.override
     async def get_by_user_id_and_name(
-        self, name: str, user_id: int
+        self, user_id: int, name: str
     ) -> Character | None:
         stmt = select(Character).where(
             Character.name == name, Character.user_id == user_id
@@ -79,8 +79,8 @@ class CharacterRepository(ICharacterRepository):
         return result.scalars().all()
 
     @t.override
-    async def delete_by_user_id(self, name: str, user_id: int) -> bool:
-        character = await self.get_by_user_id_and_name(name, user_id)
+    async def delete_by_name_and_user_id(self, name: str, user_id: int) -> bool:
+        character = await self.get_by_user_id_and_name(user_id, name)
 
         if character:
             await self.session.delete(character)
