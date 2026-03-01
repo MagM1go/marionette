@@ -1,5 +1,5 @@
 from marionette.domain.entities.character import Character
-from marionette.domain.exceptions import CharacterLocked, CharacterNotFound
+from marionette.domain.exceptions import CharacterLocked, CharacterNotFound, CharacterNotLocked, WrongChannel
 from marionette.domain.repositories import IAgencyRepository, ICharacterRepository
 
 
@@ -18,17 +18,35 @@ class RoleplayService:
                 f"У вас нет персонажа с именем **{character_name}**!"
             )
 
+        # ВЫБРАННЫЙ персонаж может быть активен
         if character.entranced_channel_id:
             raise CharacterLocked(
                 f"Персонаж уже активен в <#{character.entranced_channel_id}>! "
                 + "Чтобы выйти, воспользуйтесь командой `/exit`"
             )
-            
-        characters = await self.character_repo.get_all_characters_by_user_id(user_id)
-        if any(с.entranced_channel_id is not None for с in characters):
-            raise CharacterLocked(
-                "У вас уже есть активный персонаж! Проверьте, кто это: `/profile characters active`"
-            )
 
+        # А это - любой другой персонаж может быть активен, тоже нужно проверить
+        # Активный персонаж может быть всего один.
+        entranced_character = await self.character_repo.get_entranced_character_by_user_id(user_id)
+        if entranced_character:
+            raise CharacterLocked(
+                f"У вас уже есть активный персонаж! Вы, что ли, забыли про **{entranced_character.name}**?"
+            )
+        
         await self.character_repo.set_timeline(character, thread_id)
+        return character
+
+    async def exit_timeline(self, context_channel_id: int, user_id: int, character_name: str) -> Character:
+        if not (character := await self.character_repo.get_by_user_id_and_name(user_id, character_name)):
+            raise CharacterNotFound(
+                f"У вас нет персонажа с именем **{character_name}**!"
+            )
+            
+        if not character.entranced_channel_id:
+            raise CharacterNotLocked("Персонаж нигде не активен! Увы...")
+            
+        if context_channel_id != character.entranced_channel_id:
+            raise WrongChannel("Если вы хотите выйти из таймлайна, то нужно вводить команду в нём же!")
+            
+        await self.character_repo.set_timeline(character, None)
         return character

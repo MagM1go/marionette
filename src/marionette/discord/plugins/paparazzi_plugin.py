@@ -4,6 +4,7 @@ import crescent
 import hikari
 
 from marionette.application.usecases.entrance_usecase import EntranceUseCase
+from marionette.application.usecases.exit_usecase import ExitUseCase
 from marionette.application.usecases.expose_usecase import ExposeCharacterUseCase
 from marionette.discord.sender import send_result, send_result_with_context
 from marionette.domain.repositories import ICharacterRepository
@@ -52,6 +53,28 @@ class EntranceCommand:
 
 
 @plugin.include
+@crescent.command(
+    name="exit",
+    description="Выйти из таймлайна",
+    guild=config.MAIN_GUILD_ID,
+)
+class ExitCommand:
+    character_name = crescent.option(
+        str, "Имя персонажа (полное)", autocomplete=_character_autocomplete
+    )
+
+    @inject_plugin
+    async def callback(
+        self, context: crescent.Context, usecase: Inject[ExitUseCase]
+    ) -> None:
+        result = await usecase.execute(
+            context.channel_id, context.user.id, self.character_name
+        )
+        response = ResultPresenter.present(result)
+        await send_result_with_context(context, response, ephemeral=True)
+
+
+@plugin.include
 @crescent.event
 @inject_plugin
 async def tabloid_event(
@@ -59,14 +82,14 @@ async def tabloid_event(
     character_repo: Inject[ICharacterRepository],
     expose_usecase: Inject[ExposeCharacterUseCase],
 ) -> None:
-    characters = await character_repo.get_all_characters_by_user_id(event.author_id)
-    character = next(
-        (c for c in characters if c.entranced_channel_id == event.channel_id), None
-    )
-    if not character:
+    if not event.is_human:
+        return
+        
+    entranced_character = await character_repo.get_entranced_character_by_user_id(event.author_id)
+    if not entranced_character:
         return
 
-    result = await expose_usecase.expose(event.author_id, character.name)
-    if not result.is_empty():
+    result = await expose_usecase.expose(entranced_character)
+    if result:
         response = ResultPresenter.present(result)
         await send_result(plugin.app.rest, config.TABLOID_CHANNEL_ID, response)

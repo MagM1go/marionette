@@ -23,6 +23,8 @@ from marionette.infrastructure.repositories.character_repository import (
 from marionette.infrastructure.repositories.redis_repository import CooldownRepository
 from marionette.infrastructure.repositories.uow import UnitOfWork
 
+from marionette.application.usecases.exit_usecase import ExitUseCase
+
 
 class ApplicationProvider(Provider):
     @provide(scope=Scope.APP)
@@ -79,15 +81,11 @@ class ApplicationProvider(Provider):
     def expose_usecase(
         self,
         rating_service: RatingService,
-        character_repo: ICharacterRepository,
-        agency_repo: IAgencyRepository,
         uow: IUnitOfWork,
         cooldown_repo: ICooldownRepository,
     ) -> ExposeCharacterUseCase:
         return ExposeCharacterUseCase(
             rating_service=rating_service,
-            character_repo=character_repo,
-            agency_repo=agency_repo,
             uow=uow,
             cooldown_repo=cooldown_repo,
         )
@@ -95,3 +93,7 @@ class ApplicationProvider(Provider):
     @provide(scope=Scope.REQUEST)
     def entrance_usecase(self, roleplay_service: RoleplayService) -> EntranceUseCase:
         return EntranceUseCase(roleplay_service=roleplay_service)
+
+    @provide(scope=Scope.REQUEST)
+    def exit_usecase(self, roleplay_service: RoleplayService) -> ExitUseCase:
+        return ExitUseCase(roleplay_service=roleplay_service)
