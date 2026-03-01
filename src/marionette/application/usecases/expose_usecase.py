@@ -13,7 +13,8 @@ from marionette.presentation.colors import Color
 
 
 class ExposeCharacterUseCase:
-    EXPOSE_CHANCE: tuple[float, float] = (0.2, 0.6)
+    ONE_DAY: int = 60 * 60 * 24
+    EXPOSE_CHANCE: tuple[float, float] = (0.2, 0.5)
     
     def __init__(
         self,
@@ -61,7 +62,7 @@ class ExposeCharacterUseCase:
             character.rating = character_new_rating
 
             await uow.commit()
-            await self.cooldown_repo.set_cooldown(cd_key, 60 * 60 * 24)
+            await self.cooldown_repo.set_cooldown(cd_key, self.ONE_DAY)
 
         return Result(
             embed=Embed(
