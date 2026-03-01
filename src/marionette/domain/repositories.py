@@ -62,7 +62,7 @@ class ICharacterRepository(ABC):
 
     @abstractmethod
     async def get_by_user_id_and_name(
-        self, name: str, user_id: int
+        self, user_id: int, name: str
     ) -> Character | None:
         """Возвращает персонажа пользователя по имени.
 
@@ -97,7 +97,7 @@ class ICharacterRepository(ABC):
         """
 
     @abstractmethod
-    async def delete_by_user_id(self, name: str, user_id: int) -> bool:
+    async def delete_by_name_and_user_id(self, name: str, user_id: int) -> bool:
         """Удаляет персонажа пользователя по имени.
 
         Args:
