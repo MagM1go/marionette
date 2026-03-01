@@ -5,21 +5,23 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from marionette.application.usecases.entrance import EntranceUseCase
 from marionette.application.usecases.expose_usecase import ExposeCharacterUseCase
-from marionette.domain.repositories import IAgencyRepository, ICharacterRepository, ICooldownRepository
+from marionette.domain.repositories import (
+    IAgencyRepository,
+    ICharacterRepository,
+    ICooldownRepository,
+)
 from marionette.domain.services.rating_service import RatingService
 from marionette.domain.services.roleplay_service import RoleplayService
 from marionette.domain.uow import IUnitOfWork
+from marionette.infrastructure.cache.redis import RedisManager
 from marionette.infrastructure.config import config
 from marionette.infrastructure.db.manager import DBManager
 from marionette.infrastructure.repositories.agency_repository import AgencyRepository
 from marionette.infrastructure.repositories.character_repository import (
     CharacterRepository,
 )
-from marionette.infrastructure.repositories.uow import UnitOfWork
-
-from marionette.infrastructure.cache.redis import RedisManager
-
 from marionette.infrastructure.repositories.redis_repository import CooldownRepository
+from marionette.infrastructure.repositories.uow import UnitOfWork
 
 
 class ApplicationProvider(Provider):
@@ -33,13 +35,13 @@ class ApplicationProvider(Provider):
     async def session(self, manager: DBManager) -> AsyncGenerator[AsyncSession, None]:
         async with manager.get_session() as session:
             yield session
-            
+
     @provide(scope=Scope.APP)
     async def redis_manager(self) -> AsyncGenerator[RedisManager, None]:
         manager = RedisManager(config.REDIS_URL)
         yield manager
         await manager.dispose()
-    
+
     @provide(scope=Scope.REQUEST)
     def cooldown_repository(self, manager: RedisManager) -> ICooldownRepository:
         return CooldownRepository(manager.client)
@@ -80,14 +82,14 @@ class ApplicationProvider(Provider):
         character_repo: ICharacterRepository,
         agency_repo: IAgencyRepository,
         uow: IUnitOfWork,
-        cooldown_repo: ICooldownRepository
+        cooldown_repo: ICooldownRepository,
     ) -> ExposeCharacterUseCase:
         return ExposeCharacterUseCase(
             rating_service=rating_service,
             character_repo=character_repo,
             agency_repo=agency_repo,
             uow=uow,
-            cooldown_repo=cooldown_repo
+            cooldown_repo=cooldown_repo,
         )
 
     @provide(scope=Scope.REQUEST)
