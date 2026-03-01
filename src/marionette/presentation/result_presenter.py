@@ -8,24 +8,19 @@ from marionette.presentation.colors import Color
 class ResultPresenter:
     @staticmethod
     def present(result: Result) -> str | hikari.Embed | tuple[str, hikari.Embed]:
-        if not result.content and not result.embed:
-            raise ValueError("Result должен быть не пустым")
-
-        hikari_embed = None
-        if result.embed:
-            hikari_embed = ResultPresenter._to_hikari_embed(result.embed)
-
-        if result.content and not hikari_embed:
-            return result.content
-
-        if hikari_embed and not result.content:
-            return hikari_embed
-
-        if result.content and hikari_embed:
-            return result.content, hikari_embed
-
-        # Никогда не должно сюда попасть
-        raise ValueError("Result должен быть не пустым")
+        hikari_embed = (
+            ResultPresenter._to_hikari_embed(result.embed) if result.embed else None
+        )
+    
+        match (result.content, hikari_embed):
+            case (str(content), None):
+                return content
+            case (None, hikari.Embed() as embed):
+                return embed
+            case (str(content), hikari.Embed() as embed):
+                return content, embed
+            case _:
+                raise ValueError("Result должен быть не пустым")
 
     @staticmethod
     def _to_hikari_embed(embed: Embed) -> hikari.Embed:
