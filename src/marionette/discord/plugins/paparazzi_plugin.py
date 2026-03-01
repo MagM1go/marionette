@@ -3,7 +3,7 @@ import typing as t
 import crescent
 import hikari
 
-from marionette.application.usecases.entrance import EntranceUseCase
+from marionette.application.usecases.entrance_usecase import EntranceUseCase
 from marionette.application.usecases.expose_usecase import ExposeCharacterUseCase
 from marionette.discord.sender import send_result, send_result_with_context
 from marionette.domain.repositories import ICharacterRepository

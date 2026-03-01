@@ -3,7 +3,7 @@ from collections.abc import AsyncGenerator
 from dishka import Provider, Scope, provide
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from marionette.application.usecases.entrance import EntranceUseCase
+from marionette.application.usecases.entrance_usecase import EntranceUseCase
 from marionette.application.usecases.expose_usecase import ExposeCharacterUseCase
 from marionette.domain.repositories import (
     IAgencyRepository,
