@@ -69,5 +69,4 @@ async def tabloid_event(
     result = await expose_usecase.expose(event.author_id, character.name)
     if not result.is_empty():
         response = ResultPresenter.present(result)
-    
         await send_result(plugin.app.rest, config.TABLOID_CHANNEL_ID, response)
