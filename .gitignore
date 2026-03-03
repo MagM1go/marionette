@@ -15,3 +15,5 @@ uv.lock
 .mypy_cache
 
 alembic/versions/*
+
+.env
