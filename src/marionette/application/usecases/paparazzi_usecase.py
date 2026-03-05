@@ -1,15 +1,13 @@
 import random
 
-from marionette.application.dto.embed import Embed
-from marionette.application.dto.result import Result
+from marionette.application.dto.paparazzi import PaparazziExposeData
 from marionette.domain.entities.character import Character
 from marionette.domain.repositories import ICooldownRepository
 from marionette.domain.services.rating_service import RatingChangeReason, RatingService
 from marionette.domain.uow import IUnitOfWork
-from marionette.presentation.colors import Color
 
 
-class ExposeCharacterUseCase:
+class PaparazziUseCase:
     ONE_DAY: int = 60 * 60 * 24
     EXPOSE_CHANCE: tuple[float, float] = (0.2, 0.5)
 
@@ -23,7 +21,7 @@ class ExposeCharacterUseCase:
         self.uow = uow
         self.cooldown_repo = cooldown_repo
 
-    async def expose(self, character: Character) -> Result | None:
+    async def expose(self, character: Character) -> PaparazziExposeData | None:
         cd_key = f"cooldown:{character.user_id}:{character.id}"
         if await self.cooldown_repo.is_on_cooldown(cd_key):
             return None
@@ -47,18 +45,13 @@ class ExposeCharacterUseCase:
 
             character.rating = character_new_rating
 
-            await uow.commit()
             await self.cooldown_repo.set_cooldown(cd_key, self.ONE_DAY)
+            await uow.commit()
 
-        return Result(
-            embed=Embed(
-                title="📸 Папарацци не дремлют",
-                description=(
-                    f"Наши источники сообщают, что **{character.name}** "
-                    f"был(а) замечен(а) в <#{character.entranced_channel_id}>.\n\n"
-                    f"*Редакция продолжает следить за развитием событий.*"
-                ),
-                footer="Эксклюзив · Токийский инсайдер",
-                color=Color.TABLOID,
-            )
+        if not character.entranced_channel_id:
+            raise ValueError("Персонаж должен находиться в локации.")
+
+        return PaparazziExposeData(
+            exposed_character_name=character.name,
+            expose_channel_id=character.entranced_channel_id
         )
