@@ -4,7 +4,8 @@ from dishka import Provider, Scope, provide
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from marionette.application.usecases.entrance_usecase import EntranceUseCase
-from marionette.application.usecases.expose_usecase import ExposeCharacterUseCase
+from marionette.application.usecases.exit_usecase import ExitUseCase
+from marionette.application.usecases.paparazzi_usecase import PaparazziUseCase
 from marionette.domain.repositories import (
     IAgencyRepository,
     ICharacterRepository,
@@ -22,8 +23,6 @@ from marionette.infrastructure.repositories.character_repository import (
 )
 from marionette.infrastructure.repositories.redis_repository import CooldownRepository
 from marionette.infrastructure.repositories.uow import UnitOfWork
-
-from marionette.application.usecases.exit_usecase import ExitUseCase
 
 
 class ApplicationProvider(Provider):
@@ -83,8 +82,8 @@ class ApplicationProvider(Provider):
         rating_service: RatingService,
         uow: IUnitOfWork,
         cooldown_repo: ICooldownRepository,
-    ) -> ExposeCharacterUseCase:
-        return ExposeCharacterUseCase(
+    ) -> PaparazziUseCase:
+        return PaparazziUseCase(
             rating_service=rating_service,
             uow=uow,
             cooldown_repo=cooldown_repo,
