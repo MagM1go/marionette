@@ -9,6 +9,7 @@ dependencies = [
     "dishka>=1.8.0",
     "hikari>=2.5.0",
     "hikari-crescent>=1.4.0",
+    "hikari-miru>=4.2.0",
     "mypy>=1.19.1",
     "psycopg[binary,pool]>=3.3.3",
     "python-dotenv>=1.2.1",
