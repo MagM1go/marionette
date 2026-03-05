@@ -3,8 +3,8 @@ import typing as t
 import crescent
 import hikari
 
-from marionette.discord.sender import send_result_with_context
 from marionette.domain.exceptions import DomainException
+from marionette.presentation.error_presenter import ErrorPresenter
 
 if t.TYPE_CHECKING:
     from marionette.infrastructure.di.container import CrescentContainer
@@ -18,4 +18,5 @@ plugin = crescent.Plugin[hikari.GatewayBot, "CrescentContainer"]()
 async def catch_command_exception(
     exception: DomainException, context: crescent.Context
 ) -> None:
-    await send_result_with_context(context, exception.message, ephemeral=True)
+    result = ErrorPresenter.present(exception.message)
+    await context.respond(embed=result, ephemeral=True)

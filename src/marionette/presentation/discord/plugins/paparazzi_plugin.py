@@ -5,12 +5,12 @@ import hikari
 
 from marionette.application.usecases.entrance_usecase import EntranceUseCase
 from marionette.application.usecases.exit_usecase import ExitUseCase
-from marionette.application.usecases.expose_usecase import ExposeCharacterUseCase
-from marionette.discord.sender import send_result, send_result_with_context
+from marionette.application.usecases.paparazzi_usecase import PaparazziUseCase
 from marionette.domain.repositories import ICharacterRepository
 from marionette.infrastructure.config import config
 from marionette.infrastructure.di.inject import Inject, inject
-from marionette.presentation.result_presenter import ResultPresenter
+from marionette.presentation.entrance_presenter import EntrancePresenter
+from marionette.presentation.paparazzi_presenter import PaparazziPresenter
 
 if t.TYPE_CHECKING:
     from marionette.infrastructure.di.container import CrescentContainer
@@ -48,8 +48,8 @@ class EntranceCommand:
         result = await usecase.execute(
             context.user.id, self.character_name, self.channel.id
         )
-        response = ResultPresenter.present(result)
-        await send_result_with_context(context, response, ephemeral=True)
+        response = EntrancePresenter.present(result.location_id)
+        await context.respond(response)
 
 
 @plugin.include
@@ -68,10 +68,10 @@ class ExitCommand:
         self, context: crescent.Context, usecase: Inject[ExitUseCase]
     ) -> None:
         result = await usecase.execute(
-            context.channel_id, context.user.id, self.character_name
+            context.user.id, self.character_name, context.channel_id
         )
-        response = ResultPresenter.present(result)
-        await send_result_with_context(context, response, ephemeral=True)
+        response = EntrancePresenter.present(result.location_id)
+        await context.respond(response)
 
 
 @plugin.include
@@ -80,7 +80,7 @@ class ExitCommand:
 async def tabloid_event(
     event: hikari.MessageCreateEvent,
     character_repo: Inject[ICharacterRepository],
-    expose_usecase: Inject[ExposeCharacterUseCase],
+    expose_usecase: Inject[PaparazziUseCase],
 ) -> None:
     if not event.is_human:
         return
@@ -88,10 +88,19 @@ async def tabloid_event(
     entranced_character = await character_repo.get_entranced_character_by_user_id(
         event.author_id
     )
+
     if not entranced_character:
+        return
+
+    if not entranced_character.entranced_channel_id:
         return
 
     result = await expose_usecase.expose(entranced_character)
     if result:
-        response = ResultPresenter.present(result)
-        await send_result(plugin.app.rest, config.TABLOID_CHANNEL_ID, response)
+        response = PaparazziPresenter.present(
+            channel_id=entranced_character.entranced_channel_id,
+            character_name=entranced_character.name,
+        )
+        await event.app.rest.create_message(
+            channel=config.TABLOID_CHANNEL_ID, embed=response
+        )
