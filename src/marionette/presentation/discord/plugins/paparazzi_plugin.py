@@ -6,14 +6,14 @@ import hikari
 from marionette.application.usecases.entrance_usecase import EntranceUseCase
 from marionette.application.usecases.exit_usecase import ExitUseCase
 from marionette.application.usecases.paparazzi_usecase import PaparazziUseCase
-from marionette.domain.repositories import ICharacterRepository
+from marionette.application.protocols import ICharacterRepository
 from marionette.infrastructure.config import config
-from marionette.infrastructure.di.inject import Inject, inject
-from marionette.presentation.entrance_presenter import EntrancePresenter
-from marionette.presentation.paparazzi_presenter import PaparazziPresenter
+from marionette.presentation.di.inject import Inject, inject
+from marionette.presentation.discord.presenters.entrance_presenter import EntryExitPresenter
+from marionette.presentation.discord.presenters.paparazzi_presenter import PaparazziPresenter
 
 if t.TYPE_CHECKING:
-    from marionette.infrastructure.di.container import CrescentContainer
+    from marionette.presentation.di.container import CrescentContainer
 
 plugin = crescent.Plugin[hikari.GatewayBot, "CrescentContainer"]()
 inject_plugin = inject(lambda: plugin.model.dishka())
@@ -48,7 +48,7 @@ class EntranceCommand:
         result = await usecase.execute(
             context.user.id, self.character_name, self.channel.id
         )
-        response = EntrancePresenter.present(result.location_id)
+        response = EntryExitPresenter.present_entry(result.location_id)
         await context.respond(response)
 
 
@@ -67,11 +67,10 @@ class ExitCommand:
     async def callback(
         self, context: crescent.Context, usecase: Inject[ExitUseCase]
     ) -> None:
-        result = await usecase.execute(
+        await usecase.execute(
             context.user.id, self.character_name, context.channel_id
         )
-        response = EntrancePresenter.present(result.location_id)
-        await context.respond(response)
+        await context.respond(EntryExitPresenter.exit_message)
 
 
 @plugin.include
