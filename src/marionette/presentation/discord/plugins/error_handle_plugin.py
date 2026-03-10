@@ -4,10 +4,10 @@ import crescent
 import hikari
 
 from marionette.domain.exceptions import DomainException
-from marionette.presentation.error_presenter import ErrorPresenter
+from marionette.presentation.discord.presenters.error_presenter import ErrorPresenter
 
 if t.TYPE_CHECKING:
-    from marionette.infrastructure.di.container import CrescentContainer
+    from marionette.presentation.di.container import CrescentContainer
 
 
 plugin = crescent.Plugin[hikari.GatewayBot, "CrescentContainer"]()
@@ -18,5 +18,4 @@ plugin = crescent.Plugin[hikari.GatewayBot, "CrescentContainer"]()
 async def catch_command_exception(
     exception: DomainException, context: crescent.Context
 ) -> None:
-    result = ErrorPresenter.present(exception.message)
-    await context.respond(embed=result, ephemeral=True)
+    await context.respond(embed=ErrorPresenter.present(exception), ephemeral=True)
