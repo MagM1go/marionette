@@ -4,7 +4,7 @@ import crescent
 import hikari
 
 if t.TYPE_CHECKING:
-    from marionette.infrastructure.di.container import CrescentContainer
+    from marionette.presentation.di.container import CrescentContainer
 
 
 plugin = crescent.Plugin[hikari.GatewayBot, "CrescentContainer"]()
