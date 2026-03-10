@@ -1,6 +1,6 @@
 import hikari
 
-from marionette.presentation.colors import Color
+from marionette.presentation.discord.colors import Color
 
 
 class PaparazziPresenter:

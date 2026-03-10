@@ -1,0 +1,30 @@
+import hikari
+
+from marionette.domain import exceptions as exc
+from marionette.presentation.discord.colors import Color
+
+_MESSAGES: dict[type, str] = {
+    exc.CharacterNotEntranced: "Персонаж нигде не активен! Увы...",
+}
+
+
+class ErrorPresenter:
+    @staticmethod
+    def present(e: Exception) -> hikari.Embed:
+        match e:
+            case exc.CharacterNotFound(name=name):
+                text = f"У вас нет персонажа с именем **{name}**!"
+            case exc.AlreadyEntranced(channel_id=cid):
+                text = f"Персонаж уже активен в <#{cid}>! Воспользуйтесь `/exit`"
+            case exc.AnotherCharacterIsActive(character_name=name):
+                text = f"У вас уже есть активный персонаж! Вы забыли про **{name}**?"
+            case exc.WrongChannel(expected_channel_id=cid):
+                text = f"Выйти можно только из канала <#{cid}>!"
+            case _:
+                text = _MESSAGES.get(type(e), "Произошла неизвестная ошибка.")
+
+        return hikari.Embed(
+            title="❌ Сбой!",
+            description=f"Сообщение от информатора: {text}",
+            color=Color.ERROR,
+        )
