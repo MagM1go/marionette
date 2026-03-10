@@ -13,6 +13,7 @@ class Roles(StrEnum):
     STYLIST = "Stylist"
     MAFIA = "Mafia"
 
-    class AgencyRoles(StrEnum):
-        DIRECTOR = "Agency Director"
-        MANAGER = "Agency Manager"
+
+class AgencyRoles(StrEnum):
+    DIRECTOR = "Agency Director"
+    MANAGER = "Agency Manager"
