@@ -17,9 +17,7 @@ class Character(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
-    user_id: Mapped[int] = mapped_column(
-        BigInteger, index=True, nullable=False
-    )
+    user_id: Mapped[int] = mapped_column(BigInteger, index=True, nullable=False)
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     role: Mapped[Roles] = mapped_column(Enum(Roles), nullable=True)
     rating: Mapped[int] = mapped_column(Integer, default=0)
@@ -33,19 +31,25 @@ class Character(Base):
         onupdate=func.now(),
         nullable=False,
     )
-    agency_id: Mapped[int | None] = mapped_column(ForeignKey("agencies.id"), nullable=True)
+    agency_id: Mapped[int | None] = mapped_column(
+        ForeignKey("agencies.id"), nullable=True
+    )
     agency: Mapped["Agency"] = relationship("Agency", back_populates="characters")
     home_channel_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
     entranced_channel_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
-    is_in_performance: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
-    
+    is_in_performance: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False
+    )
+
     @property
     def age(self) -> int:
         today = datetime.today()
-        return today.year - self.birthday.year - (
-            (today.month, today.day) < (self.birthday.month, self.birthday.day)
+        return (
+            today.year
+            - self.birthday.year
+            - ((today.month, today.day) < (self.birthday.month, self.birthday.day))
         )
-        
+
     @t.override
     def __repr__(self) -> str:
         return f"<Character(id={self.id}, user_id={self.user_id}, name='{self.name}', role={self.role}, is_active={self.is_active}, rating={self.rating})>"
