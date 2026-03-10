@@ -26,7 +26,8 @@ COPY --from=builder /app/alembic.ini /app/alembic.ini
 COPY --from=builder /app/alembic /app/alembic
 
 ENV PATH="/app/.venv/bin:$PATH"
+ENV PYTHONBUFFERED=1
 
 USER appuser
 
-CMD ["python", "-O", "-m", "marionette"]
+CMD ["python", "-OO", "-m", "marionette"]
