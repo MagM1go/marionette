@@ -2,7 +2,7 @@ import typing as t
 
 from redis.asyncio import Redis
 
-from marionette.domain.repositories import ICooldownRepository
+from marionette.application.protocols import ICooldownRepository
 
 
 class CooldownRepository(ICooldownRepository):

@@ -4,8 +4,8 @@ from collections.abc import Sequence
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from marionette.application.protocols import IAgencyRepository
 from marionette.domain.entities.agency import Agency
-from marionette.domain.repositories import IAgencyRepository
 
 
 class AgencyRepository(IAgencyRepository):
@@ -13,18 +13,10 @@ class AgencyRepository(IAgencyRepository):
         self.session = session
 
     @t.override
-    async def save(
-        self,
-        owner_id: int,
-        name: str,
-    ) -> Agency | None:
+    def create(self, owner_id: int, name: str) -> Agency | None:
         agency = Agency(owner_id=owner_id, name=name)
-        await self.session.flush()
+        self.session.add(agency)
         return agency
-
-    @t.override
-    async def update(self) -> None:
-        await self.session.flush()
 
     @t.override
     async def get_all(self) -> Sequence[Agency]:

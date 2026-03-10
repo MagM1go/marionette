@@ -1,10 +1,6 @@
 import random
 from enum import IntEnum, StrEnum
 
-from marionette.domain.repositories import IAgencyRepository, ICharacterRepository
-
-from marionette.domain.uow import IUnitOfWork
-
 
 class RatingChangeReason(StrEnum):
     VOTE = "vote"
@@ -127,16 +123,7 @@ class RatingService:
     - Новичкам легче расти, топам сложнее (делители)
     - Агентство даёт +12% к приросту, но больше потерь
     - PERFORMANCE доступна только персонажам
-    - Сезонный сброс сохраняет часть рейтинга
     """
-
-    def __init__(
-        self, character_repo: ICharacterRepository, agency_repo: IAgencyRepository, uow: IUnitOfWork
-    ) -> None:
-        self.character_repo: ICharacterRepository = character_repo
-        self.agency_repo: IAgencyRepository = agency_repo
-        
-        self.uow: IUnitOfWork = uow
 
     def _calculate_change(
         self,
@@ -217,7 +204,7 @@ class RatingService:
             rating, scaled, is_increase=False, agency_penalty=penalty
         )
         return max(0, rating + change)
-        
+
     def dec_agency_rating_from_member(
         self,
         agency_rating: int,
@@ -226,38 +213,3 @@ class RatingService:
     ) -> int:
         penalty = int(abs(character_loss) * ratio)
         return max(0, agency_rating - penalty)
-
-    async def season_reset(self) -> None:
-        """
-        | До сброса  | После сброса |
-        | ---------- | ------------ |
-        | 0-99       | 0            |
-        | 100-299    | 25           |
-        | 300-499    | 70           |
-        | 500-699    | 150          |
-        | 700-899    | 200          |
-        | 900-999    | 300          |
-        | 1000+      | 400          |
-        """
-
-        def reset_bounds(rating: int) -> int:
-            bounds = [
-                (100, 0),
-                (300, 25),
-                (500, 70),
-                (700, 150),
-                (900, 200),
-                (1000, 300),
-            ]
-            for max_value, bound in bounds:
-                if rating < max_value:
-                    return bound
-                    
-            return 400
-
-        async with self.uow:
-            for repo in [self.agency_repo, self.character_repo]:
-                for entity in await repo.get_all(): # type: ignore
-                    entity.rating = reset_bounds(entity.rating)
-                
-            await self.uow.commit()
