@@ -1,16 +1,28 @@
-class DomainException(Exception):
-    def __init__(self, message: str) -> None:
-        self.message = message
-        super().__init__(message)
+class DomainException(Exception): ...
 
 
-class CharacterNotFound(DomainException): ...
+class CharacterNotFound(DomainException):
+    def __init__(self, name: str) -> None:
+        super().__init__()
+        self.name = name
 
 
-class CharacterLocked(DomainException): ...
+class AlreadyEntranced(DomainException):
+    def __init__(self, channel_id: int) -> None:
+        super().__init__()
+        self.channel_id = channel_id
 
 
-class CharacterNotLocked(DomainException): ...
+class AnotherCharacterIsActive(DomainException):
+    def __init__(self, character_name: str) -> None:
+        super().__init__()
+        self.character_name = character_name
 
 
-class WrongChannel(DomainException): ...
+class CharacterNotEntranced(DomainException): ...
+
+
+class WrongChannel(DomainException): 
+    def __init__(self, expected_channel_id: int) -> None:
+        super().__init__()
+        self.expected_channel_id = expected_channel_id
