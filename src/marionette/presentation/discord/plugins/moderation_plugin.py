@@ -3,15 +3,12 @@ import typing as t
 import crescent
 import hikari
 
-from marionette.application.protocols import ICharacterRepository
+from marionette.application.protocols import ICharacterRepository, UserId
 from marionette.infrastructure.config import config
+from marionette.presentation.di.container import CrescentContainer
 from marionette.presentation.di.inject import Inject, inject
 
-if t.TYPE_CHECKING:
-    from marionette.presentation.di.container import CrescentContainer
-
-
-plugin = crescent.Plugin[hikari.GatewayBot, "CrescentContainer"]()
+plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 
 NON_RP_PREFIX: t.Final[str] = "//"
 
@@ -31,7 +28,7 @@ async def message_create_event(
         return
 
     entranced_character = await character_repo.get_entranced_character_by_user_id(
-        event.author_id
+        UserId(event.author_id)
     )
     if (
         not entranced_character

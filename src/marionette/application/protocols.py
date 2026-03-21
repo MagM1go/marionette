@@ -1,20 +1,27 @@
 from collections.abc import Sequence
 from datetime import datetime
-from typing import Protocol
+from typing import NewType, Protocol
 
 from marionette.domain.entities.agency import Agency
 from marionette.domain.entities.character import Character
+from marionette.domain.entities.onboarding import OnboardingStep
 from marionette.domain.roles import Roles
+
+UserId = NewType("UserId", int)
+RoleId = NewType("RoleId", int)
+ChannelId = NewType("ChannelId", int)
+CharacterId = NewType("CharacterId", int)
+AgencyId = NewType("AgencyId", int)
 
 
 class ICharacterRepository(Protocol):
     def create(
         self,
-        user_id: int,
+        user_id: UserId,
         name: str,
         role: Roles,
         birthday: datetime,
-        home_channel_id: int,
+        home_channel_id: ChannelId,
     ) -> Character | None:
         """Создаёт нового персонажа.
 
@@ -32,7 +39,7 @@ class ICharacterRepository(Protocol):
         """Возвращает всех персонажей всех игроков."""
         ...
 
-    async def set_active(self, user_id: int, name: str, is_active: bool) -> None:
+    async def set_active(self, user_id: UserId, name: str, is_active: bool) -> None:
         """Устанавливает активного персонажа игрока.
 
         Только один персонаж может быть активным одновременно. Активный персонаж
@@ -45,7 +52,7 @@ class ICharacterRepository(Protocol):
             is_active: True - установить как активного, False - убирает активного персонажа.
         """
 
-    async def set_location(self, character: Character, channel_id: int | None) -> None:
+    async def set_location(self, character: Character, channel_id: ChannelId | None) -> None:
         """Вход/выход из временной линии (РП-канала)
 
         Args:
@@ -53,9 +60,7 @@ class ICharacterRepository(Protocol):
             channel_id: Discord ID канала
         """
 
-    async def get_by_user_id_and_name(
-        self, user_id: int, name: str
-    ) -> Character | None:
+    async def get_by_user_id_and_name(self, user_id: UserId, name: str) -> Character | None:
         """Возвращает персонажа пользователя по имени.
 
         Args:
@@ -66,7 +71,7 @@ class ICharacterRepository(Protocol):
             Персонаж или None, если не найден.
         """
 
-    async def get_all_characters_by_user_id(self, user_id: int) -> Sequence[Character]:
+    async def get_all_characters_by_user_id(self, user_id: UserId) -> Sequence[Character]:
         """Возвращает всех персонажей пользователя.
 
         Args:
@@ -77,7 +82,7 @@ class ICharacterRepository(Protocol):
         """
         ...
 
-    async def get_by_character_id(self, character_id: int) -> Character | None:
+    async def get_by_character_id(self, character_id: CharacterId) -> Character | None:
         """Возвращает персонажа по его ID.
 
         Args:
@@ -87,10 +92,8 @@ class ICharacterRepository(Protocol):
             Персонаж или None, если не найден.
         """
 
-    async def get_entranced_character_by_user_id(
-        self, user_id: int
-    ) -> Character | None:
-        """Возвращает канал, в котором присутствует активный персонаж
+    async def get_entranced_character_by_user_id(self, user_id: UserId) -> Character | None:
+        """Возвращает активного персонажа пользователя
 
         Args:
             user_id: Discord ID пользователя.
@@ -104,9 +107,6 @@ class ICharacterRepository(Protocol):
 
         Args:
             character: Персонаж игрока
-
-        Returns:
-            True, если персонаж удалён и False, если не найден.
         """
         ...
 
@@ -114,7 +114,7 @@ class ICharacterRepository(Protocol):
 class IAgencyRepository(Protocol):
     def create(
         self,
-        owner_id: int,
+        owner_id: UserId,
         name: str,
     ) -> Agency | None:
         """Создаёт новое агентство.
@@ -131,11 +131,11 @@ class IAgencyRepository(Protocol):
         """Возвращает все агентства."""
         ...
 
-    async def get_agency_by_id(self, id: int) -> Agency | None:
+    async def get_agency_by_id(self, agency_id: AgencyId) -> Agency | None:
         """Возвращает агентство по его ID.
 
         Args:
-            id: ID агентства в базе данных.
+            agency_id: ID агентства в базе данных.
 
         Returns:
             Агентство или None,
@@ -146,3 +146,52 @@ class ICooldownRepository(Protocol):
     async def is_on_cooldown(self, key: str) -> bool: ...
 
     async def set_cooldown(self, key: str, seconds: int) -> None: ...
+
+
+class IOnboardingRepository(Protocol):
+    def start(self, user_id: UserId) -> None:
+        """Создаёт состояние онбординга, если его ещё нет."""
+        ...
+
+    async def get_current_step(self, user_id: UserId) -> OnboardingStep | None:
+        """Возвращает текущий шаг пользователя."""
+        ...
+
+    async def set_current_step(self, user_id: UserId, step: OnboardingStep) -> None:
+        """Устанавливает текущий шаг пользователя."""
+        ...
+
+    async def is_complete(self, user_id: UserId) -> bool:
+        """Проверяет, завершён ли онбординг."""
+        ...
+
+    async def set_complete(self, user_id: UserId) -> None:
+        """Помечает онбординг как завершённый."""
+        ...
+
+    async def add_role(self, user_id: UserId, role_id: RoleId) -> None:
+        """Сохраняет выданную во время онбординга роль."""
+        ...
+
+    async def remove_role(self, user_id: UserId, role_id: RoleId) -> None:
+        """Удаляет сохранённую роль."""
+        ...
+
+    async def get_roles(self, user_id: UserId) -> list[RoleId]:
+        """Возвращает роли, выданные пользователю во время онбординга."""
+        ...
+
+    async def reset(self, user_id: UserId) -> None:
+        """Сбрасывает онбординг пользователя."""
+        ...
+
+    async def log_event(
+        self,
+        user_id: UserId,
+        event_name: str,
+        step: OnboardingStep | None = None,
+        metadata: dict[str, str] | None = None,
+        created_at: datetime | None = None,
+    ) -> None:
+        """Логирует событие онбординга."""
+        ...

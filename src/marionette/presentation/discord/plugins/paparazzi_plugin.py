@@ -1,21 +1,21 @@
-import typing as t
-
 import crescent
 import hikari
 
+from marionette.application.protocols import ICharacterRepository, UserId
 from marionette.application.usecases.entrance_usecase import EntranceUseCase
 from marionette.application.usecases.exit_usecase import ExitUseCase
 from marionette.application.usecases.paparazzi_usecase import PaparazziUseCase
-from marionette.application.protocols import ICharacterRepository
 from marionette.infrastructure.config import config
+from marionette.presentation.di.container import CrescentContainer
 from marionette.presentation.di.inject import Inject, inject
-from marionette.presentation.discord.presenters.entrance_presenter import EntryExitPresenter
-from marionette.presentation.discord.presenters.paparazzi_presenter import PaparazziPresenter
+from marionette.presentation.discord.presenters.entrance_presenter import (
+    EntryExitPresenter,
+)
+from marionette.presentation.discord.presenters.paparazzi_presenter import (
+    PaparazziPresenter,
+)
 
-if t.TYPE_CHECKING:
-    from marionette.presentation.di.container import CrescentContainer
-
-plugin = crescent.Plugin[hikari.GatewayBot, "CrescentContainer"]()
+plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 inject_plugin = inject(lambda: plugin.model.dishka())
 
 
@@ -25,7 +25,7 @@ async def _character_autocomplete(
     _: hikari.AutocompleteInteractionOption,
     character_repo: Inject[ICharacterRepository],
 ) -> list[tuple[str, str]]:
-    characters = await character_repo.get_all_characters_by_user_id(context.user.id)
+    characters = await character_repo.get_all_characters_by_user_id(UserId(context.user.id))
     return [(c.name, c.name) for c in characters]
 
 
@@ -67,9 +67,7 @@ class ExitCommand:
     async def callback(
         self, context: crescent.Context, usecase: Inject[ExitUseCase]
     ) -> None:
-        await usecase.execute(
-            context.user.id, self.character_name, context.channel_id
-        )
+        await usecase.execute(context.user.id, self.character_name, context.channel_id)
         await context.respond(EntryExitPresenter.exit_message)
 
 
@@ -79,13 +77,13 @@ class ExitCommand:
 async def tabloid_event(
     event: hikari.MessageCreateEvent,
     character_repo: Inject[ICharacterRepository],
-    expose_usecase: Inject[PaparazziUseCase],
+    paparazzi_usecase: Inject[PaparazziUseCase],
 ) -> None:
     if not event.is_human:
         return
 
     entranced_character = await character_repo.get_entranced_character_by_user_id(
-        event.author_id
+        UserId(event.author_id)
     )
 
     if not entranced_character:
@@ -94,7 +92,16 @@ async def tabloid_event(
     if not entranced_character.entranced_channel_id:
         return
 
-    result = await expose_usecase.expose(entranced_character)
+    channel = plugin.app.cache.get_guild_channel(
+        event.channel_id
+    ) or plugin.app.cache.get_thread(event.channel_id)
+    if not channel or not channel.name:
+        return
+
+    if not channel.name.startswith(config.PAPARAZZI_TRIGGER_CHANNEL_PREFIX):
+        return
+
+    result = await paparazzi_usecase.expose(entranced_character)
     if result:
         response = PaparazziPresenter.present(
             channel_id=entranced_character.entranced_channel_id,
