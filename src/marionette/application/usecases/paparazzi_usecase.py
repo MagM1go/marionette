@@ -1,7 +1,5 @@
 import random
 
-from sqlalchemy.ext.asyncio import AsyncSession
-
 from marionette.application.dto.paparazzi import PaparazziExposeData
 from marionette.application.protocols import ICooldownRepository
 from marionette.domain.entities.character import Character
@@ -15,11 +13,9 @@ class PaparazziUseCase:
     def __init__(
         self,
         rating_service: RatingService,
-        session: AsyncSession,
         cooldown_repo: ICooldownRepository,
     ) -> None:
         self.rating_service = rating_service
-        self.session = session
         self.cooldown_repo = cooldown_repo
 
     async def expose(self, character: Character) -> PaparazziExposeData | None:
