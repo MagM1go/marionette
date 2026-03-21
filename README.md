@@ -82,6 +82,9 @@ docker compose up --build
 > **Окружение, в котором всё создавалось и тестировалось:**
 > 
 > Python 3.14.2 (main, Jan 10 2026, 19:46:42) [GCC 15.2.1 20260103] on linux
+>
 > Docker: Docker version 29.1.4, build 0e6fee6c52
+>
 > Docker Compose version 5.0.1
+>
 > uv 0.9.26
