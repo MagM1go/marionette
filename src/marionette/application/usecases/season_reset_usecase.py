@@ -35,8 +35,9 @@ class SeasonResetUseCase:
             for max_value, bound in bounds:
                 if rating < max_value:
                     return bound
+
             return 400
 
         for repo in [self.agency_repo, self.character_repo]:
-            for entity in await repo.get_all(): # type: ignore
+            for entity in await repo.get_all():  # type: ignore
                 entity.rating = reset_bounds(entity.rating)
