@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import typing as t
 from datetime import datetime
 
@@ -34,7 +36,7 @@ class Character(Base):
     agency_id: Mapped[int | None] = mapped_column(
         ForeignKey("agencies.id"), nullable=True
     )
-    agency: Mapped["Agency"] = relationship("Agency", back_populates="characters")
+    agency: Mapped[Agency] = relationship("Agency", back_populates="characters")
     home_channel_id: Mapped[int] = mapped_column(BigInteger, nullable=False)
     entranced_channel_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
     is_in_performance: Mapped[bool] = mapped_column(
@@ -52,4 +54,8 @@ class Character(Base):
 
     @t.override
     def __repr__(self) -> str:
-        return f"<Character(id={self.id}, user_id={self.user_id}, name='{self.name}', role={self.role}, is_active={self.is_active}, rating={self.rating})>"
+        return (
+            f"<Character(id={self.id}, user_id={self.user_id}, "
+            f"name='{self.name}', role={self.role}, "
+            f"is_active={self.is_active}, rating={self.rating})>"
+        )

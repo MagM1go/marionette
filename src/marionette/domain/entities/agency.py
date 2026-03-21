@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 # pyright: reportImportCycles=false
 # базедпурайт говорит циклический импорт :muscle:
 import typing as t
@@ -18,8 +20,11 @@ class Agency(Base):
     owner_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False)
     name: Mapped[str] = mapped_column(String(60), unique=True, nullable=False)
     rating: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    characters: Mapped[list["Character"]] = relationship(back_populates="agency")
+    characters: Mapped[list[Character]] = relationship(back_populates="agency")
 
     @t.override
     def __repr__(self) -> str:
-        return f"Agency(id={self.id}, owner_id={self.owner_id}, name={self.name}, rating={self.rating})"
+        return (
+            f"Agency(id={self.id}, owner_id={self.owner_id}, "
+            f"name={self.name}, rating={self.rating})"
+        )
