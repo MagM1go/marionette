@@ -7,7 +7,7 @@ class CharacterNotFound(DomainException):
         self.name = name
 
 
-class AlreadyEntranced(DomainException):
+class AlreadyInLocation(DomainException):
     def __init__(self, channel_id: int) -> None:
         super().__init__()
         self.channel_id = channel_id
@@ -19,10 +19,14 @@ class AnotherCharacterIsActive(DomainException):
         self.character_name = character_name
 
 
-class CharacterNotEntranced(DomainException): ...
+class CharacterNotInLocation(DomainException): ...
 
 
-class WrongChannel(DomainException): 
+class WrongChannel(DomainException):
     def __init__(self, expected_channel_id: int) -> None:
         super().__init__()
         self.expected_channel_id = expected_channel_id
+
+
+class OnboardingTransitionError(DomainException):
+    pass

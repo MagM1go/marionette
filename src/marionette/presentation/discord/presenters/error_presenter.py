@@ -4,7 +4,7 @@ from marionette.domain import exceptions as exc
 from marionette.presentation.discord.colors import Color
 
 _MESSAGES: dict[type, str] = {
-    exc.CharacterNotEntranced: "Персонаж нигде не активен! Увы...",
+    exc.CharacterNotInLocation: "Персонаж нигде не активен! Увы...",
 }
 
 
@@ -14,7 +14,7 @@ class ErrorPresenter:
         match e:
             case exc.CharacterNotFound(name=name):
                 text = f"У вас нет персонажа с именем **{name}**!"
-            case exc.AlreadyEntranced(channel_id=cid):
+            case exc.AlreadyInLocation(channel_id=cid):
                 text = f"Персонаж уже активен в <#{cid}>! Воспользуйтесь `/exit`"
             case exc.AnotherCharacterIsActive(character_name=name):
                 text = f"У вас уже есть активный персонаж! Вы забыли про **{name}**?"
