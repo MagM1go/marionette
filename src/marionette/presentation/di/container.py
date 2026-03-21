@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
-from dishka import AsyncContainer
 import miru
+from dishka import AsyncContainer
 
 
 @dataclass
