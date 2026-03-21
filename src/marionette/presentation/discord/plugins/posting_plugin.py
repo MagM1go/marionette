@@ -1,17 +1,11 @@
-# This is only for moderators and admins
-import typing as t
-
 import crescent
 import hikari
 
 from marionette.infrastructure.config import config
+from marionette.presentation.di.container import CrescentContainer
 from marionette.presentation.discord.modals.posting_modal import PostBreakingNewsModal
 
-if t.TYPE_CHECKING:
-    from marionette.presentation.di.container import CrescentContainer
-
-
-plugin = crescent.Plugin[hikari.GatewayBot, "CrescentContainer"]()
+plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 
 
 @plugin.include

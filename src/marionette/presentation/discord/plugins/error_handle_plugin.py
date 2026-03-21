@@ -1,16 +1,11 @@
-import typing as t
-
 import crescent
 import hikari
 
 from marionette.domain.exceptions import DomainException
+from marionette.presentation.di.container import CrescentContainer
 from marionette.presentation.discord.presenters.error_presenter import ErrorPresenter
 
-if t.TYPE_CHECKING:
-    from marionette.presentation.di.container import CrescentContainer
-
-
-plugin = crescent.Plugin[hikari.GatewayBot, "CrescentContainer"]()
+plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 
 
 @plugin.include
