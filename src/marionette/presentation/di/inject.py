@@ -1,10 +1,10 @@
 # pyright: reportExplicitAny=false
 from collections.abc import Callable
+from contextlib import AbstractAsyncContextManager
 from functools import wraps
 from typing import (
     Annotated,
     Any,
-    AsyncContextManager,
     TypeVar,
     cast,
     get_args,
@@ -21,7 +21,7 @@ type Inject[T] = Annotated[T, _MARKER]
 
 # typing.Any momento
 def inject(
-    get_container: Callable[[], AsyncContextManager[Any]],
+    get_container: Callable[[], AbstractAsyncContextManager[Any]],
 ) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     def decorator(func: Callable[..., Any]) -> Any:
         @wraps(func)
