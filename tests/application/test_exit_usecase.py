@@ -5,8 +5,8 @@ import pytest
 from marionette.application.usecases.exit_usecase import ExitUseCase
 from marionette.domain.entities.character import Character
 from marionette.domain.exceptions import (
-    CharacterNotEntranced,
     CharacterNotFound,
+    CharacterNotInLocation,
     WrongChannel,
 )
 from tests.fakes import FakeCharacterRepository
@@ -44,7 +44,7 @@ async def test_execute_raises_when_character_not_entranced(
 ) -> None:
     repo = character_repo_factory([character_factory()])
 
-    with pytest.raises(CharacterNotEntranced):
+    with pytest.raises(CharacterNotInLocation):
         await ExitUseCase(repo).execute(100, "Airi", 777)
 
 

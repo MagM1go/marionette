@@ -5,7 +5,7 @@ import pytest
 from marionette.application.usecases.entrance_usecase import EntranceUseCase
 from marionette.domain.entities.character import Character
 from marionette.domain.exceptions import (
-    AlreadyEntranced,
+    AlreadyInLocation,
     AnotherCharacterIsActive,
     CharacterNotFound,
 )
@@ -44,7 +44,7 @@ async def test_execute_raises_when_character_already_entranced(
 ) -> None:
     repo = character_repo_factory([character_factory(entranced_channel_id=321)])
 
-    with pytest.raises(AlreadyEntranced):
+    with pytest.raises(AlreadyInLocation):
         await EntranceUseCase(repo).execute(100, "Airi", 777)
 
 
