@@ -1,4 +1,4 @@
-from typing import override
+from typing import cast, override
 
 import hikari
 import miru
@@ -11,7 +11,6 @@ from marionette.presentation.discord.presenters.posting_presenter import (
 
 class PostBreakingNewsModal(miru.Modal):
     def __init__(self, title: str, source: str, custom_id: str) -> None:
-        self.title = title
         self.source = source
 
         super().__init__(title, custom_id=custom_id, timeout=300)
@@ -25,28 +24,23 @@ class PostBreakingNewsModal(miru.Modal):
     image = miru.TextInput(
         label="Изображение (большое)",
         required=False,
-        placeholder="https://image-hosting.domain/image.png"
+        placeholder="https://image-hosting.domain/image.png",
     )
 
     @override
     async def callback(self, context: miru.ModalContext) -> None:
-        channel = context.client.cache.get_guild_channel(config.NEWS_CHANNEL_ID)
-
-        if not channel or not self.message.value:
-            raise ValueError
-
+        message = cast(str, self.message.value)  # доверяем контракту дискорда, что сообщение будет не пустым (required=True в self.message)
         response = PostingPresenter.present(
             username=context.user.username,
             author_id=context.user.id,
             image=self.image.value,
             source=self.source,
-            message=self.message.value,
+            message=message
         )
+        
         await context.client.rest.create_message(
-            channel.id,
+            config.NEWS_CHANNEL_ID,
             components=response,
             flags=hikari.MessageFlag.IS_COMPONENTS_V2,
         )
-        await context.respond(
-            "Новость была отправлена! еоу...", flags=hikari.MessageFlag.EPHEMERAL
-        )
+        await context.respond("Новость была отправлена! еоу...", flags=hikari.MessageFlag.EPHEMERAL)
