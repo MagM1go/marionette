@@ -32,7 +32,7 @@ class BreakingNewsCommand:
     )
 
     async def callback(self, ctx: crescent.Context) -> None:
-        custom_id = f"postmodal_{ctx.user.username}"
+        custom_id = f"postmodal_{ctx.user.id}"
         modal = PostBreakingNewsModal(self.title, self.source, custom_id)
         await ctx.respond_with_modal(self.title, custom_id, components=modal)
         plugin.model.component_client.start_modal(modal)
