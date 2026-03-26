@@ -14,10 +14,9 @@ class OnboardingStep(IntEnum):
     WELCOME = 1
     INTRO = 2
     RULES = 3
-    CHOOSE_MODE = 4
-    DRAFT_REGISTRATION = 5
-    FULL_REGISTRATION = 6
-    COMPLETED = 7
+    DRAFT_REGISTRATION = 4
+    FULL_REGISTRATION = 5
+    COMPLETED = 6
 
 
 class OnboardingState(Base):
