@@ -1,4 +1,5 @@
 from marionette.application.protocols import IAgencyRepository, ICharacterRepository
+from marionette.domain.policies.season_reset_policy import SeasonResetPolicy
 
 
 class SeasonResetUseCase:
@@ -19,25 +20,12 @@ class SeasonResetUseCase:
         character_repo: ICharacterRepository,
         agency_repo: IAgencyRepository,
     ) -> None:
-        self.character_repo = character_repo
-        self.agency_repo = agency_repo
+        self._character_repo = character_repo
+        self._agency_repo = agency_repo
+
+        self.repos = [self._character_repo, self._agency_repo]
 
     async def execute(self) -> None:
-        def reset_bounds(rating: int) -> int:
-            bounds = [
-                (100, 0),
-                (300, 25),
-                (500, 70),
-                (700, 150),
-                (900, 200),
-                (1000, 300),
-            ]
-            for max_value, bound in bounds:
-                if rating < max_value:
-                    return bound
-
-            return 400
-
-        for repo in [self.agency_repo, self.character_repo]:
+        for repo in self.repos:
             for entity in await repo.get_all():  # type: ignore
-                entity.rating = reset_bounds(entity.rating)
+                entity.rating = SeasonResetPolicy.get_reset_rating(entity.rating)
