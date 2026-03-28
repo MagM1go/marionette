@@ -27,6 +27,8 @@ services:
     volumes:
       - ./alembic/versions:/app/alembic/versions
     working_dir: /app
+    env_file:
+      - .env
     environment:
       DATABASE_URL: "postgresql+psycopg://marionette:pass@marionette-postgres:5432/roleplay"
     depends_on:
