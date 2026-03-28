@@ -142,12 +142,6 @@ class IAgencyRepository(Protocol):
         """
 
 
-class ICooldownRepository(Protocol):
-    async def is_on_cooldown(self, key: str) -> bool: ...
-
-    async def set_cooldown(self, key: str, seconds: int) -> None: ...
-
-
 class IOnboardingRepository(Protocol):
     def start(self, user_id: UserId) -> None:
         """Создаёт состояние онбординга, если его ещё нет."""

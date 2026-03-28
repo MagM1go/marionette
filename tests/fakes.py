@@ -19,7 +19,7 @@ class FakeCharacterRepository:
         name: str,
         role: Roles,
         birthday: date | datetime,
-        home_channel_id: int,
+        home_channel_id: int
     ) -> Character:
         birthday_datetime = (
             birthday
@@ -36,6 +36,7 @@ class FakeCharacterRepository:
             rating=0,
             is_active=False,
             is_in_performance=False,
+            last_exposed_at=None
         )
         self.characters.append(character)
         return character
@@ -53,9 +54,7 @@ class FakeCharacterRepository:
         self.set_location_calls.append((character, channel_id))
         character.entranced_channel_id = channel_id
 
-    async def get_by_user_id_and_name(
-        self, user_id: int, name: str
-    ) -> Character | None:
+    async def get_by_user_id_and_name(self, user_id: int, name: str) -> Character | None:
         for character in self.characters:
             if character.user_id == user_id and character.name == name:
                 return character
@@ -102,15 +101,3 @@ class FakeAgencyRepository:
             if agency.id == agency_id:
                 return agency
         return None
-
-
-class FakeCooldownRepository:
-    def __init__(self, on_cooldown: bool = False) -> None:
-        self.on_cooldown = on_cooldown
-        self.set_calls: list[tuple[str, int]] = []
-
-    async def is_on_cooldown(self, key: str) -> bool:
-        return self.on_cooldown
-
-    async def set_cooldown(self, key: str, seconds: int) -> None:
-        self.set_calls.append((key, seconds))

@@ -11,7 +11,6 @@ from sqlalchemy.ext.asyncio import (
 from marionette.application.protocols import (
     IAgencyRepository,
     ICharacterRepository,
-    ICooldownRepository,
     IOnboardingRepository,
 )
 from marionette.application.usecases.entrance_usecase import EntranceUseCase
@@ -29,7 +28,6 @@ from marionette.infrastructure.repositories.character_repository import (
 from marionette.infrastructure.repositories.onboarding_repository import (
     OnboardingRepository,
 )
-from marionette.infrastructure.repositories.redis_repository import CooldownRepository
 
 
 class ApplicationProvider(Provider):
@@ -71,10 +69,6 @@ class ApplicationProvider(Provider):
         await manager.dispose()
 
     @provide(scope=Scope.REQUEST)
-    def cooldown_repository(self, manager: RedisManager) -> ICooldownRepository:
-        return CooldownRepository(manager.client)
-
-    @provide(scope=Scope.REQUEST)
     def character_repository(self, session: AsyncSession) -> ICharacterRepository:
         return CharacterRepository(session)
 
@@ -91,15 +85,8 @@ class ApplicationProvider(Provider):
         return RatingService()
 
     @provide(scope=Scope.REQUEST)
-    def paparazzi_usecase(
-        self,
-        rating_service: RatingService,
-        cooldown_repo: ICooldownRepository,
-    ) -> PaparazziUseCase:
-        return PaparazziUseCase(
-            rating_service=rating_service,
-            cooldown_repo=cooldown_repo,
-        )
+    def paparazzi_usecase(self, rating_service: RatingService) -> PaparazziUseCase:
+        return PaparazziUseCase(rating_service=rating_service)
 
     @provide(scope=Scope.REQUEST)
     def onboarding_usecase(

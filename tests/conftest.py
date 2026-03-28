@@ -13,7 +13,7 @@ if str(SRC) not in sys.path:
 from marionette.domain.entities.agency import Agency
 from marionette.domain.entities.character import Character
 from marionette.domain.roles import Roles
-from tests.fakes import FakeAgencyRepository, FakeCharacterRepository, FakeCooldownRepository
+from tests.fakes import FakeAgencyRepository, FakeCharacterRepository
 
 
 @pytest.fixture
@@ -47,6 +47,7 @@ def character_factory() -> Callable[..., Character]:
         agency: Agency | None = None,
         agency_id: int | None = None,
         role: Roles = Roles.IDOL,
+        last_exposed_at: datetime | None = None,
     ) -> Character:
         actual_agency = agency
         actual_agency_id = agency_id
@@ -66,6 +67,7 @@ def character_factory() -> Callable[..., Character]:
             agency_id=actual_agency_id,
             is_active=False,
             is_in_performance=False,
+            last_exposed_at=last_exposed_at
         )
 
     return factory
@@ -85,13 +87,5 @@ def character_repo_factory() -> Callable[[list[Character] | None], FakeCharacter
 def agency_repo_factory() -> Callable[[list[Agency]], FakeAgencyRepository]:
     def factory(agencies: list[Agency]) -> FakeAgencyRepository:
         return FakeAgencyRepository(agencies)
-
-    return factory
-
-
-@pytest.fixture
-def cooldown_repo_factory() -> Callable[[bool], FakeCooldownRepository]:
-    def factory(on_cooldown: bool = False) -> FakeCooldownRepository:
-        return FakeCooldownRepository(on_cooldown=on_cooldown)
 
     return factory
