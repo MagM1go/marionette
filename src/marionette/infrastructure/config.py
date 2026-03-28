@@ -29,6 +29,7 @@ class Config:
 
     # Discord Roles
     UNVERIFIED_ROLE_ID: int = int(os.environ["UNVERIFIED_ROLE_ID"])
+    START_ROLE_ID: int = int(os.environ["START_ROLE_ID"])
     UNREGISTERED_ROLE_ID: int = int(os.environ["UNREGISTERED_ROLE_ID"])
 
     # Infrastructure
