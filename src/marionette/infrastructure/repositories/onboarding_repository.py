@@ -1,5 +1,5 @@
 import typing as t
-from datetime import datetime
+from datetime import UTC, datetime
 
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -128,6 +128,6 @@ class OnboardingRepository(IOnboardingRepository):
                 event_name=event_name,
                 step=step,
                 payload=metadata or {},
-                created_at=created_at or datetime.now(),
+                created_at=created_at or datetime.now(UTC),
             )
         )
