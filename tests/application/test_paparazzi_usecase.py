@@ -6,6 +6,8 @@ import pytest
 from marionette.application.usecases.paparazzi_usecase import PaparazziUseCase
 from marionette.domain.entities.agency import Agency
 from marionette.domain.entities.character import Character
+from marionette.domain.exceptions import CharacterNotInLocation
+from marionette.domain.policies.paparazzi_policy import PaparazziPolicy
 from tests.fakes import FakeCooldownRepository
 
 
@@ -20,7 +22,7 @@ async def test_expose_raises_when_character_not_in_location(
         cooldown_repo=FakeCooldownRepository(),
     )
 
-    with pytest.raises(ValueError, match="должен находиться в локации"):
+    with pytest.raises(CharacterNotInLocation):
         await usecase.expose(character)
 
 
@@ -90,4 +92,4 @@ async def test_expose_updates_character_and_agency_ratings(
         agency_rating=400,
         character_loss=20,
     )
-    assert cooldown_repo.set_calls == [("cooldown:100:10", PaparazziUseCase.ONE_DAY)]
+    assert cooldown_repo.set_calls == [("cooldown:100:10", PaparazziPolicy.ONE_DAY)]

@@ -1,15 +1,13 @@
 import random
 
 from marionette.application.dto.paparazzi import PaparazziExposeData
-from marionette.application.protocols import ICooldownRepository
+from marionette.application.protocols import CharacterId, ICooldownRepository, UserId
 from marionette.domain.entities.character import Character
-from marionette.domain.services.rating_service import RatingChangeReason, RatingService
+from marionette.domain.policies.paparazzi_policy import PaparazziPolicy
+from marionette.domain.services.rating_service import RatingService
 
 
 class PaparazziUseCase:
-    ONE_DAY: int = 60 * 60 * 24
-    EXPOSE_CHANCE: tuple[float, float] = (0.2, 0.37)
-
     def __init__(
         self,
         rating_service: RatingService,
@@ -19,32 +17,24 @@ class PaparazziUseCase:
         self.cooldown_repo = cooldown_repo
 
     async def expose(self, character: Character) -> PaparazziExposeData | None:
-        if not character.entranced_channel_id:
-            raise ValueError("Персонаж должен находиться в локации.")
+        PaparazziPolicy.ensure_character_in_location(character)
 
-        cd_key = f"cooldown:{character.user_id}:{character.id}"
-        if await self.cooldown_repo.is_on_cooldown(cd_key):
+        cooldown_key = self._make_cooldown_key(UserId(character.user_id), CharacterId(character.id))
+        if await self.cooldown_repo.is_on_cooldown(cooldown_key):
             return None
 
-        if not (self.EXPOSE_CHANCE[0] < random.random() < self.EXPOSE_CHANCE[1]):
+        if not PaparazziPolicy.is_exposed(random.random()):
             return None
 
-        character_new_rating = self.rating_service.dec_character_rating(
-            rating=character.rating, reason=RatingChangeReason.NEWS_NEGATIVE
-        )
-        character_loss = character.rating - character_new_rating
+        PaparazziPolicy.recalculate_exposed_rating(self.rating_service, character)
 
-        if character.agency_id:
-            character.agency.rating = self.rating_service.dec_agency_rating_from_member(
-                agency_rating=character.agency.rating,
-                character_loss=character_loss,
-            )
+        await self.cooldown_repo.set_cooldown(cooldown_key, PaparazziPolicy.ONE_DAY)
 
-        character.rating = character_new_rating
-
-        await self.cooldown_repo.set_cooldown(cd_key, self.ONE_DAY)
-
+        assert character.entranced_channel_id is not None
         return PaparazziExposeData(
             exposed_character_name=character.name,
             expose_channel_id=character.entranced_channel_id,
         )
+
+    def _make_cooldown_key(self, user_id: UserId, character_id: CharacterId) -> str:
+        return f"cooldown:{user_id}:{character_id}"
