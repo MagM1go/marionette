@@ -1,6 +1,10 @@
-from marionette.domain.entities.character import Character
+import typing as t
+
 from marionette.domain.exceptions import CharacterNotInLocation
 from marionette.domain.services.rating_service import RatingChangeReason, RatingService
+
+if t.TYPE_CHECKING:
+    from marionette.domain.entities.character import Character
 
 
 class PaparazziPolicy:
