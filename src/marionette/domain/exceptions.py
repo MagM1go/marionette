@@ -19,14 +19,16 @@ class AnotherCharacterIsActive(DomainException):
         self.character_name = character_name
 
 
-class CharacterNotInLocation(DomainException): ...
-
-
 class WrongChannel(DomainException):
     def __init__(self, expected_channel_id: int) -> None:
         super().__init__()
         self.expected_channel_id = expected_channel_id
 
 
-class OnboardingTransitionError(DomainException):
-    pass
+class CharacterNotInLocation(DomainException): ...
+
+
+class OnboardingTransitionError(DomainException): ...
+
+
+class OnboardingNotFoundError(DomainException): ...
