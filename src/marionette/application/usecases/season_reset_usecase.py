@@ -1,4 +1,5 @@
-from marionette.application.protocols import IAgencyRepository, ICharacterRepository
+from marionette.application.protocols import AgencyRepository, CharacterRepository
+from marionette.application.protocols.uow_protocol import UnitOfWork
 from marionette.domain.policies.season_reset_policy import SeasonResetPolicy
 
 
@@ -16,16 +17,19 @@ class SeasonResetUseCase:
     """
 
     def __init__(
-        self,
-        character_repo: ICharacterRepository,
-        agency_repo: IAgencyRepository,
+        self, character_repo: CharacterRepository, agency_repo: AgencyRepository, uow: UnitOfWork
     ) -> None:
         self._character_repo = character_repo
         self._agency_repo = agency_repo
+        self._uow = uow
 
         self.repos = [self._character_repo, self._agency_repo]
 
+    # TODO: N+1?
     async def execute(self) -> None:
-        for repo in self.repos:
-            for entity in await repo.get_all():  # type: ignore
-                entity.rating = SeasonResetPolicy.get_reset_rating(entity.rating)
+        async with self._uow:
+            for repo in self.repos:
+                for entity in await repo.get_all():  # type: ignore
+                    entity.rating = SeasonResetPolicy.get_reset_rating(entity.rating)
+
+            await self._uow.commit()
