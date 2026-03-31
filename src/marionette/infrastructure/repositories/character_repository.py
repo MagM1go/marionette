@@ -2,15 +2,16 @@ import typing as t
 from collections.abc import Sequence
 from datetime import datetime
 
-from sqlalchemy import select, update
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
 
-from marionette.application.protocols import ICharacterRepository
+from marionette.application.protocols import CharacterRepository
 from marionette.domain.entities.character import Character
 from marionette.domain.roles import Roles
 
 
-class CharacterRepository(ICharacterRepository):
+class SqlAlchemyCharacterRepository(CharacterRepository):
     def __init__(self, session: AsyncSession) -> None:
         self.session: AsyncSession = session
 
@@ -34,52 +35,48 @@ class CharacterRepository(ICharacterRepository):
         return character
 
     @t.override
-    async def set_active(self, user_id: int, name: str, is_active: bool) -> None:
-        await self.session.execute(
-            update(Character)
-            .where(Character.user_id == user_id, Character.name == name)
-            .values(is_active=is_active)
-        )
-
-    @t.override
-    async def set_location(self, character: Character, channel_id: int | None) -> None:
-        character.entranced_channel_id = channel_id
-
-    @t.override
-    async def get_by_user_id_and_name(
-        self, user_id: int, name: str
-    ) -> Character | None:
-        stmt = select(Character).where(
-            Character.name == name, Character.user_id == user_id
+    async def get_by_user_id_and_name(self, user_id: int, name: str) -> Character | None:
+        stmt = (
+            select(Character)
+            .options(joinedload(Character.agency))
+            .where(Character.name == name, Character.user_id == user_id)
         )
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
 
     @t.override
     async def get_by_character_id(self, character_id: int) -> Character | None:
-        stmt = select(Character).where(Character.id == character_id)
+        stmt = (
+            select(Character)
+            .options(joinedload(Character.agency))
+            .where(Character.id == character_id)
+        )
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
 
     @t.override
     async def get_all_characters_by_user_id(self, user_id: int) -> Sequence[Character]:
-        stmt = select(Character).where(Character.user_id == user_id)
+        stmt = (
+            select(Character)
+            .options(joinedload(Character.agency))
+            .where(Character.user_id == user_id)
+        )
         result = await self.session.execute(stmt)
         return result.scalars().all()
 
     @t.override
-    async def get_entranced_character_by_user_id(
-        self, user_id: int
-    ) -> Character | None:
-        stmt = select(Character).where(
-            Character.user_id == user_id, Character.entranced_channel_id.is_not(None)
+    async def get_entranced_character_by_user_id(self, user_id: int) -> Character | None:
+        stmt = (
+            select(Character)
+            .options(joinedload(Character.agency))
+            .where(Character.user_id == user_id, Character.entranced_channel_id.is_not(None))
         )
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
 
     @t.override
     async def get_all(self) -> Sequence[Character]:
-        stmt = select(Character)
+        stmt = select(Character).options(joinedload(Character.agency))
         result = await self.session.execute(stmt)
         return result.scalars().all()
 

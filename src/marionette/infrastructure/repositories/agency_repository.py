@@ -4,11 +4,11 @@ from collections.abc import Sequence
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from marionette.application.protocols import IAgencyRepository
+from marionette.application.protocols import AgencyRepository
 from marionette.domain.entities.agency import Agency
 
 
-class AgencyRepository(IAgencyRepository):
+class SqlAlchemyAgencyRepository(AgencyRepository):
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
