@@ -11,11 +11,11 @@ requires-python = ">=3.14"
 dependencies = [
     "alembic>=1.18.4",
     "celery>=5.6.2",
+    "dature>=0.16.0",
     "dishka>=1.8.0",
     "hikari>=2.5.0",
     "hikari-crescent>=1.4.0",
     "hikari-miru>=4.2.0",
-    "nox>=2026.2.9",
     "psycopg[binary,pool]>=3.3.3",
     "redis[asyncio]>=7.2.0",
     "sqlalchemy[asyncio]>=2.0.46",
@@ -28,6 +28,7 @@ dev = [
     "pytest-asyncio",
     "ruff",
     "pytest-cov>=7.1.0",
+    "nox>=2026.2.9",
 ]
 
 [tool.hatch.build.targets.wheel]
