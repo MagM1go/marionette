@@ -9,8 +9,6 @@ wheels/
 # Virtual environments
 .venv
 
-uv.lock
-
 .ruff_cache
 .mypy_cache
 
@@ -18,3 +16,4 @@ alembic/versions/*
 
 .env
 .nox
+.coverage
