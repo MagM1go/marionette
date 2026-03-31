@@ -1,25 +1,26 @@
-import typing as t
+from contextlib import suppress
 
 import crescent
 import hikari
 
-from marionette.application.protocols import ICharacterRepository, UserId
-from marionette.infrastructure.config import config
-from marionette.presentation.di.container import CrescentContainer
-from marionette.presentation.di.inject import Inject, inject
+from marionette.application.protocols.roleplay_moderation_protocol import RoleplayModeration
+from marionette.application.usecases.moderation_usecase import ModerationUseCase
+from marionette.bootstrap.config import config
+from marionette.bootstrap.di.container import CrescentContainer
+from marionette.bootstrap.di.inject import Inject, inject
 
 plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
-
-NON_RP_PREFIX: t.Final[str] = "//"
 
 
 @plugin.include
 @crescent.event
 @inject(lambda: plugin.model.dishka())
 async def message_create_event(
-    event: hikari.GuildMessageCreateEvent, character_repo: Inject[ICharacterRepository]
+    event: hikari.GuildMessageCreateEvent,
+    moderation_usecase: Inject[ModerationUseCase],
+    moderation_service: Inject[RoleplayModeration],
 ) -> None:
-    """Нужно для отлеживания нахождения игрока в РП канале
+    """Нужно для отcлеживания нахождения игрока в РП канале
 
     Если игрок пытается писать что-либо в РП канал, при этом НЕ находясь в нём (/entrance) - сообщения игрока будут удаляться
     Удаляться они будут при условии, если префикс не сопадает: //
@@ -27,49 +28,29 @@ async def message_create_event(
     if not event.is_human:
         return
 
-    entranced_character = await character_repo.get_entranced_character_by_user_id(
-        UserId(event.author_id)
+    channel = (
+        plugin.app.cache.get_guild_channel(event.channel_id) or await event.message.fetch_channel()
     )
-    if (
-        not entranced_character
-        or entranced_character.entranced_channel_id == event.channel_id
+    # заглушка также временная, со следующим патчем будет убрано и сделано по-человечески
+    if not moderation_service.is_rp_location(channel, plugin.app.cache): # pyright: ignore[reportArgumentType]
+        return
+
+    if await moderation_usecase.execute(
+        user_id=event.author_id, channel_id=event.channel_id, message_content=event.message.content
     ):
-        return
-
-    message_channel = (
-        plugin.app.cache.get_guild_channel(event.channel_id)
-        or await event.message.fetch_channel()
-    )
-    if not isinstance(
-        message_channel, (hikari.GuildTextChannel, hikari.GuildThreadChannel)
-    ):
-        return
-
-    if not message_channel or not message_channel.parent_id:
-        return
-
-    parent = plugin.app.cache.get_guild_channel(message_channel.parent_id)
-    if parent and parent.parent_id:
-        parent = plugin.app.cache.get_guild_channel(parent.parent_id)
-
-    if parent and parent.id not in config.RP_CATEGORIES:
-        return
-
-    if event.message.content and not event.message.content.startswith(NON_RP_PREFIX):
-        await plugin.app.rest.delete_message(
-            channel=event.channel_id, message=event.message_id
-        )
+        with suppress(hikari.NotFoundError):
+            await plugin.app.rest.delete_message(channel=event.channel_id, message=event.message_id)
 
 
 @plugin.include
 @crescent.event
 async def on_started(_: hikari.StartedEvent) -> None:
-    guild = await plugin.app.rest.fetch_guild(config.MAIN_GUILD_ID)
+    guild = await plugin.app.rest.fetch_guild(config.discord.main_guild_channel)
     threads = await plugin.app.rest.fetch_active_threads(guild)
 
     for thread in threads:
         channel = plugin.app.cache.get_guild_channel(thread.parent_id)
-        if channel and channel.parent_id in config.RP_CATEGORIES:
+        if channel and channel.parent_id in config.discord.rp_categories:
             await plugin.app.rest.join_thread(thread.id)
 
 
