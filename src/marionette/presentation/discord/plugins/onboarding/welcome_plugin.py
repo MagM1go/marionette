@@ -1,9 +1,11 @@
 import crescent
 import hikari
 
+from marionette.application.protocols import UserId
 from marionette.application.usecases.onboarding_usecase import OnboardingUseCase
-from marionette.presentation.di.container import CrescentContainer
-from marionette.presentation.di.inject import Inject, inject
+from marionette.bootstrap.di.container import CrescentContainer
+from marionette.bootstrap.di.inject import Inject, inject
+from marionette.domain.entities.onboarding import OnboardingStep
 
 plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 
@@ -13,4 +15,6 @@ plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 @inject(lambda: plugin.model.dishka())
 async def on_user_arrive(
     event: hikari.MemberCreateEvent, usecase: Inject[OnboardingUseCase]
-) -> None: ...
+) -> None:
+    user_id = UserId(event.user_id)
+    await usecase.move_to(plugin.app.rest, event.guild_id, user_id, OnboardingStep.WELCOME)

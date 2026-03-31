@@ -1,7 +1,7 @@
 import crescent
 import hikari
 
-from marionette.presentation.di.container import CrescentContainer
+from marionette.bootstrap.di.container import CrescentContainer
 
 plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 
