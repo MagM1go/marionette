@@ -1,16 +1,18 @@
 import crescent
 import hikari
 
-from marionette.infrastructure.config import config
-from marionette.presentation.di.container import CrescentContainer
-from marionette.presentation.discord.modals.posting_modal import PostBreakingNewsModal
+from marionette.bootstrap.config import config
+from marionette.bootstrap.di.container import CrescentContainer
+from marionette.presentation.discord.plugins.posting.ui.modals.posting_modal import (
+    PostBreakingNewsModal,
+)
 
 plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 
 
 @plugin.include
 @crescent.command(
-    guild=config.MAIN_GUILD_ID,
+    guild=config.discord.main_guild_channel,
     name="breaking",
     description="Опубликовать важное сообщение (staff only)",
     default_member_permissions=hikari.Permissions.MANAGE_MESSAGES,

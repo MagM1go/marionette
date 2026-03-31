@@ -3,10 +3,8 @@ from typing import cast, override
 import hikari
 import miru
 
-from marionette.infrastructure.config import config
-from marionette.presentation.discord.presenters.posting_presenter import (
-    PostingPresenter,
-)
+from marionette.bootstrap.config import config
+from marionette.presentation.discord.presenters.posting_presenter import PostingPresenter
 
 
 class PostBreakingNewsModal(miru.Modal):
@@ -29,17 +27,19 @@ class PostBreakingNewsModal(miru.Modal):
 
     @override
     async def callback(self, context: miru.ModalContext) -> None:
-        message = cast(str, self.message.value)  # доверяем контракту дискорда, что сообщение будет не пустым (required=True в self.message)
+        message = cast(
+            str, self.message.value
+        )  # доверяем контракту дискорда, что сообщение будет не пустым (required=True в self.message)
         response = PostingPresenter.present(
             username=context.user.username,
             author_id=context.user.id,
             image=self.image.value,
             source=self.source,
-            message=message
+            message=message,
         )
-        
+
         await context.client.rest.create_message(
-            config.NEWS_CHANNEL_ID,
+            config.discord.news_channel_id,
             components=response,
             flags=hikari.MessageFlag.IS_COMPONENTS_V2,
         )
