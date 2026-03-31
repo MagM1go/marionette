@@ -9,7 +9,7 @@ if t.TYPE_CHECKING:
 
 class PaparazziPolicy:
     ONE_DAY: int = 60 * 60 * 24
-    EXPOSE_CHANCE: tuple[float, float] = (0.2, 0.37)
+    EXPOSE_CHANCE: tuple[float, float] = (0.2, 0.24)
 
     @staticmethod
     def ensure_character_in_location(character: Character) -> None:
