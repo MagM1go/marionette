@@ -8,15 +8,17 @@ from marionette.application.usecases.paparazzi_usecase import PaparazziUseCase
 from marionette.domain.entities.agency import Agency
 from marionette.domain.entities.character import Character
 from marionette.domain.exceptions import CharacterNotInLocation
+from tests.fakes import FakeUnitOfWork
 
 
 @pytest.mark.asyncio
 async def test_expose_raises_when_character_not_in_location(
     character_factory: Callable[..., Character],
+    fake_uow: FakeUnitOfWork,
 ) -> None:
     character = character_factory()
     character.entranced_channel_id = None
-    usecase = PaparazziUseCase(rating_service=Mock())
+    usecase = PaparazziUseCase(rating_service=Mock(), uow=fake_uow)
 
     with pytest.raises(CharacterNotInLocation):
         await usecase.expose(character)
@@ -25,12 +27,13 @@ async def test_expose_raises_when_character_not_in_location(
 @pytest.mark.asyncio
 async def test_expose_returns_none_when_on_cooldown(
     character_factory: Callable[..., Character],
+    fake_uow: FakeUnitOfWork,
 ) -> None:
     last_exposure = datetime.now(UTC) - timedelta(hours=1)
     character = character_factory(entranced_channel_id=777, last_exposed_at=last_exposure)
 
     rating_service = Mock()
-    usecase = PaparazziUseCase(rating_service=rating_service)
+    usecase = PaparazziUseCase(rating_service=rating_service, uow=fake_uow)
 
     result = await usecase.expose(character)
 
@@ -39,9 +42,11 @@ async def test_expose_returns_none_when_on_cooldown(
 
 
 @pytest.mark.asyncio
-@patch("marionette.application.usecases.paparazzi_usecase.random.random", return_value=0.3)
+@patch("marionette.application.usecases.paparazzi_usecase.random.random", return_value=0.22)
 async def test_expose_works_after_cooldown_expired(
-    _: object, character_factory: Callable[..., Character]
+    _: object,
+    character_factory: Callable[..., Character],
+    fake_uow: FakeUnitOfWork,
 ) -> None:
     # Прошло 25 часов
     expired_exposure = datetime.now(UTC) - timedelta(hours=25)
@@ -49,37 +54,45 @@ async def test_expose_works_after_cooldown_expired(
 
     rating_service = Mock()
     rating_service.dec_character_rating.return_value = 100
-    usecase = PaparazziUseCase(rating_service=rating_service)
+    usecase = PaparazziUseCase(rating_service=rating_service, uow=fake_uow)
 
     result = await usecase.expose(character)
 
     assert result is not None
     assert character.rating == 100
+    assert fake_uow.commit_calls == 1
+    assert fake_uow.rollback_calls == 0
 
 
 @pytest.mark.asyncio
-@patch("marionette.application.usecases.paparazzi_usecase.random.random", return_value=0.3)
+@patch("marionette.application.usecases.paparazzi_usecase.random.random", return_value=0.22)
 async def test_expose_updates_last_exposed_at_timestamp(
-    _: object, character_factory: Callable[..., Character]
+    _: object,
+    character_factory: Callable[..., Character],
+    fake_uow: FakeUnitOfWork,
 ) -> None:
     character = character_factory(entranced_channel_id=777, last_exposed_at=None)
     rating_service = Mock()
     rating_service.dec_character_rating.return_value = character.rating
-    usecase = PaparazziUseCase(rating_service=rating_service)
+    usecase = PaparazziUseCase(rating_service=rating_service, uow=fake_uow)
 
     await usecase.expose(character)
 
     assert character.last_exposed_at is not None
     assert (datetime.now(UTC) - character.last_exposed_at).total_seconds() < 10
+    assert fake_uow.commit_calls == 1
+    assert fake_uow.rollback_calls == 0
 
 
 @pytest.mark.asyncio
 @patch("marionette.application.usecases.paparazzi_usecase.random.random", return_value=0.1)
 async def test_expose_returns_none_when_roll_outside_chance(
-    _: object, character_factory: Callable[..., Character]
+    _: object,
+    character_factory: Callable[..., Character],
+    fake_uow: FakeUnitOfWork,
 ) -> None:
     rating_service = Mock()
-    usecase = PaparazziUseCase(rating_service=rating_service)
+    usecase = PaparazziUseCase(rating_service=rating_service, uow=fake_uow)
 
     result = await usecase.expose(character_factory(entranced_channel_id=777))
 
@@ -88,9 +101,12 @@ async def test_expose_returns_none_when_roll_outside_chance(
 
 
 @pytest.mark.asyncio
-@patch("marionette.application.usecases.paparazzi_usecase.random.random", return_value=0.3)
+@patch("marionette.application.usecases.paparazzi_usecase.random.random", return_value=0.22)
 async def test_expose_updates_character_and_agency_ratings(
-    _: object, agency_factory: Callable[..., Agency], character_factory: Callable[..., Character]
+    _: object,
+    agency_factory: Callable[..., Agency],
+    character_factory: Callable[..., Character],
+    fake_uow: FakeUnitOfWork,
 ) -> None:
     agency = agency_factory(rating=400)
     character = character_factory(
@@ -101,7 +117,7 @@ async def test_expose_updates_character_and_agency_ratings(
     rating_service = Mock()
     rating_service.dec_character_rating.return_value = 100
     rating_service.dec_agency_rating_from_member.return_value = 392
-    usecase = PaparazziUseCase(rating_service=rating_service)
+    usecase = PaparazziUseCase(rating_service=rating_service, uow=fake_uow)
 
     result = await usecase.expose(character)
 
@@ -110,8 +126,13 @@ async def test_expose_updates_character_and_agency_ratings(
     assert result.expose_channel_id == 777
     assert character.rating == 100
     assert agency.rating == 392
-    rating_service.dec_character_rating.assert_called_once()
+    rating_service.dec_character_rating.assert_called_once_with(
+        rating=120,
+        reason="news_negative",
+    )
     rating_service.dec_agency_rating_from_member.assert_called_once_with(
         agency_rating=400,
         character_loss=20,
     )
+    assert fake_uow.commit_calls == 1
+    assert fake_uow.rollback_calls == 0

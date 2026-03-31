@@ -1,7 +1,7 @@
-from __future__ import annotations
-
 from collections.abc import Sequence
 from datetime import date, datetime
+from types import TracebackType
+from typing import Self
 
 from marionette.domain.entities.agency import Agency
 from marionette.domain.entities.character import Character
@@ -11,7 +11,6 @@ from marionette.domain.roles import Roles
 class FakeCharacterRepository:
     def __init__(self, characters: list[Character] | None = None) -> None:
         self.characters = characters or []
-        self.set_location_calls: list[tuple[Character, int | None]] = []
 
     def create(
         self,
@@ -49,10 +48,6 @@ class FakeCharacterRepository:
             if character.user_id == user_id and character.name == name:
                 character.is_active = is_active
                 return
-
-    async def set_location(self, character: Character, channel_id: int | None) -> None:
-        self.set_location_calls.append((character, channel_id))
-        character.entranced_channel_id = channel_id
 
     async def get_by_user_id_and_name(self, user_id: int, name: str) -> Character | None:
         for character in self.characters:
@@ -101,3 +96,27 @@ class FakeAgencyRepository:
             if agency.id == agency_id:
                 return agency
         return None
+
+
+class FakeUnitOfWork:
+    def __init__(self) -> None:
+        self.commit_calls = 0
+        self.rollback_calls = 0
+
+    async def commit(self) -> None:
+        self.commit_calls += 1
+
+    async def rollback(self) -> None:
+        self.rollback_calls += 1
+
+    async def __aenter__(self) -> Self:
+        return self
+
+    async def __aexit__(
+        self,
+        exc_type: type[BaseException] | None = None,
+        exc: BaseException | None = None,
+        exc_traceback: TracebackType | None = None,
+    ) -> None:
+        if exc_type is not None:
+            await self.rollback()

@@ -13,7 +13,7 @@ if str(SRC) not in sys.path:
 from marionette.domain.entities.agency import Agency
 from marionette.domain.entities.character import Character
 from marionette.domain.roles import Roles
-from tests.fakes import FakeAgencyRepository, FakeCharacterRepository
+from tests.fakes import FakeAgencyRepository, FakeCharacterRepository, FakeUnitOfWork
 
 
 @pytest.fixture
@@ -89,3 +89,8 @@ def agency_repo_factory() -> Callable[[list[Agency]], FakeAgencyRepository]:
         return FakeAgencyRepository(agencies)
 
     return factory
+
+
+@pytest.fixture
+def fake_uow() -> FakeUnitOfWork:
+    return FakeUnitOfWork()

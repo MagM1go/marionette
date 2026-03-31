@@ -1,0 +1,71 @@
+from collections.abc import Callable
+
+import pytest
+
+from marionette.application.usecases.moderation_usecase import ModerationUseCase
+from marionette.domain.entities.character import Character
+from tests.fakes import FakeCharacterRepository
+
+
+@pytest.mark.parametrize("message_content", [None, ""])
+async def test_execute_returns_false_for_empty_message_content(
+    character_repo_factory: Callable[..., FakeCharacterRepository],
+    message_content: str | None,
+) -> None:
+    usecase = ModerationUseCase(character_repo_factory())
+
+    result = await usecase.execute(
+        user_id=100,
+        channel_id=777,
+        message_content=message_content
+    )
+
+    assert result is False
+
+
+async def test_execute_returns_false_for_current_character_location(
+    character_factory: Callable[..., Character],
+    character_repo_factory: Callable[..., FakeCharacterRepository],
+) -> None:
+    repo = character_repo_factory([character_factory(entranced_channel_id=777)])
+    usecase = ModerationUseCase(repo)
+
+    result = await usecase.execute(
+        user_id=100,
+        channel_id=777,
+        message_content="RP message"
+    )
+
+    assert result is False
+
+
+async def test_execute_keeps_non_rp_message_from_another_location(
+    character_factory: Callable[..., Character],
+    character_repo_factory: Callable[..., FakeCharacterRepository],
+) -> None:
+    repo = character_repo_factory([character_factory(entranced_channel_id=321)])
+    usecase = ModerationUseCase(repo)
+
+    result = await usecase.execute(
+        user_id=100,
+        channel_id=777,
+        message_content="// OOC message"
+    )
+
+    assert result is False
+
+
+async def test_execute_deletes_rp_message_from_another_location(
+    character_factory: Callable[..., Character],
+    character_repo_factory: Callable[..., FakeCharacterRepository],
+) -> None:
+    repo = character_repo_factory([character_factory(entranced_channel_id=321)])
+    usecase = ModerationUseCase(repo)
+
+    result = await usecase.execute(
+        user_id=100,
+        channel_id=777,
+        message_content="RP message"
+    )
+
+    assert result is True
