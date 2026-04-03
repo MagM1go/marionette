@@ -17,4 +17,4 @@ async def on_user_arrive(
     event: hikari.MemberCreateEvent, usecase: Inject[OnboardingUseCase]
 ) -> None:
     user_id = UserId(event.user_id)
-    await usecase.move_to(plugin.app.rest, event.guild_id, user_id, OnboardingStep.WELCOME)
+    await usecase.move_to(event.guild_id, user_id, OnboardingStep.WELCOME)

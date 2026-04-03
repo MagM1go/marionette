@@ -1,7 +1,9 @@
+from typing import Any
+
 import crescent
 import hikari
 import miru
-from dishka import make_async_container
+from dishka import AsyncContainer, make_async_container
 
 from marionette.bootstrap.config import config
 from marionette.bootstrap.di.container import CrescentContainer
@@ -11,10 +13,20 @@ from marionette.bootstrap.di.providers.repository_provider import RepositoryProv
 from marionette.bootstrap.di.providers.usecases_provider import UseCaseProvider
 
 
+def _init_container(context: dict[Any, Any]) -> AsyncContainer:
+    providers = (
+        DatabaseProvider(),
+        InfrastructureProvider(),
+        UseCaseProvider(),
+        RepositoryProvider(),
+    )
+    return make_async_container(*providers, context=context)
+
+
 def build_discord_bot(plugins_path: str) -> hikari.GatewayBot:
     bot = hikari.GatewayBot(token=config.discord.bot_token, intents=hikari.Intents.ALL)
-    dishka_container = make_async_container(
-        DatabaseProvider(), InfrastructureProvider(), UseCaseProvider(), RepositoryProvider()
+    dishka_container = _init_container(
+        context={hikari.api.Cache: bot.cache, hikari.api.RESTClient: bot.rest}
     )
     miru_client = miru.Client(bot)
 

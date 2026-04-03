@@ -1,8 +1,5 @@
-from typing import Any, Protocol
-
-from marionette.application.protocols.types import LocationId
+from typing import Protocol
 
 
 class RoleplayModeration(Protocol):
-    # TODO: я устал почищу Any попозже
-    def is_rp_location(self, location_id: LocationId, cache: Any) -> bool: ...
+    def is_rp_location(self, location: object) -> bool: ...

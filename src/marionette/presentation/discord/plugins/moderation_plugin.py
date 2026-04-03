@@ -31,8 +31,7 @@ async def message_create_event(
     channel = (
         plugin.app.cache.get_guild_channel(event.channel_id) or await event.message.fetch_channel()
     )
-    # заглушка также временная, со следующим патчем будет убрано и сделано по-человечески
-    if not moderation_service.is_rp_location(channel, plugin.app.cache): # pyright: ignore[reportArgumentType]
+    if not moderation_service.is_rp_location(channel):
         return
 
     if await moderation_usecase.execute(

@@ -14,15 +14,18 @@ class StepAssets(TypedDict):
 
 
 class HikariDiscordService(PlayerAccessManager):
-    async def add_role(self, rest: hikari.RESTClientImpl, guild_id: int, user_id: UserId, role_id: RoleId) -> None:
-        with suppress(hikari.ForbiddenError):
-            await rest.add_role_to_member(guild=guild_id, user=user_id, role=role_id)
+    def __init__(self, rest: hikari.api.RESTClient) -> None:
+        self._rest = rest
 
-    async def remove_role(self, rest: hikari.RESTClientImpl, guild_id: int, user_id: UserId, role_id: RoleId) -> None:
+    async def add_role(self, zone_id: int, user_id: UserId, role_id: RoleId) -> None:
         with suppress(hikari.ForbiddenError):
-            await rest.remove_role_from_member(guild=guild_id, user=user_id, role=role_id)
+            await self._rest.add_role_to_member(guild=zone_id, user=user_id, role=role_id)
 
-    async def apply_step_assets(self, rest: hikari.RESTClientImpl, guild_id: int, user_id: UserId, step: OnboardingStep) -> None:
+    async def remove_role(self, zone_id: int, user_id: UserId, role_id: RoleId) -> None:
+        with suppress(hikari.ForbiddenError):
+            await self._rest.remove_role_from_member(guild=zone_id, user=user_id, role=role_id)
+
+    async def apply_step_assets(self, zone_id: int, user_id: UserId, step: OnboardingStep) -> None:
         configs: dict[OnboardingStep, StepAssets] = {
             OnboardingStep.INTRO: {
                 "add": (RoleId(config.discord.start_role_id),),
@@ -36,10 +39,10 @@ class HikariDiscordService(PlayerAccessManager):
 
         cfg = configs.get(step)
         if cfg is None:
-            return 
+            return
 
         for role_id in cfg["add"]:
-            await self.add_role(rest, guild_id, user_id, role_id)
+            await self.add_role(zone_id, user_id, role_id)
 
         for role_id in cfg["remove"]:
-            await self.remove_role(rest, guild_id, user_id, role_id)
+            await self.remove_role(zone_id, user_id, role_id)
