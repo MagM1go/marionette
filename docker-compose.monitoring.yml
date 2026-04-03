@@ -1,0 +1,74 @@
+services:
+  victoria-metrics:
+    image: victoriametrics/victoria-metrics:latest
+    command:
+      - "--storageDataPath=/storage"
+      - "--httpListenAddr=:8428"
+    ports:
+      - "8428:8428"
+    volumes:
+      - victoria_metrics_data:/storage
+    restart: unless-stopped
+    networks:
+      - marionette-observability
+
+  vmagent:
+    image: victoriametrics/vmagent:latest
+    command:
+      - "-promscrape.config=/etc/vmagent/victoria.yml"
+      - "-remoteWrite.url=http://victoria-metrics:8428/api/v1/write"
+    volumes:
+      - ./metrics/vmagent/victoria.yml:/etc/vmagent/victoria.yml:ro
+    depends_on:
+      - victoria-metrics
+      - postgres-exporter
+      - cadvisor
+    restart: unless-stopped
+    networks:
+      - marionette-observability
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3300:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./metrics/grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      - victoria-metrics
+    restart: unless-stopped
+    networks:
+      - marionette-observability
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    environment:
+      DATA_SOURCE_NAME: "postgresql://marionette:pass@marionette-postgres:5432/roleplay?sslmode=disable"
+    restart: unless-stopped
+    depends_on:
+      - victoria-metrics
+    networks:
+      - marionette-observability
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    privileged: true
+    devices:
+      - /dev/kmsg:/dev/kmsg
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /dev/disk:/dev/disk:ro
+    restart: unless-stopped
+    networks:
+      - marionette-observability
+
+volumes:
+  victoria_metrics_data:
+  grafana_data:
+
+networks:
+  marionette-observability:
+    external: true

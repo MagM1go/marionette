@@ -14,12 +14,16 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - marionette-observability
         
   marionette-redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
     restart: unless-stopped
+    networks:
+      - marionette-observability
 
   marionette-migration:
     build: .
@@ -29,11 +33,11 @@ services:
     working_dir: /app
     env_file:
       - .env
-    environment:
-      DATABASE_URL: "postgresql+psycopg://marionette:pass@marionette-postgres:5432/roleplay"
     depends_on:
       marionette-postgres:
         condition: service_healthy
+    networks:
+      - marionette-observability
 
   marionette:
     build: .
@@ -42,7 +46,14 @@ services:
     depends_on:
       marionette-migration:
         condition: service_completed_successfully
+    networks:
+      - marionette-observability
 
 volumes:
   postgres_data:
   redis_data:
+
+networks:
+  marionette-observability:
+    external: true
+    name: marionette-observability
