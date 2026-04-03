@@ -22,7 +22,7 @@ def _set_required_env(monkeypatch: pytest.MonkeyPatch, **overrides: str) -> None
         "NEWS_CHANNEL_ID": "43",
         "TABLOID_CHANNEL_ID": "44",
         "REGISTRATION_CHANNEL_ID": "45",
-        "RP_CATEGORIES": "1, 2,3",
+        "RP_CATEGORIES": "[1, 2, 3]",
         "ONBOARDING_WELCOME_CHANNEL_ID": "46",
         "ONBOARDING_INTRO_CHANNEL_ID": "47",
         "ONBOARDING_RULES_CHANNEL_ID": "48",
@@ -86,7 +86,7 @@ def test_load_config_prefers_environment_over_dotenv(
         monkeypatch,
         MARIONETTE_TOKEN="env-token",
         DATABASE_URL="postgresql+psycopg://env:pass@localhost:5432/app",
-        RP_CATEGORIES="9,10",
+        RP_CATEGORIES="[9,10]",
         MAIN_GUILD_ID="999",
     )
     config_module = _reload_config_module()
