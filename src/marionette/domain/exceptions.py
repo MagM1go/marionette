@@ -25,6 +25,9 @@ class WrongChannel(DomainException):
         self.expected_channel_id = expected_channel_id
 
 
+class CharacterWithoutAgencyError(DomainException): ...
+
+
 class CharacterNotInLocation(DomainException): ...
 
 

@@ -5,6 +5,7 @@ from marionette.presentation.discord.colors import Color
 
 _MESSAGES: dict[type, str] = {
     exc.CharacterNotInLocation: "Персонаж нигде не активен! Увы...",
+    exc.CharacterWithoutAgencyError: "У персонажа нет агенства, не удалось убрать рейтинг."
 }
 
 

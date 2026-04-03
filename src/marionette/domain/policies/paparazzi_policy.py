@@ -1,6 +1,6 @@
 import typing as t
 
-from marionette.domain.exceptions import CharacterNotInLocation
+from marionette.domain.exceptions import CharacterNotInLocation, CharacterWithoutAgencyError
 from marionette.domain.services.rating_service import RatingChangeReason, RatingService
 
 if t.TYPE_CHECKING:
@@ -15,6 +15,11 @@ class PaparazziPolicy:
     def ensure_character_in_location(character: Character) -> None:
         if not character.entranced_channel_id:
             raise CharacterNotInLocation()
+            
+    @staticmethod
+    def ensure_character_in_agency(character: Character) -> None:
+        if character.agency is None:
+            raise CharacterWithoutAgencyError()
 
     @classmethod
     def is_exposed(cls, random_value: float) -> bool:
@@ -35,6 +40,8 @@ class PaparazziPolicy:
     def calculate_agency_rating(
         cls, service: RatingService, character: Character, character_loss: int
     ) -> int:
+        cls.ensure_character_in_agency(character)
+        
         return service.dec_agency_rating_from_member(
             agency_rating=character.agency.rating,
             character_loss=character_loss,
