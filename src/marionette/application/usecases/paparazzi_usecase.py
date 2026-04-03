@@ -2,16 +2,16 @@ import random
 from datetime import UTC, datetime
 
 from marionette.application.dto.paparazzi import PaparazziExposeData
-from marionette.application.protocols import UnitOfWork
+from marionette.application.protocols import Transaction
 from marionette.domain.entities.character import Character
 from marionette.domain.policies.paparazzi_policy import PaparazziPolicy
 from marionette.domain.services.rating_service import RatingService
 
 
 class PaparazziUseCase:
-    def __init__(self, rating_service: RatingService, uow: UnitOfWork) -> None:
+    def __init__(self, rating_service: RatingService, transaction: Transaction) -> None:
         self._service = rating_service
-        self._uow = uow
+        self._transaction = transaction
 
     async def expose(self, character: Character) -> PaparazziExposeData | None:
         PaparazziPolicy.ensure_character_in_location(character)
@@ -24,16 +24,18 @@ class PaparazziUseCase:
 
         new_char_rating, loss = PaparazziPolicy.calculate_character_rating(self._service, character)
 
-        async with self._uow as uow:
+        async with self._transaction as transaction:
             character.expose_to_paparazzi(new_char_rating, now)
 
             if character.agency_id:
                 new_agency_rating = PaparazziPolicy.calculate_agency_rating(
                     self._service, character, loss
                 )
-                character.agency.rating = new_agency_rating
+                PaparazziPolicy.ensure_character_in_agency(character)
 
-            await uow.commit()
+                character.agency.rating = new_agency_rating  # pyright: ignore[reportOptionalMemberAccess]
+
+            await transaction.commit()
 
         return PaparazziExposeData(
             exposed_character_name=character.name,

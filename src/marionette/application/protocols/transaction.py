@@ -2,7 +2,7 @@ from types import TracebackType
 from typing import Protocol, Self
 
 
-class UnitOfWork(Protocol):
+class Transaction(Protocol):
     async def commit(self) -> None: ...
     async def rollback(self) -> None: ...
 

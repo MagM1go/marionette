@@ -4,9 +4,9 @@ from dishka import Provider, Scope, provide
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.ext.asyncio.engine import AsyncEngine
 
-from marionette.application.protocols import UnitOfWork
+from marionette.application.protocols import Transaction
 from marionette.bootstrap.config import config
-from marionette.infrastructure.uow import SqlAlchemyUnitOfWork
+from marionette.infrastructure.transaction import SqlAlchemyTransaction
 
 
 class DatabaseProvider(Provider):
@@ -38,4 +38,4 @@ class DatabaseProvider(Provider):
         async with factory() as session:
             yield session
 
-    uow = provide(SqlAlchemyUnitOfWork, provides=UnitOfWork)
+    transaction = provide(SqlAlchemyTransaction, provides=Transaction)

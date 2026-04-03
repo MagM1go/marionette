@@ -98,7 +98,7 @@ class FakeAgencyRepository:
         return None
 
 
-class FakeUnitOfWork:
+class FakeTransaction:
     def __init__(self) -> None:
         self.commit_calls = 0
         self.rollback_calls = 0

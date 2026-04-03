@@ -3,10 +3,10 @@ from typing import Self
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from marionette.application.protocols import UnitOfWork
+from marionette.application.protocols import Transaction
 
 
-class SqlAlchemyUnitOfWork(UnitOfWork):
+class SqlAlchemyTransaction(Transaction):
     def __init__(self, session: AsyncSession) -> None:
         self._session = session
 
