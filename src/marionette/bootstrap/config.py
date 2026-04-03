@@ -1,24 +1,10 @@
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from dature import F, Merge, Source, TypeLoader, load
+from dature import F, Merge, Source, load
 from dature.types import FieldMapping
 
 _ENV_FILE = Path(__file__).resolve().parents[3] / ".env"
-
-
-def _parse_int_list(value: object) -> list[int]:
-    if value == "" or value is None:
-        return []
-    if isinstance(value, list):
-        return [int(item) for item in value]
-    if isinstance(value, str):
-        return [int(item.strip()) for item in value.split(",") if item.strip()]
-    msg = f"Expected a list or comma-separated string, got {type(value).__name__}"
-    raise TypeError(msg)
-
-
-_TYPE_LOADERS = (TypeLoader(list[int], _parse_int_list),)
 
 
 @dataclass
@@ -69,8 +55,7 @@ def _load_section[T](
                 field_mapping=field_mapping,
                 skip_if_broken=True,
             ),
-            Source(field_mapping=field_mapping),
-            type_loaders=_TYPE_LOADERS,
+            Source(field_mapping=field_mapping)
         ),
         dataclass_,
     )
