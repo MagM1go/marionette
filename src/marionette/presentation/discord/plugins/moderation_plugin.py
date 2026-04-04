@@ -4,6 +4,7 @@ import crescent
 import hikari
 
 from marionette.application.protocols.roleplay_moderation_protocol import RoleplayModeration
+from marionette.application.protocols.types import LocationId
 from marionette.application.usecases.moderation_usecase import ModerationUseCase
 from marionette.bootstrap.config import config
 from marionette.bootstrap.di.container import CrescentContainer
@@ -28,10 +29,7 @@ async def message_create_event(
     if not event.is_human:
         return
 
-    channel = (
-        plugin.app.cache.get_guild_channel(event.channel_id) or await event.message.fetch_channel()
-    )
-    if not moderation_service.is_rp_location(channel):
+    if not await moderation_service.is_rp_location(LocationId(event.channel_id)):
         return
 
     if await moderation_usecase.execute(
