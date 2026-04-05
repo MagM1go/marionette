@@ -22,7 +22,6 @@ class ModerationUseCase:
         entranced_character = await self._repository.get_entranced_character_by_user_id(
             UserId(user_id)
         )
-
         entranced_channel_id = (
             entranced_character.entranced_channel_id if entranced_character else None
         )
