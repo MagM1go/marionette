@@ -1,9 +1,9 @@
 import os
 from logging.config import fileConfig
 
+from alembic import context
 from sqlalchemy import engine_from_config, pool
 
-from alembic import context
 from marionette.domain.entities.agency import Agency  # noqa: F401
 from marionette.domain.entities.base import Base
 from marionette.domain.entities.character import Character  # noqa: F401

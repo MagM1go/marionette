@@ -29,11 +29,10 @@ def build_discord_bot(plugins_path: str) -> hikari.GatewayBot:
         context={hikari.api.Cache: bot.cache, hikari.api.RESTClient: bot.rest}
     )
     miru_client = miru.Client(bot)
-
     client = crescent.Client(
         bot,
         model=CrescentContainer(dishka_container, miru_client),
     )
+    
     client.plugins.load_folder(plugins_path, strict=False)
-
     return bot
