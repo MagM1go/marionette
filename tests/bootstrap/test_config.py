@@ -48,7 +48,7 @@ def test_load_config_reads_environment_without_dotenv_file(
     assert config.database.url == "postgresql+psycopg://env:pass@localhost:5432/app"
     assert config.database.pool_size == 77
     assert config.database.max_overflow == 20
-    assert config.discord.main_guild_channel == 42
+    assert config.discord.main_guild_id == 42
     assert config.discord.paparazzi_trigger_channel_prefix == "PP"
     assert config.discord.rp_categories == [1, 2, 3]
 
@@ -95,7 +95,7 @@ def test_load_config_prefers_environment_over_dotenv(
 
     assert config.discord.bot_token == "env-token"
     assert config.database.url == "postgresql+psycopg://env:pass@localhost:5432/app"
-    assert config.discord.main_guild_channel == 999
+    assert config.discord.main_guild_id == 999
     assert config.discord.rp_categories == [9, 10]
     assert config.database.pool_size == 11
     assert config.database.max_overflow == 22
