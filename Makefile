@@ -1,4 +1,4 @@
-.PHONY: up down restart logs ps app-up monitoring-up app-down monitoring-down
+.PHONY: up down restart logs ps app-up monitoring-up app-down monitoring-down clear
 
 NETWORK := marionette-observability
 APP_COMPOSE := docker-compose.yml
@@ -50,3 +50,6 @@ app-down:
 
 monitoring-down:
 	docker compose -f $(MONITORING_COMPOSE) down
+
+clear:
+	find . -type d -name "__pycache__" -exec rm -rf {} +
