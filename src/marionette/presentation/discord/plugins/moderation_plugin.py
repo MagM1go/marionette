@@ -42,7 +42,7 @@ async def message_create_event(
 @plugin.include
 @crescent.event
 async def on_started(_: hikari.StartedEvent) -> None:
-    guild = await plugin.app.rest.fetch_guild(config.discord.main_guild_channel)
+    guild = await plugin.app.rest.fetch_guild(config.discord.main_guild_id)
     threads = await plugin.app.rest.fetch_active_threads(guild)
 
     for thread in threads:

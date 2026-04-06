@@ -33,7 +33,7 @@ async def _character_autocomplete(
 @crescent.command(
     name="entrance",
     description="Войти в локацию",
-    guild=config.discord.main_guild_channel,
+    guild=config.discord.main_guild_id,
 )
 class EntranceCommand:
     channel = crescent.option(hikari.GuildThreadChannel, "Ветка (таймлайн)")
@@ -52,7 +52,7 @@ class EntranceCommand:
 @crescent.command(
     name="exit",
     description="Выйти с локации",
-    guild=config.discord.main_guild_channel,
+    guild=config.discord.main_guild_id,
 )
 class ExitCommand:
     character_name = crescent.option(

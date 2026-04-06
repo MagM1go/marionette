@@ -11,7 +11,7 @@ _ENV_FILE = Path(__file__).resolve().parents[3] / ".env"
 class DiscordConfig:
     bot_token: str
 
-    main_guild_channel: int
+    main_guild_id: int
     news_channel_id: int
     tabloid_channel_id: int
     registration_channel_id: int
@@ -75,7 +75,7 @@ def load_config(*, env_file: Path = _ENV_FILE) -> Config:
         DiscordConfig,
         field_mapping={
             F[DiscordConfig].bot_token: "marionette_token",
-            F[DiscordConfig].main_guild_channel: "main_guild_id",
+            F[DiscordConfig].main_guild_id: "main_guild_id",
         },
         env_file=env_file,
     )

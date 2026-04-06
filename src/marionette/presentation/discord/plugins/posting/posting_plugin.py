@@ -12,7 +12,7 @@ plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 
 @plugin.include
 @crescent.command(
-    guild=config.discord.main_guild_channel,
+    guild=config.discord.main_guild_id,
     name="breaking",
     description="Опубликовать важное сообщение (staff only)",
     default_member_permissions=hikari.Permissions.MANAGE_MESSAGES,
