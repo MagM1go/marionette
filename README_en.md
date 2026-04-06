@@ -22,6 +22,12 @@ TL;DR: this is a local and niche project, so the README is more introductory tha
 
 ---
 
+# A bit of boring stuff
+
+You can find some more detailed info about running the project and a few other things [here](docs/en/quick_start.md)
+
+---
+
 # So what is it for?
 
 It exists to implement mechanics from my fictional world. Doing all of that manually in Discord would have been tedious and boring, so the bot automated it. It also removes the annoying need to manually moderate certain kinds of specific content that would be awful to clean up by hand.
