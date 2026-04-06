@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio.engine import AsyncEngine
 
 from marionette.application.protocols import Transaction
 from marionette.bootstrap.config import config
-from marionette.infrastructure.transaction import SqlAlchemyTransaction
+from marionette.infrastructure.database.transaction import SqlAlchemyTransaction
 
 
 class DatabaseProvider(Provider):
