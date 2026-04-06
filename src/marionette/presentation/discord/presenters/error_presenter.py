@@ -1,11 +1,13 @@
 import hikari
 
 from marionette.domain import exceptions as exc
+from marionette.presentation.discord import exceptions as dis_exc
 from marionette.presentation.discord.colors import Color
 
 _MESSAGES: dict[type, str] = {
     exc.CharacterNotInLocation: "Персонаж нигде не активен! Увы...",
-    exc.CharacterWithoutAgencyError: "У персонажа нет агенства, не удалось убрать рейтинг."
+    exc.CharacterWithoutAgencyError: "У персонажа нет агенства, не удалось убрать рейтинг.",
+    dis_exc.DmsNotAllowed: "Команду нельзя использовать в личных сообщениях."
 }
 
 
