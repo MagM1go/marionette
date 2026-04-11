@@ -5,7 +5,7 @@ import hikari
 import pytest
 
 from marionette.bootstrap.config import config
-from marionette.infrastructure.hikari.moderation_service import HikariRoleplayModeration
+from marionette.infrastructure.services.discord.moderation_service import HikariRoleplayModeration
 
 
 @pytest.fixture
@@ -105,7 +105,7 @@ async def test_is_rp_location_fetches_missing_parent_chain_from_rest(
         fetched_channels={
             parent_channel_id: parent_channel,
             rp_category_id: category,
-        }
+        },
     )
 
     assert await service.is_rp_location(thread.id) is True
@@ -162,7 +162,7 @@ async def test_is_rp_location_returns_false_when_rest_cannot_fetch_parent(
             raw_body=b"",
             message="not found",
             code=10003,
-        )
+        ),
     )
 
     assert await service.is_rp_location(thread.id) is False

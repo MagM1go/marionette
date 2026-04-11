@@ -5,6 +5,7 @@ from typing import Self
 
 from marionette.domain.entities.agency import Agency
 from marionette.domain.entities.character import Character
+from marionette.domain.entities.onboarding import OnboardingEvent, OnboardingState, OnboardingStep
 from marionette.domain.roles import Roles
 
 
@@ -13,12 +14,7 @@ class FakeCharacterRepository:
         self.characters = characters or []
 
     def create(
-        self,
-        user_id: int,
-        name: str,
-        role: Roles,
-        birthday: date | datetime,
-        home_channel_id: int
+        self, user_id: int, name: str, role: Roles, birthday: date | datetime, home_channel_id: int
     ) -> Character:
         birthday_datetime = (
             birthday
@@ -35,7 +31,7 @@ class FakeCharacterRepository:
             rating=0,
             is_active=False,
             is_in_performance=False,
-            last_exposed_at=None
+            last_exposed_at=None,
         )
         self.characters.append(character)
         return character
@@ -120,3 +116,39 @@ class FakeTransaction:
     ) -> None:
         if exc_type is not None:
             await self.rollback()
+
+
+class FakeOnboardingRepository:
+    def __init__(self, state: OnboardingState | None) -> None:
+        self.state = state
+        self.logged_events: list[OnboardingEvent] = []
+
+    async def create(self, user_id: int, created_at: datetime) -> OnboardingState:
+        if self.state is None:
+            self.state = OnboardingState(
+                user_id=user_id,
+                current_step=OnboardingStep.NEWBIE,
+                is_complete=False,
+                created_at=created_at,
+                updated_at=created_at,
+            )
+
+        return self.state
+
+    async def reset(self, user_id: int, created_at: datetime) -> OnboardingState:
+        if self.state is None:
+            self.state = OnboardingState(
+                user_id=user_id,
+                current_step=OnboardingStep.NEWBIE,
+                is_complete=False,
+                created_at=created_at,
+                updated_at=created_at,
+            )
+
+        return self.state
+
+    async def get_by_user_id(self, user_id: int) -> OnboardingState | None:
+        return self.state
+
+    async def log_event(self, event: OnboardingEvent) -> None:
+        self.logged_events.append(event)
