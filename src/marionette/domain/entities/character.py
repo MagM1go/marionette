@@ -18,7 +18,7 @@ if t.TYPE_CHECKING:
 class Character(Base):
     __tablename__: str = "characters"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=False)
     user_id: Mapped[int] = mapped_column(BigInteger, index=True)
     name: Mapped[str] = mapped_column(String(255))

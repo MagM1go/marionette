@@ -16,7 +16,7 @@ if t.TYPE_CHECKING:
 class Agency(Base):
     __tablename__: str = "agencies"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
     owner_id: Mapped[int] = mapped_column(BigInteger, unique=True, nullable=False)
     name: Mapped[str] = mapped_column(String(60), unique=True, nullable=False)
     rating: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
