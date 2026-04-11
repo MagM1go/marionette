@@ -136,7 +136,7 @@ async def test_move_to_marks_onboarding_as_completed(
     now = datetime.now(UTC)
     state = OnboardingState(
         user_id=100,
-        current_step=OnboardingStep.FULL_REGISTRATION,
+        current_step=OnboardingStep.REGISTRATION,
         is_complete=False,
         created_at=now,
         updated_at=now,

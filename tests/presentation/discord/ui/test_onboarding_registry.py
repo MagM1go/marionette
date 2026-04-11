@@ -11,5 +11,5 @@ def test_onboarding_registry_maps_custom_ids_to_steps() -> None:
 def test_onboarding_registry_contains_only_persistent_views_for_interactive_screens() -> None:
     views = onboarding_registry.iter_persistent_views()
 
-    assert len(views) == 2
-    assert {type(view).__name__ for view in views} == {"HelloView", "IntroView"}
+    assert len(views) == 4
+    assert {type(view).__name__ for view in views} == {"HelloView", "IntroView", "FaqView", "RulesView"}
