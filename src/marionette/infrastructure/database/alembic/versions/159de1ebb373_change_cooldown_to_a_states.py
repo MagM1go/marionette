@@ -59,7 +59,6 @@ def upgrade() -> None:
     op.drop_index(op.f('ix_uq_characters_one_active_per_user'), table_name='characters', postgresql_where='(is_active = true)')
     op.drop_index(op.f('ix_uq_characters_one_in_location_per_user'), table_name='characters', postgresql_where='(current_location_id IS NOT NULL)')
     op.drop_constraint(op.f('uq_characters_user_id_name'), 'characters', type_='unique')
-    op.drop_constraint(op.f('characters_agency_id_fkey'), 'characters', type_='foreignkey')
     op.create_foreign_key(None, 'characters', 'agencies', ['agency_id'], ['id'])
     op.drop_column('characters', 'current_location_id')
     # ### end Alembic commands ###

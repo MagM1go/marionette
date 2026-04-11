@@ -5,17 +5,17 @@ from enum import IntEnum
 from typing import Any
 
 from sqlalchemy import JSON, BigInteger, Boolean, DateTime, Enum, Integer, String, func
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, mapped_column
 
 from marionette.domain.entities.base import Base
 
 
 class OnboardingStep(IntEnum):
+    NEWBIE = 0
     WELCOME = 1
     INTRO = 2
     RULES = 3
-    DRAFT_REGISTRATION = 4
-    FULL_REGISTRATION = 5
+    REGISTRATION = 5
     COMPLETED = 6
 
 
@@ -26,7 +26,7 @@ class OnboardingState(Base):
     current_step: Mapped[OnboardingStep] = mapped_column(
         Enum(OnboardingStep, native_enum=False),
         nullable=False,
-        default=OnboardingStep.WELCOME,
+        default=OnboardingStep.NEWBIE,
     )
     is_complete: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     created_at: Mapped[datetime] = mapped_column(
@@ -44,12 +44,6 @@ class OnboardingState(Base):
         DateTime(timezone=True),
         nullable=True,
     )
-    roles: Mapped[list[OnboardingRoleGrant]] = relationship(
-        lazy="raise",
-        cascade="all, delete-orphan",
-        primaryjoin="OnboardingState.user_id == OnboardingRoleGrant.user_id",
-        foreign_keys="[OnboardingRoleGrant.user_id]",
-    )
 
     def move_to_step(self, step: OnboardingStep) -> None:
         if self.is_complete:
@@ -58,10 +52,6 @@ class OnboardingState(Base):
         if step == OnboardingStep.COMPLETED:
             self.is_complete = True
             self.completed_at = datetime.now(UTC)
-
-    def add_role(self, role_id: int) -> None:
-        if not any(r.role_id == role_id for r in self.roles):
-            self.roles.append(OnboardingRoleGrant(user_id=self.user_id, role_id=role_id))
 
 
 class OnboardingRoleGrant(Base):

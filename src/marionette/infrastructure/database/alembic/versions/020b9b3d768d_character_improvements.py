@@ -33,7 +33,6 @@ def upgrade() -> None:
     op.create_index('ix_uq_characters_one_active_per_user', 'characters', ['user_id'], unique=True, postgresql_where=sa.text('is_active = true'))
     op.create_index('ix_uq_characters_one_in_location_per_user', 'characters', ['user_id'], unique=True, postgresql_where=sa.text('current_location_id IS NOT NULL'))
     op.create_unique_constraint('uq_characters_user_id_name', 'characters', ['user_id', 'name'])
-    op.drop_constraint(op.f('characters_agency_id_fkey'), 'characters', type_='foreignkey')
     op.create_foreign_key(
         'fk_characters_agency_id_agencies',
         'characters',

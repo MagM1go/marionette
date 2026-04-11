@@ -7,6 +7,7 @@ from sqlalchemy import engine_from_config, pool
 from marionette.domain.entities.agency import Agency  # noqa: F401
 from marionette.domain.entities.base import Base
 from marionette.domain.entities.character import Character  # noqa: F401
+from marionette.domain.entities.onboarding import OnboardingEvent, OnboardingRoleGrant, OnboardingState
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
