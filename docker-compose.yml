@@ -29,7 +29,7 @@ services:
     build: .
     command: alembic upgrade head
     volumes:
-      - ./src/marionette/infrastructure/database/alembic/versions:/app/alembic/versions
+      - ./src/marionette/infrastructure/database/alembic/versions:/app/src/marionette/infrastructure/database/alembic/versions
     working_dir: /app
     env_file:
       - .env
