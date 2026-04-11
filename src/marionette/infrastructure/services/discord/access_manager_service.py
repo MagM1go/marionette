@@ -13,7 +13,7 @@ class StepAssets(TypedDict):
     remove: tuple[RoleId, ...]
 
 
-class HikariDiscordService(PlayerAccessManager):
+class DicsordAccessManager(PlayerAccessManager):
     def __init__(self, rest: hikari.api.RESTClient) -> None:
         self._rest = rest
 

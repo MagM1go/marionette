@@ -6,8 +6,8 @@ from marionette.application.protocols import PlayerAccessManager
 from marionette.application.protocols.roleplay_moderation_protocol import RoleplayModeration
 from marionette.bootstrap.config import config
 from marionette.infrastructure.cache.redis import RedisManager
-from marionette.infrastructure.hikari.discord_service import HikariDiscordService
-from marionette.infrastructure.hikari.moderation_service import HikariRoleplayModeration
+from marionette.infrastructure.services.discord.access_manager_service import DicsordAccessManager
+from marionette.infrastructure.services.discord.moderation_service import HikariRoleplayModeration
 
 
 class InfrastructureProvider(Provider):
@@ -19,5 +19,5 @@ class InfrastructureProvider(Provider):
         yield manager
         await manager.dispose()
 
-    discord_service = provide(HikariDiscordService, provides=PlayerAccessManager)
+    discord_service = provide(DicsordAccessManager, provides=PlayerAccessManager)
     moderation_service = provide(HikariRoleplayModeration, provides=RoleplayModeration)
