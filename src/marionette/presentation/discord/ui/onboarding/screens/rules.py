@@ -19,12 +19,13 @@ class RulesView(miru.View):
     def __init__(self) -> None:
         super().__init__(timeout=None)
 
+    @miru.text_select(options=_RULES_OPTIONS, custom_id=ONBOARDING_RULES_CUSTOM_ID)
+    async def rules(self, context: miru.ViewContext, select: miru.TextSelect) -> None:
+        await context.respond(select.values[0], flags=hikari.MessageFlag.EPHEMERAL)
+
+    # TODO: добавить ошибку при повторном нажатии
     @miru.button(
         "Я прочитал и принимаю правила", emoji="✅", custom_id=ONBOARDING_RULES_CUSTOM_ID_ACCEPT
     )
     async def accept_rules(self, context: miru.ViewContext, _: miru.Button) -> None:
         await context.respond("✅", flags=hikari.MessageFlag.EPHEMERAL)
-
-    @miru.text_select(options=_RULES_OPTIONS, custom_id=ONBOARDING_RULES_CUSTOM_ID)
-    async def rules(self, context: miru.ViewContext, select: miru.TextSelect) -> None:
-        await context.respond(select.values[0], flags=hikari.MessageFlag.EPHEMERAL)
