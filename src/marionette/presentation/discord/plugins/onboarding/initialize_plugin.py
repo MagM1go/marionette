@@ -4,11 +4,9 @@ import hikari
 from marionette.bootstrap.config import config
 from marionette.bootstrap.di.container import CrescentContainer
 from marionette.presentation.discord.exceptions import DiscordException
-from marionette.presentation.discord.ui.onboarding import (
-    OnboardingPublisher,
-    OnboardingViewRegistry,
-    onboarding_registry,
-)
+from marionette.presentation.discord.ui.onboarding.publisher import OnboardingPublisher
+from marionette.presentation.discord.ui.onboarding.registry import onboarding_registry
+from marionette.presentation.discord.ui.onboarding.view_registry import OnboardingViewRegistry
 
 plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 
