@@ -35,6 +35,10 @@ class DicsordAccessManager(PlayerAccessManager):
                 "add": (RoleId(config.discord.unregistered_role_id),),
                 "remove": (RoleId(config.discord.start_role_id),),
             },
+            OnboardingStep.REGISTRATION: {
+                "add": (RoleId(config.discord.text_role_id),),
+                "remove": (),
+            },
         }
 
         cfg = configs.get(step)
