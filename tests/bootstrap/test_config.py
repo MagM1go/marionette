@@ -30,6 +30,7 @@ def _set_required_env(monkeypatch: pytest.MonkeyPatch, **overrides: str) -> None
         "UNVERIFIED_ROLE_ID": "50",
         "START_ROLE_ID": "51",
         "UNREGISTERED_ROLE_ID": "52",
+        "TEXT_ROLE_ID": "53",
     }
     values.update(overrides)
 
@@ -51,6 +52,7 @@ def test_load_config_reads_environment_without_dotenv_file(
     assert config.discord.main_guild_id == 42
     assert config.discord.paparazzi_trigger_channel_prefix == "PP"
     assert config.discord.rp_categories == [1, 2, 3]
+    assert config.discord.text_role_id == 53
 
 
 def test_load_config_prefers_environment_over_dotenv(
@@ -78,6 +80,7 @@ def test_load_config_prefers_environment_over_dotenv(
                 "UNVERIFIED_ROLE_ID=108",
                 "START_ROLE_ID=109",
                 "UNREGISTERED_ROLE_ID=110",
+                "TEXT_ROLE_ID=111",
             ]
         )
     )
@@ -100,3 +103,4 @@ def test_load_config_prefers_environment_over_dotenv(
     assert config.database.pool_size == 11
     assert config.database.max_overflow == 22
     assert config.discord.paparazzi_trigger_channel_prefix == "FILEPP"
+    assert config.discord.text_role_id == 53
