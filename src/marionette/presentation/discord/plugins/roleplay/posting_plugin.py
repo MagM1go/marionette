@@ -3,7 +3,7 @@ import hikari
 
 from marionette.bootstrap.config import config
 from marionette.bootstrap.di.container import CrescentContainer
-from marionette.presentation.discord.ui.posting.modals.posting_modal import PostBreakingNewsModal
+from marionette.presentation.discord.ui.posting.posting_modal import PostBreakingNewsModal
 
 plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 
