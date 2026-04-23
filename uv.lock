@@ -396,17 +396,13 @@ wheels = [
 
 [[package]]
 name = "hikari"
-version = "2.5.0"
-source = { registry = "https://pypi.org/simple" }
+version = "2.5.1.dev0"
+source = { git = "https://github.com/mplatypus/hikari.git?branch=feature%2Fmodals-v2#bdcecc13373e3a8298d9ca26407f9c3d1a791541" }
 dependencies = [
     { name = "aiohttp" },
     { name = "attrs" },
     { name = "colorlog" },
     { name = "multidict" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/06/bd/e4bd16c662fe7614bb6f38aba40a095aef998af0602674fe24740d3814cd/hikari-2.5.0.tar.gz", hash = "sha256:b8fe7e5cd5adfedcdcc488a86781bc946002fb79d984a473736624dd8201993b", size = 1924829, upload-time = "2025-10-31T12:34:27.838Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/66/c5/256c7d498cbe8e67edfd9bb2971740eadb662effcf9b9c1aff8e6d21e90d/hikari-2.5.0-py3-none-any.whl", hash = "sha256:fd108b51c73f46b562ac9e7cd48d4f74655224083ae37a319a417c30418a40ec", size = 580206, upload-time = "2025-10-31T12:34:25.633Z" },
 ]
 
 [[package]]
@@ -558,7 +554,7 @@ requires-dist = [
     { name = "celery", specifier = ">=5.6.2" },
     { name = "dature", specifier = ">=0.16.0" },
     { name = "dishka", specifier = ">=1.8.0" },
-    { name = "hikari", specifier = ">=2.5.0" },
+    { name = "hikari", git = "https://github.com/mplatypus/hikari.git?branch=feature%2Fmodals-v2" },
     { name = "hikari-crescent", specifier = ">=1.4.0" },
     { name = "hikari-miru", specifier = ">=4.2.0" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.19.1" },
