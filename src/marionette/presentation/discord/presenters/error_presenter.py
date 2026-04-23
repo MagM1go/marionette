@@ -7,6 +7,7 @@ from marionette.presentation.discord.colors import Color
 _MESSAGES: dict[type, str] = {
     exc.CharacterNotInLocation: "Персонаж нигде не активен! Увы...",
     exc.CharacterWithoutAgencyError: "У персонажа нет агенства, не удалось убрать рейтинг.",
+    exc.TooManyCharacters: "Кажется, у вас слишком много персонажей. Увы, но более трёх создать нельзя.",
     exc.OnboardingRulesAlreadyAcceptedError: "Вы уже приняли правила. Повторно нажимать на кнопку не нужно.",
     dis_exc.DmsNotAllowed: "Команду нельзя использовать в личных сообщениях."
 }
@@ -18,6 +19,8 @@ class ErrorPresenter:
         match e:
             case exc.CharacterNotFound(name=name):
                 text = f"У вас нет персонажа с именем **{name}**!"
+            case exc.CharacterNotActive(name=name):
+                text = f"Персонаж **{name}** пока не может быть использован. Статус персонажа можно узнать в профиле."
             case exc.AlreadyInLocation(channel_id=cid):
                 text = f"Персонаж уже активен в <#{cid}>! Воспользуйтесь `/exit`"
             case exc.AnotherCharacterIsActive(character_name=name):

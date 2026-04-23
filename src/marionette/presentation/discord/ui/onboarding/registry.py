@@ -9,10 +9,8 @@ from marionette.bootstrap.config import config
 from marionette.presentation.discord.presenters.onboarding.faq_presenter import FaqPresenter
 from marionette.presentation.discord.presenters.onboarding.hello_presenter import HelloPresenter
 from marionette.presentation.discord.presenters.onboarding.intro_presenter import IntroPresenter
-from marionette.presentation.discord.presenters.onboarding.registration_presenter import (
-    RegistrationPresenter,
-)
 from marionette.presentation.discord.presenters.onboarding.rules_presenter import RulesPresenter
+from marionette.presentation.discord.presenters.registration_presenter import RegistrationPresenter
 from marionette.presentation.discord.ui.onboarding.screens.faq import FaqView
 from marionette.presentation.discord.ui.onboarding.screens.hello import HelloView
 from marionette.presentation.discord.ui.onboarding.screens.intro import IntroView
@@ -23,6 +21,8 @@ from marionette.presentation.discord.ui.onboarding.steps import (
     ONBOARDING_REGISTRATION_CUSTOM_ID,
     ONBOARDING_RULES_CUSTOM_ID_ACCEPT,
 )
+
+from marionette.presentation.discord.ui.registration.registration_view import RegistrationView
 
 type ScreenPresenter = (
     FaqPresenter | HelloPresenter | IntroPresenter | RulesPresenter | RegistrationPresenter
@@ -108,6 +108,7 @@ onboarding_registry = OnboardingRegistry(
             screen_id="registration",
             channel_id=config.discord.registration_channel_id,
             presenter=RegistrationPresenter,
+            view_factory=RegistrationView
         ),
     ),
     actions_by_custom_id={

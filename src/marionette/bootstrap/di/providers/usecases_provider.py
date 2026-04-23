@@ -14,6 +14,8 @@ from marionette.application.usecases.season_reset_usecase import SeasonResetUseC
 from marionette.domain.services.rating_service import RatingService
 from marionette.presentation.discord.ui.onboarding.dispatcher import OnboardingActionDispatcher
 
+from marionette.application.usecases.register_usecase import RegisterUseCase
+
 
 class UseCaseProvider(Provider):
     scope = Scope.REQUEST
@@ -32,3 +34,4 @@ class UseCaseProvider(Provider):
     exit_usecase = provide(ExitUseCase)
     moderation_usecase = provide(ModerationUseCase)
     season_reset_usecase = provide(SeasonResetUseCase)
+    register_usecase = provide(RegisterUseCase)
