@@ -31,6 +31,18 @@ class CharacterWithoutAgencyError(DomainException): ...
 class CharacterNotInLocation(DomainException): ...
 
 
+class CharacterIsTooYoung(DomainException): ...
+
+
+class CharacterNotActive(DomainException):
+    def __init__(self, name: str) -> None:
+        super().__init__()
+        self.name = name
+        
+        
+class TooManyCharacters(DomainException): ...
+
+
 class OnboardingTransitionError(DomainException): ...
 
 

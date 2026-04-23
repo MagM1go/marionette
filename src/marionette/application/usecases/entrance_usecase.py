@@ -4,8 +4,10 @@ from marionette.application.protocols.transaction import Transaction
 from marionette.domain.exceptions import (
     AlreadyInLocation,
     AnotherCharacterIsActive,
+    CharacterNotActive,
     CharacterNotFound,
 )
+from marionette.domain.statuses import CharacterStatus
 
 
 class EntranceUseCase:
@@ -18,8 +20,12 @@ class EntranceUseCase:
             character = await self._repository.get_by_user_id_and_name(
                 UserId(user_id), character_name
             )
+            
             if not character:
                 raise CharacterNotFound(character_name)
+
+            if character.status != CharacterStatus.IS_ACTIVE:
+                raise CharacterNotActive(character_name)
 
             if character.entranced_channel_id:
                 raise AlreadyInLocation(character.entranced_channel_id)

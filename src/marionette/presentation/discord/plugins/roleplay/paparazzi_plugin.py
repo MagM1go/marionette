@@ -15,6 +15,8 @@ from marionette.presentation.discord.presenters.paparazzi_presenter import (
     PaparazziPresenter,
 )
 
+from marionette.domain.statuses import CharacterStatus
+
 plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 inject_plugin = inject(lambda: plugin.model.dishka())
 
@@ -26,7 +28,7 @@ async def _character_autocomplete(
     character_repo: Inject[CharacterRepository],
 ) -> list[tuple[str, str]]:
     characters = await character_repo.get_all_characters_by_user_id(UserId(context.user.id))
-    return [(c.name, c.name) for c in characters]
+    return [(c.name, c.name) for c in characters if c.status == CharacterStatus.IS_ACTIVE]
 
 
 @plugin.include
