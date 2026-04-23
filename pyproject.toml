@@ -13,7 +13,7 @@ dependencies = [
     "celery>=5.6.2",
     "dature>=0.16.0",
     "dishka>=1.8.0",
-    "hikari>=2.5.0",
+    "hikari",
     "hikari-crescent>=1.4.0",
     "hikari-miru>=4.2.0",
     "psycopg[binary,pool]>=3.3.3",
@@ -70,3 +70,6 @@ exclude = ["alembic/"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
+
+[tool.uv.sources]
+hikari = { git = "https://github.com/mplatypus/hikari.git", branch = "feature/modals-v2" }
