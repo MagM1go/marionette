@@ -20,6 +20,8 @@ class DiscordConfig:
     onboarding_intro_channel_id: int
     onboarding_rules_channel_id: int
     onboarding_faq_channel_id: int
+    
+    moderation_channel_id: int
 
     unverified_role_id: int
     start_role_id: int
