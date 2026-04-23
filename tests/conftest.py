@@ -13,6 +13,7 @@ if str(SRC) not in sys.path:
 from marionette.domain.entities.agency import Agency
 from marionette.domain.entities.character import Character
 from marionette.domain.roles import Roles
+from marionette.domain.statuses import CharacterStatus
 from tests.fakes import FakeAgencyRepository, FakeCharacterRepository, FakeTransaction
 
 
@@ -47,7 +48,9 @@ def character_factory() -> Callable[..., Character]:
         agency: Agency | None = None,
         agency_id: int | None = None,
         role: Roles = Roles.IDOL,
+        biography: str = "",
         last_exposed_at: datetime | None = None,
+        status: CharacterStatus = CharacterStatus.IS_ACTIVE,
     ) -> Character:
         actual_agency = agency
         actual_agency_id = agency_id
@@ -59,15 +62,16 @@ def character_factory() -> Callable[..., Character]:
             user_id=user_id,
             name=name,
             role=role,
+            biography=biography,
             birthday=datetime(2000, 1, 1),
-            home_channel_id=10,
             entranced_channel_id=entranced_channel_id,
             rating=rating,
             agency=actual_agency,
             agency_id=actual_agency_id,
             is_active=False,
             is_in_performance=False,
-            last_exposed_at=last_exposed_at
+            last_exposed_at=last_exposed_at,
+            status=status,
         )
 
     return factory
