@@ -22,14 +22,14 @@ class SqlAlchemyCharacterRepository(CharacterRepository):
         name: str,
         role: Roles,
         birthday: datetime,
-        home_channel_id: int,
+        biography: str
     ) -> Character | None:
         character = Character(
             user_id=user_id,
             name=name,
             role=role,
             birthday=birthday,
-            home_channel_id=home_channel_id,
+            biography=biography
         )
         self.session.add(character)
         return character

@@ -2,7 +2,7 @@ from collections.abc import Sequence
 from datetime import datetime
 from typing import Protocol
 
-from marionette.application.protocols.types import CharacterId, LocationId, UserId
+from marionette.application.protocols.types import CharacterId, UserId
 from marionette.domain.entities.character import Character
 from marionette.domain.roles import Roles
 
@@ -14,7 +14,7 @@ class CharacterRepository(Protocol):
         name: str,
         role: Roles,
         birthday: datetime,
-        home_channel_id: LocationId,
+        biography: str
     ) -> Character | None:
         """Создаёт нового персонажа.
 
@@ -23,6 +23,7 @@ class CharacterRepository(Protocol):
             name: Имя персонажа.
             role: Роль персонажа в индустрии.
             birthday: Дата рождения персонажа. Используется для проверки доступа к NSFW каналам.
+            biography: Биография персонажа
 
         Returns:
             Созданный персонаж или None, если персонаж с таким именем уже существует у пользователя.

@@ -3,13 +3,15 @@ from __future__ import annotations
 import typing as t
 from datetime import UTC, datetime
 
-from sqlalchemy import BigInteger, Boolean, DateTime, Integer, String, func
+from sqlalchemy import BigInteger, Boolean, DateTime, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.schema import ForeignKey
 
 from marionette.domain.entities.base import Base
 from marionette.domain.policies.paparazzi_policy import PaparazziPolicy
 from marionette.domain.roles import Roles
+
+from marionette.domain.statuses import CharacterStatus
 
 if t.TYPE_CHECKING:
     from marionette.domain.entities.agency import Agency
@@ -18,11 +20,14 @@ if t.TYPE_CHECKING:
 class Character(Base):
     __tablename__: str = "characters"
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    is_active: Mapped[bool] = mapped_column(Boolean, default=False)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    is_active: Mapped[bool] = mapped_column(default=False)
+    """Означает, что персонаж находится в локации и выбран именно он, как персонаж, за которого игрок пишет"""
+    
     user_id: Mapped[int] = mapped_column(BigInteger, index=True)
     name: Mapped[str] = mapped_column(String(255))
     role: Mapped[Roles | None] = mapped_column()
+    biography: Mapped[str] = mapped_column()
     rating: Mapped[int] = mapped_column(default=0)
     birthday: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
@@ -31,10 +36,10 @@ class Character(Base):
     )
     agency_id: Mapped[int | None] = mapped_column(ForeignKey("agencies.id"))
     agency: Mapped[Agency] = relationship("Agency", back_populates="characters")
-    home_channel_id: Mapped[int] = mapped_column(BigInteger)
     entranced_channel_id: Mapped[int | None] = mapped_column(BigInteger)
     is_in_performance: Mapped[bool] = mapped_column(Boolean, default=False)
     last_exposed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    status: Mapped[CharacterStatus] = mapped_column(default=CharacterStatus.MODERATION)
 
     @t.override
     def __repr__(self) -> str:
@@ -52,6 +57,12 @@ class Character(Base):
             - self.birthday.year
             - ((today.month, today.day) < (self.birthday.month, self.birthday.day))
         )
+        
+    def abandon(self) -> None:
+        if self.status == CharacterStatus.MODERATION or self.status == CharacterStatus.ABANDONED:
+            raise ValueError("Cannot abandon a character that has not passed moderation or is already abandoned.")
+    
+        self.status = CharacterStatus.ABANDONED
 
     def can_be_exposed(self, current_time: datetime) -> bool:
         if not self.last_exposed_at:
