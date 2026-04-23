@@ -7,6 +7,8 @@ ENV UV_LINK_MODE=copy
 WORKDIR /app
 
 COPY pyproject.toml uv.lock ./
+
+RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen --no-dev --no-install-project
 
@@ -22,7 +24,7 @@ RUN useradd -u 1000 -m appuser
 
 COPY --from=builder /app/.venv /app/.venv
 COPY --from=builder /app/src /app/src
-COPY --from=builder /app/assets /app/assets
+COPY --from=builder /app/src/marionette/assets /app/src/marionette/assets
 COPY --from=builder /app/alembic.ini /app/alembic.ini
 COPY --from=builder /app/src/marionette/infrastructure/database/alembic /app/src/marionette/infrastructure/database/alembic
 
