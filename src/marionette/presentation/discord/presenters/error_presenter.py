@@ -7,6 +7,7 @@ from marionette.presentation.discord.colors import Color
 _MESSAGES: dict[type, str] = {
     exc.CharacterNotInLocation: "Персонаж нигде не активен! Увы...",
     exc.CharacterWithoutAgencyError: "У персонажа нет агенства, не удалось убрать рейтинг.",
+    exc.CharacterBirthdayIncorrect: "Убедитесь, что вы правильно ввели дату рождения персонажа. Формат: `дд-мм-гггг`",
     exc.TooManyCharacters: "Кажется, у вас слишком много персонажей. Увы, но более трёх создать нельзя.",
     exc.OnboardingRulesAlreadyAcceptedError: "Вы уже приняли правила. Повторно нажимать на кнопку не нужно.",
     dis_exc.DmsNotAllowed: "Команду нельзя использовать в личных сообщениях."

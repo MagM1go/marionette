@@ -38,8 +38,8 @@ class CharacterNotActive(DomainException):
     def __init__(self, name: str) -> None:
         super().__init__()
         self.name = name
-        
-        
+
+
 class TooManyCharacters(DomainException): ...
 
 
@@ -50,3 +50,6 @@ class OnboardingNotFoundError(DomainException): ...
 
 
 class OnboardingRulesAlreadyAcceptedError(DomainException): ...
+
+
+class CharacterBirthdayIncorrect(DomainException): ...
