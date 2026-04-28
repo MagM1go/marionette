@@ -2,7 +2,9 @@ from collections.abc import Callable
 
 import pytest
 
-from marionette.application.usecases.moderation_usecase import ModerationUseCase
+from marionette.application.usecases.delete_offtopic_message_usecase import (
+    DeleteOfftopicMessageUseCase,
+)
 from marionette.domain.entities.character import Character
 from tests.fakes import FakeCharacterRepository
 
@@ -12,7 +14,7 @@ async def test_execute_returns_false_for_empty_message_content(
     character_repo_factory: Callable[..., FakeCharacterRepository],
     message_content: str | None,
 ) -> None:
-    usecase = ModerationUseCase(character_repo_factory())
+    usecase = DeleteOfftopicMessageUseCase(character_repo_factory())
 
     result = await usecase.execute(
         user_id=100,
@@ -28,7 +30,7 @@ async def test_execute_returns_false_for_current_character_location_with_rp_mess
     character_repo_factory: Callable[..., FakeCharacterRepository],
 ) -> None:
     repo = character_repo_factory([character_factory(entranced_channel_id=777)])
-    usecase = ModerationUseCase(repo)
+    usecase = DeleteOfftopicMessageUseCase(repo)
 
     result = await usecase.execute(
         user_id=100,
@@ -44,7 +46,7 @@ async def test_execute_returns_false_for_current_character_location_with_non_rp_
     character_repo_factory: Callable[..., FakeCharacterRepository],
 ) -> None:
     repo = character_repo_factory([character_factory(entranced_channel_id=777)])
-    usecase = ModerationUseCase(repo)
+    usecase = DeleteOfftopicMessageUseCase(repo)
 
     result = await usecase.execute(
         user_id=100,
@@ -60,7 +62,7 @@ async def test_execute_returns_false_for_non_rp_message_from_another_location(
     character_repo_factory: Callable[..., FakeCharacterRepository],
 ) -> None:
     repo = character_repo_factory([character_factory(entranced_channel_id=321)])
-    usecase = ModerationUseCase(repo)
+    usecase = DeleteOfftopicMessageUseCase(repo)
 
     result = await usecase.execute(
         user_id=100,
@@ -76,7 +78,7 @@ async def test_execute_returns_true_for_rp_message_from_another_location(
     character_repo_factory: Callable[..., FakeCharacterRepository],
 ) -> None:
     repo = character_repo_factory([character_factory(entranced_channel_id=321)])
-    usecase = ModerationUseCase(repo)
+    usecase = DeleteOfftopicMessageUseCase(repo)
 
     result = await usecase.execute(
         user_id=100,
@@ -90,7 +92,7 @@ async def test_execute_returns_true_for_rp_message_from_another_location(
 async def test_execute_returns_true_for_rp_message_when_character_is_not_entranced(
     character_repo_factory: Callable[..., FakeCharacterRepository],
 ) -> None:
-    usecase = ModerationUseCase(character_repo_factory())
+    usecase = DeleteOfftopicMessageUseCase(character_repo_factory())
 
     result = await usecase.execute(
         user_id=100,
@@ -104,7 +106,7 @@ async def test_execute_returns_true_for_rp_message_when_character_is_not_entranc
 async def test_execute_returns_false_for_non_rp_message_when_character_is_not_entranced(
     character_repo_factory: Callable[..., FakeCharacterRepository],
 ) -> None:
-    usecase = ModerationUseCase(character_repo_factory())
+    usecase = DeleteOfftopicMessageUseCase(character_repo_factory())
 
     result = await usecase.execute(
         user_id=100,

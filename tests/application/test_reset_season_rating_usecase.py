@@ -2,14 +2,14 @@ from collections.abc import Callable
 
 import pytest
 
-from marionette.application.usecases.season_reset_usecase import SeasonResetUseCase
+from marionette.application.usecases.season_reset_usecase import ResetSeasonRatingUseCase
 from marionette.domain.entities.agency import Agency
 from marionette.domain.entities.character import Character
 from tests.fakes import FakeAgencyRepository, FakeCharacterRepository, FakeTransaction
 
 
 @pytest.mark.asyncio
-async def test_execute_resets_ratings_to_expected_floor_by_band(
+async def test_reset_resets_ratings_to_expected_floor_by_band(
     character_factory: Callable[..., Character],
     agency_factory: Callable[..., Agency],
     fake_transaction: FakeTransaction,
@@ -29,11 +29,11 @@ async def test_execute_resets_ratings_to_expected_floor_by_band(
         ]
     )
 
-    await SeasonResetUseCase(
+    await ResetSeasonRatingUseCase(
         character_repo=character_repo,
         agency_repo=agency_repo,
         transaction=fake_transaction,
-    ).execute()
+    ).reset()
 
     assert [entity.rating for entity in character_repo.characters] == [
         0,
