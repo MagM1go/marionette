@@ -27,13 +27,14 @@ class IntroView(miru.View):
         await context.respond("ну вот это", flags=hikari.MessageFlag.EPHEMERAL)
         
     @miru.button("Что дальше?", custom_id="what_next")
-    async def onboarding_intro_button_next(self, context: miru.ViewContext, _: miru.Button) -> None:
+    async def onboarding_intro_button_what_next(self, context: miru.ViewContext, _: miru.Button) -> None:
         if context.guild_id is None:
             raise DmsNotAllowed()
 
         view = miru.View()
         view.add_item(NextButton())
         await context.respond("ну вот это", flags=hikari.MessageFlag.EPHEMERAL, components=view)
+        context.client.start_view(view=view)
 
 
 class NextButton(miru.Button):
