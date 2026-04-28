@@ -5,7 +5,7 @@ import hikari
 
 from marionette.application.protocols.roleplay_moderation_protocol import RoleplayModeration
 from marionette.application.protocols.types import LocationId
-from marionette.application.usecases.moderation_usecase import ModerationUseCase
+from marionette.application.usecases.delete_offtopic_message_usecase import DeleteOfftopicMessageUseCase
 from marionette.bootstrap.config import config
 from marionette.bootstrap.di.container import CrescentContainer
 from marionette.bootstrap.di.inject import Inject, inject
@@ -18,7 +18,7 @@ plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 @inject(lambda: plugin.model.dishka())
 async def message_create_event(
     event: hikari.GuildMessageCreateEvent,
-    moderation_usecase: Inject[ModerationUseCase],
+    moderation_usecase: Inject[DeleteOfftopicMessageUseCase],
     moderation_service: Inject[RoleplayModeration],
 ) -> None:
     """Нужно для отcлеживания нахождения игрока в РП канале

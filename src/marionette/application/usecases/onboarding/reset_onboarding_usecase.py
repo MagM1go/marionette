@@ -1,6 +1,6 @@
 from datetime import UTC, datetime
 
-from marionette.application.protocols.onboarding_protocol import OnboardingRepository
+from marionette.application.protocols.onboarding_repository import OnboardingRepository
 from marionette.application.protocols.transaction import Transaction
 from marionette.application.protocols.types import UserId
 

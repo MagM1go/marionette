@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from marionette.application.protocols.character_protocol import CharacterRepository
+from marionette.application.protocols.character_repository import CharacterRepository
 from marionette.application.protocols.transaction import Transaction
 from marionette.application.protocols.types import UserId
 from marionette.domain.roles import Roles
@@ -12,7 +12,7 @@ class RegisterUseCase:
         self._transaction = transaction
         self._repository = repository
 
-    async def execute(
+    async def register(
         self,
         user_id: UserId,
         name: str,

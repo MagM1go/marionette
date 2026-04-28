@@ -1,7 +1,7 @@
-from .access_protocol import PlayerAccessManager
-from .agency_protocol import AgencyRepository
-from .character_protocol import CharacterRepository
-from .onboarding_protocol import OnboardingRepository
+from .access_manager import PlayerAccessManager
+from .agency_repository import AgencyRepository
+from .character_repository import CharacterRepository
+from .onboarding_repository import OnboardingRepository
 from .transaction import Transaction
 from .types import AgencyId, CharacterId, LocationId, RoleId, UserId
 

@@ -2,8 +2,8 @@ import crescent
 import hikari
 
 from marionette.application.protocols import CharacterRepository, UserId
-from marionette.application.usecases.entrance_usecase import EntranceUseCase
-from marionette.application.usecases.exit_usecase import ExitUseCase
+from marionette.application.usecases.enter_location_usecase import EnterLocationUseCase
+from marionette.application.usecases.exit_usecase import ExitLocationUseCase
 from marionette.application.usecases.paparazzi_usecase import PaparazziUseCase
 from marionette.bootstrap.config import config
 from marionette.bootstrap.di.container import CrescentContainer
@@ -44,8 +44,8 @@ class EntranceCommand:
     )
 
     @inject_plugin
-    async def callback(self, context: crescent.Context, usecase: Inject[EntranceUseCase]) -> None:
-        result = await usecase.execute(context.user.id, self.character_name, self.channel.id)
+    async def callback(self, context: crescent.Context, usecase: Inject[EnterLocationUseCase]) -> None:
+        result = await usecase.enter(context.user.id, self.character_name, self.channel.id)
         response = EntryExitPresenter.present_entry(result.location_id)
         await context.respond(response)
 
@@ -62,8 +62,8 @@ class ExitCommand:
     )
 
     @inject_plugin
-    async def callback(self, context: crescent.Context, usecase: Inject[ExitUseCase]) -> None:
-        await usecase.execute(context.user.id, self.character_name, context.channel_id)
+    async def callback(self, context: crescent.Context, usecase: Inject[ExitLocationUseCase]) -> None:
+        await usecase.exit(context.user.id, self.character_name, context.channel_id)
         await context.respond(EntryExitPresenter.exit_message)
 
 

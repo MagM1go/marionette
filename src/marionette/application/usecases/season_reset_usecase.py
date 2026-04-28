@@ -3,7 +3,7 @@ from marionette.application.protocols.transaction import Transaction
 from marionette.domain.policies.season_reset_policy import SeasonResetPolicy
 
 
-class SeasonResetUseCase:
+class ResetSeasonRatingUseCase:
     """
     | До сброса  | После сброса |
     | ---------- | ------------ |
@@ -26,7 +26,7 @@ class SeasonResetUseCase:
         self.repos = [self._character_repo, self._agency_repo]
 
     # TODO: N+1?
-    async def execute(self) -> None:
+    async def reset(self) -> None:
         async with self._transaction:
             for repo in self.repos:
                 for entity in await repo.get_all():  # type: ignore

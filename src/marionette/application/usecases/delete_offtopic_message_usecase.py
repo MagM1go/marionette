@@ -2,7 +2,8 @@ from marionette.application.protocols import CharacterRepository, UserId
 from marionette.domain.policies.moderation_policy import ModerationPolicy
 
 
-class ModerationUseCase:
+# TODO: Избавиться или перенести, но это не будет долго жить
+class DeleteOfftopicMessageUseCase:
     def __init__(self, character_repo: CharacterRepository) -> None:
         self._repository = character_repo
 

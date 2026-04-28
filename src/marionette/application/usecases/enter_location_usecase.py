@@ -10,12 +10,12 @@ from marionette.domain.exceptions import (
 from marionette.domain.statuses import CharacterStatus
 
 
-class EntranceUseCase:
+class EnterLocationUseCase:
     def __init__(self, character_repo: CharacterRepository, transaction: Transaction) -> None:
         self._repository = character_repo
         self._transaction = transaction
 
-    async def execute(self, user_id: int, character_name: str, thread_id: int) -> EntryExitData:
+    async def enter(self, user_id: int, character_name: str, thread_id: int) -> EntryExitData:
         async with self._transaction:
             character = await self._repository.get_by_user_id_and_name(
                 UserId(user_id), character_name

@@ -35,7 +35,7 @@ async def on_register_modal_submit(
     except ValueError as exc:
         raise CharacterBirthdayIncorrect() from exc
 
-    await usecase.execute(
+    await usecase.register(
         user_id=UserId(event.interaction.user.id),
         name=UserInterfaceHelper.get_modal_value(raw_modal, "name"),
         role=Roles(UserInterfaceHelper.get_modal_value(raw_modal, "role")),

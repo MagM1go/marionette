@@ -4,12 +4,12 @@ from marionette.application.protocols.transaction import Transaction
 from marionette.domain.exceptions import CharacterNotFound, CharacterNotInLocation, WrongChannel
 
 
-class ExitUseCase:
+class ExitLocationUseCase:
     def __init__(self, character_repo: CharacterRepository, transaction: Transaction) -> None:
         self._repository = character_repo
         self._transaction = transaction
 
-    async def execute(self, user_id: int, character_name: str, thread_id: int) -> EntryExitData:
+    async def exit(self, user_id: int, character_name: str, thread_id: int) -> EntryExitData:
         async with self._transaction:
             character = await self._repository.get_by_user_id_and_name(UserId(user_id), character_name)
             if not character:
