@@ -1,0 +1,17 @@
+.env
+.git
+.github
+.mypy_cache
+.nox
+.pytest_cache
+.ruff_cache
+.uv-cache
+.venv
+__pycache__
+*.pyc
+.coverage
+coverage.xml
+dist
+build
+wheels
+*.egg-info
