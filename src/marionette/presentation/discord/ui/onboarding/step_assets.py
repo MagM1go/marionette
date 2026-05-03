@@ -3,7 +3,7 @@ from typing import TypedDict
 
 import hikari
 
-from marionette.application.protocols import PlayerAccessManager, RoleId, UserId
+from marionette.application.protocols import RoleId, UserId
 from marionette.bootstrap.config import config
 from marionette.domain.entities.onboarding import OnboardingStep
 
@@ -13,7 +13,7 @@ class StepAssets(TypedDict):
     remove: tuple[RoleId, ...]
 
 
-class DicsordAccessManager(PlayerAccessManager):
+class OnboardingStepAssets:
     def __init__(self, rest: hikari.api.RESTClient) -> None:
         self._rest = rest
 
@@ -25,7 +25,7 @@ class DicsordAccessManager(PlayerAccessManager):
         with suppress(hikari.ForbiddenError):
             await self._rest.remove_role_from_member(guild=zone_id, user=user_id, role=role_id)
 
-    async def apply_step_assets(self, zone_id: int, user_id: UserId, step: OnboardingStep) -> None:
+    async def apply(self, zone_id: int, user_id: UserId, step: OnboardingStep) -> None:
         configs: dict[OnboardingStep, StepAssets] = {
             OnboardingStep.INTRO: {
                 "add": (RoleId(config.discord.start_role_id),),
@@ -41,12 +41,12 @@ class DicsordAccessManager(PlayerAccessManager):
             },
         }
 
-        cfg = configs.get(step)
-        if cfg is None:
+        assets = configs.get(step)
+        if assets is None:
             return
 
-        for role_id in cfg["add"]:
+        for role_id in assets["add"]:
             await self.add_role(zone_id, user_id, role_id)
 
-        for role_id in cfg["remove"]:
+        for role_id in assets["remove"]:
             await self.remove_role(zone_id, user_id, role_id)

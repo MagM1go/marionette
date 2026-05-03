@@ -13,6 +13,7 @@ from marionette.application.usecases.paparazzi_usecase import PaparazziUseCase
 from marionette.application.usecases.season_reset_usecase import ResetSeasonRatingUseCase
 from marionette.domain.services.rating_service import RatingService
 from marionette.presentation.discord.ui.onboarding.dispatcher import OnboardingActionDispatcher
+from marionette.presentation.discord.ui.onboarding.step_assets import OnboardingStepAssets
 
 from marionette.application.usecases.register_usecase import RegisterUseCase
 
@@ -29,6 +30,7 @@ class UseCaseProvider(Provider):
     accept_onboarding_rules_usecase = provide(AcceptOnboardingRulesUseCase)
     complete_onboarding_usecase = provide(CompleteOnboardingUseCase)
     onboarding_reset_usecase = provide(OnboardingResetUseCase)
+    onboarding_step_assets = provide(OnboardingStepAssets)
     onboarding_action_dispatcher = provide(OnboardingActionDispatcher)
     entrance_usecase = provide(EnterLocationUseCase)
     exit_usecase = provide(ExitLocationUseCase)

@@ -2,7 +2,6 @@ from datetime import UTC, datetime
 
 from marionette.application.protocols import (
     OnboardingRepository,
-    PlayerAccessManager,
     Transaction,
     UserId,
 )
@@ -16,11 +15,9 @@ class BaseOnboardingUseCase:
         self,
         repository: OnboardingRepository,
         transaction: Transaction,
-        access: PlayerAccessManager,
     ) -> None:
         self._repository = repository
         self._transaction = transaction
-        self._access = access
 
     @staticmethod
     def _now() -> datetime:
@@ -39,7 +36,7 @@ class BaseOnboardingUseCase:
         user_id: UserId,
         state: OnboardingState,
         step: OnboardingStep,
-    ) -> None:
+    ) -> OnboardingStep:
         OnboardingPolicy.ensure_can_move(
             current=state.current_step,
             target=step,
@@ -51,6 +48,4 @@ class BaseOnboardingUseCase:
             OnboardingEvent(user_id=int(user_id), event_name=f"step_{step}", step=step)
         )
         await transaction.commit()
-
-    async def _apply_step_assets(self, zone_id: int, user_id: UserId, step: OnboardingStep) -> None:
-        await self._access.apply_step_assets(zone_id=zone_id, user_id=user_id, step=step)
+        return step
