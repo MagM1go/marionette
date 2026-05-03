@@ -1,3 +1,8 @@
+[![CI](https://github.com/MagM1go/marionette/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/MagM1go/marionette/actions/workflows/ci.yml)
+![Python](https://img.shields.io/badge/python-3.14-blue)
+![Coverage](https://img.shields.io/badge/coverage-88%25-brightgreen)
+![License](https://img.shields.io/github/license/MagM1go/marionette)
+
 [🇺🇸 English version here](README_en.md)
 
 # HIKARI // Марионетка
