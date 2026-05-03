@@ -67,6 +67,6 @@ class RegistrationModal(ModalV2):
         )
         await context.client.rest.create_message(
             config.discord.moderation_channel_id,
-            component=RegistrationPresenter.present_moderation(name, birthday, role, bio),
+            component=RegistrationPresenter.present_moderation(context.user.id, name, birthday, role, bio),
             flags=hikari.MessageFlag.IS_COMPONENTS_V2,
         )

@@ -18,10 +18,11 @@ class RegistrationPresenter:
     #   добавить возможность добавления изображения персонажа
     @staticmethod
     def present_moderation(
-        name: str, birthday: str, role: str, biography: str
+        user_id: int, name: str, birthday: str, role: str, biography: str
     ) -> hikari.api.ComponentBuilder:
         return (
             hikari.impl.ContainerComponentBuilder()
+            .add_text_display(f"ПЕРСОНАЖ ОТ <@{user_id}>")
             .add_text_display(f"Имя персонажа: `{name}`")
             .add_text_display(
                 f"День рождения персонажа: `{birthday}`, возраст: `{age_from_birthday(birthday)}`"
