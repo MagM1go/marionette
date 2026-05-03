@@ -46,7 +46,7 @@ def upgrade() -> None:
     sa.Column('completed_at', sa.DateTime(timezone=True), nullable=True),
     sa.PrimaryKeyConstraint('user_id')
     )
-    op.add_column('characters', sa.Column('entranced_channel_id', sa.BigInteger(), nullable=True))
+    op.add_column('characters', sa.Column('entered_channel_id', sa.BigInteger(), nullable=True))
     op.add_column('characters', sa.Column('last_exposed_at', sa.DateTime(), nullable=True))
     op.alter_column('characters', 'role',
                existing_type=postgresql.ENUM('IDOL', 'ACTOR', 'MANGAKA', 'EDITOR', 'WRITER', 'AGENT', 'LAWYER', 'MEDICINE', 'STYLIST', 'MAFIA', name='roles'),
@@ -82,7 +82,7 @@ def downgrade() -> None:
                existing_type=postgresql.ENUM('IDOL', 'ACTOR', 'MANGAKA', 'EDITOR', 'WRITER', 'AGENT', 'LAWYER', 'MEDICINE', 'STYLIST', 'MAFIA', name='roles'),
                nullable=False)
     op.drop_column('characters', 'last_exposed_at')
-    op.drop_column('characters', 'entranced_channel_id')
+    op.drop_column('characters', 'entered_channel_id')
     op.drop_table('onboarding_states')
     op.drop_table('onboarding_role_grants')
     op.drop_index(op.f('ix_onboarding_events_user_id'), table_name='onboarding_events')

@@ -43,7 +43,7 @@ def upgrade() -> None:
     sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('agency_id', sa.Integer(), nullable=True),
     sa.Column('home_channel_id', sa.BigInteger(), nullable=False),
-    sa.Column('entranced_channel_id', sa.BigInteger(), nullable=True),
+    sa.Column('entered_channel_id', sa.BigInteger(), nullable=True),
     sa.Column('is_in_performance', sa.Boolean(), nullable=False),
     sa.ForeignKeyConstraint(['agency_id'], ['agencies.id'], ),
     sa.PrimaryKeyConstraint('id')
