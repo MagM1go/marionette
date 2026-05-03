@@ -6,6 +6,8 @@ from marionette.domain.entities.agency import Agency
 
 
 class AgencyRepository(Protocol):
+    """Хранилище агентств."""
+
     def create(
         self,
         owner_id: UserId,

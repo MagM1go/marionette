@@ -1,7 +1,9 @@
-from .access_manager import PlayerAccessManager
-from .agency_repository import AgencyRepository
-from .character_repository import CharacterRepository
-from .onboarding_repository import OnboardingRepository
+from .repositories import (
+    AgencyRepository,
+    CharacterRepository,
+    OnboardingRepository,
+    VoteRepository,
+)
 from .transaction import Transaction
 from .types import AgencyId, CharacterId, LocationId, RoleId, UserId
 
@@ -12,8 +14,8 @@ __all__ = (
     "CharacterRepository",
     "LocationId",
     "OnboardingRepository",
-    "PlayerAccessManager",
     "RoleId",
     "Transaction",
     "UserId",
+    "VoteRepository",
 )

@@ -8,6 +8,8 @@ from marionette.domain.roles import Roles
 
 
 class CharacterRepository(Protocol):
+    """Хранилище персонажей игроков."""
+
     def create(
         self,
         user_id: UserId,
@@ -65,7 +67,7 @@ class CharacterRepository(Protocol):
             Персонаж или None, если не найден.
         """
 
-    async def get_entranced_character_by_user_id(self, user_id: UserId) -> Character | None:
+    async def get_entered_character_by_user_id(self, user_id: UserId) -> Character | None:
         """Возвращает активного персонажа пользователя
 
         Args:
