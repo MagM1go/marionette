@@ -2,18 +2,21 @@ from enum import StrEnum
 
 
 class Roles(StrEnum):
-    IDOL = "Idol"
-    ACTOR = "Actor"
-    MANGAKA = "Mangaka"
-    EDITOR = "Editor"
-    WRITER = "Writer"
-    AGENT = "Agent"
-    LAWYER = "Lawyer"
-    MEDICINE = "Medicine"
-    STYLIST = "Stylist"
-    MAFIA = "Mafia"
+    IDOL = "Айдол"
+    ACTOR = "Актёр"
+    MANGAKA = "Мангака"
+    EDITOR = "Редактор"
+    WRITER = "Писатель"
+    AGENT = "Агент"
+    LAWYER = "Юрист"
+    MEDICINE = "Медик"
+    STYLIST = "Стилист"
+
+
+class HiddenRoles(StrEnum):
+    MAFIA = "Мафия"
 
 
 class AgencyRoles(StrEnum):
-    DIRECTOR = "Agency Director"
-    MANAGER = "Agency Manager"
+    DIRECTOR = "Директор агенства"
+    MANAGER = "Менеджер агенства"
