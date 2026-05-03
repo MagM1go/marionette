@@ -30,7 +30,7 @@ async def on_user_arrive(
         user=event.user_id,
         role=config.discord.unverified_role_id,
     )
-    await usecase.execute(event.guild_id, user_id)
+    await usecase.execute(user_id)
 
 
 @plugin.include
