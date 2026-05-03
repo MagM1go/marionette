@@ -17,3 +17,4 @@ alembic/versions/*
 .env
 .nox
 .coverage
+coverage.xml
