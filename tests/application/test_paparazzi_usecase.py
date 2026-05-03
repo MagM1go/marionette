@@ -17,7 +17,7 @@ async def test_expose_raises_when_character_not_in_location(
     fake_transaction: FakeTransaction,
 ) -> None:
     character = character_factory()
-    character.entranced_channel_id = None
+    character.entered_channel_id = None
     usecase = PaparazziUseCase(rating_service=Mock(), transaction=fake_transaction)
 
     with pytest.raises(CharacterNotInLocation):
@@ -30,7 +30,7 @@ async def test_expose_returns_none_when_on_cooldown(
     fake_transaction: FakeTransaction,
 ) -> None:
     last_exposure = datetime.now(UTC) - timedelta(hours=1)
-    character = character_factory(entranced_channel_id=777, last_exposed_at=last_exposure)
+    character = character_factory(entered_channel_id=777, last_exposed_at=last_exposure)
 
     rating_service = Mock()
     usecase = PaparazziUseCase(rating_service=rating_service, transaction=fake_transaction)
@@ -50,7 +50,7 @@ async def test_expose_works_after_cooldown_expired(
 ) -> None:
     # Прошло 25 часов
     expired_exposure = datetime.now(UTC) - timedelta(hours=25)
-    character = character_factory(entranced_channel_id=777, last_exposed_at=expired_exposure)
+    character = character_factory(entered_channel_id=777, last_exposed_at=expired_exposure)
 
     rating_service = Mock()
     rating_service.dec_character_rating.return_value = 100
@@ -71,7 +71,7 @@ async def test_expose_updates_last_exposed_at_timestamp(
     character_factory: Callable[..., Character],
     fake_transaction: FakeTransaction,
 ) -> None:
-    character = character_factory(entranced_channel_id=777, last_exposed_at=None)
+    character = character_factory(entered_channel_id=777, last_exposed_at=None)
     rating_service = Mock()
     rating_service.dec_character_rating.return_value = character.rating
     usecase = PaparazziUseCase(rating_service=rating_service, transaction=fake_transaction)
@@ -94,7 +94,7 @@ async def test_expose_returns_none_when_roll_outside_chance(
     rating_service = Mock()
     usecase = PaparazziUseCase(rating_service=rating_service, transaction=fake_transaction)
 
-    result = await usecase.expose(character_factory(entranced_channel_id=777))
+    result = await usecase.expose(character_factory(entered_channel_id=777))
 
     assert result is None
     rating_service.dec_character_rating.assert_not_called()
@@ -111,7 +111,7 @@ async def test_expose_updates_character_and_agency_ratings(
     agency = agency_factory(rating=400)
     character = character_factory(
         rating=120,
-        entranced_channel_id=777,
+        entered_channel_id=777,
         agency=agency,
     )
     rating_service = Mock()

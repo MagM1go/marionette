@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from marionette.application.protocols.character_repository import CharacterRepository
+from marionette.application.protocols import CharacterRepository
 from marionette.application.protocols.transaction import Transaction
 from marionette.application.protocols.types import UserId
 from marionette.domain.roles import Roles

@@ -20,11 +20,7 @@ class DeleteOfftopicMessageUseCase:
         if not ModerationPolicy.should_delete_message(message_content):
             return False
 
-        entranced_character = await self._repository.get_entranced_character_by_user_id(
-            UserId(user_id)
-        )
-        entranced_channel_id = (
-            entranced_character.entranced_channel_id if entranced_character else None
-        )
+        entered_character = await self._repository.get_entered_character_by_user_id(UserId(user_id))
+        entered_channel_id = entered_character.entered_channel_id if entered_character else None
 
-        return entranced_channel_id != channel_id
+        return entered_channel_id != channel_id

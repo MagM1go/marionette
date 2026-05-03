@@ -67,9 +67,9 @@ class FakeCharacterRepository:
                 return character
         return None
 
-    async def get_entranced_character_by_user_id(self, user_id: int) -> Character | None:
+    async def get_entered_character_by_user_id(self, user_id: int) -> Character | None:
         for character in self.characters:
-            if character.user_id == user_id and character.entranced_channel_id is not None:
+            if character.user_id == user_id and character.entered_channel_id is not None:
                 return character
         return None
 

@@ -13,7 +13,7 @@ class PaparazziPolicy:
 
     @staticmethod
     def ensure_character_in_location(character: Character) -> None:
-        if not character.entranced_channel_id:
+        if not character.entered_channel_id:
             raise CharacterNotInLocation()
             
     @staticmethod

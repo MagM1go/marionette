@@ -18,13 +18,13 @@ async def test_exit_clears_location_on_success(
     character_repo_factory: Callable[[list[Character] | None], FakeCharacterRepository],
     fake_transaction: FakeTransaction,
 ) -> None:
-    character = character_factory(entranced_channel_id=777)
+    character = character_factory(entered_channel_id=777)
     repo = character_repo_factory([character])
 
     result = await ExitLocationUseCase(repo, fake_transaction).exit(100, "Airi", 777)
 
     assert result.location_id == 777
-    assert character.entranced_channel_id is None
+    assert character.entered_channel_id is None
     assert fake_transaction.commit_calls == 1
     assert fake_transaction.rollback_calls == 0
 
@@ -44,7 +44,7 @@ async def test_exit_raises_when_character_missing(
 
 
 @pytest.mark.asyncio
-async def test_exit_raises_when_character_not_entranced(
+async def test_exit_raises_when_character_not_entered(
     character_factory: Callable[..., Character],
     character_repo_factory: Callable[..., FakeCharacterRepository],
     fake_transaction: FakeTransaction,
@@ -64,7 +64,7 @@ async def test_exit_raises_when_trying_to_exit_wrong_channel(
     character_repo_factory: Callable[..., FakeCharacterRepository],
     fake_transaction: FakeTransaction,
 ) -> None:
-    repo = character_repo_factory([character_factory(entranced_channel_id=321)])
+    repo = character_repo_factory([character_factory(entered_channel_id=321)])
 
     with pytest.raises(WrongChannel):
         await ExitLocationUseCase(repo, fake_transaction).exit(100, "Airi", 777)
