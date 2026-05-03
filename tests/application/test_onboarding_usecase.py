@@ -27,31 +27,13 @@ from marionette.domain.exceptions import (
 from tests.fakes import FakeOnboardingRepository, FakeTransaction
 
 
-class SpyAccessManager:
-    def __init__(self) -> None:
-        self.calls: list[tuple[int, UserId, OnboardingStep]] = []
-
-    async def add_role(self, zone_id: int, user_id: UserId, role_id: object) -> None:
-        return None
-
-    async def remove_role(self, zone_id: int, user_id: UserId, role_id: object) -> None:
-        return None
-
-    async def apply_step_assets(self, zone_id: int, user_id: UserId, step: OnboardingStep) -> None:
-        self.calls.append((zone_id, user_id, step))
-
-
 @pytest.mark.asyncio
 async def test_start_creates_state_and_moves_to_welcome(
     fake_transaction: FakeTransaction,
 ) -> None:
     repository = FakeOnboardingRepository(None)
-    access = SpyAccessManager()
 
-    await StartOnboardingUseCase(repository, fake_transaction, access).execute(
-        zone_id=777,
-        user_id=UserId(100),
-    )
+    result = await StartOnboardingUseCase(repository, fake_transaction).execute(UserId(100))
 
     assert repository.state is not None
     assert repository.state.current_step == OnboardingStep.WELCOME
@@ -59,7 +41,7 @@ async def test_start_creates_state_and_moves_to_welcome(
     assert fake_transaction.rollback_calls == 0
     assert len(repository.logged_events) == 1
     assert repository.logged_events[0].step == OnboardingStep.WELCOME
-    assert access.calls == [(777, UserId(100), OnboardingStep.WELCOME)]
+    assert result == OnboardingStep.WELCOME
 
 
 @pytest.mark.asyncio
@@ -74,19 +56,15 @@ async def test_start_is_idempotent_for_existing_onboarding(
         updated_at=datetime.now(UTC),
     )
     repository = FakeOnboardingRepository(state)
-    access = SpyAccessManager()
 
-    await StartOnboardingUseCase(repository, fake_transaction, access).execute(
-        zone_id=777,
-        user_id=UserId(100),
-    )
+    result = await StartOnboardingUseCase(repository, fake_transaction).execute(UserId(100))
 
     assert repository.state is state
     assert repository.state.current_step == OnboardingStep.WELCOME
     assert fake_transaction.commit_calls == 0
     assert fake_transaction.rollback_calls == 0
     assert repository.logged_events == []
-    assert access.calls == []
+    assert result is None
 
 
 @pytest.mark.asyncio
@@ -102,12 +80,8 @@ async def test_start_moves_existing_newbie_state_to_welcome(
         updated_at=now,
     )
     repository = FakeOnboardingRepository(state)
-    access = SpyAccessManager()
 
-    await StartOnboardingUseCase(repository, fake_transaction, access).execute(
-        zone_id=777,
-        user_id=UserId(100),
-    )
+    result = await StartOnboardingUseCase(repository, fake_transaction).execute(UserId(100))
 
     assert repository.state is state
     assert repository.state.current_step == OnboardingStep.WELCOME
@@ -115,11 +89,11 @@ async def test_start_moves_existing_newbie_state_to_welcome(
     assert fake_transaction.rollback_calls == 0
     assert len(repository.logged_events) == 1
     assert repository.logged_events[0].step == OnboardingStep.WELCOME
-    assert access.calls == [(777, UserId(100), OnboardingStep.WELCOME)]
+    assert result == OnboardingStep.WELCOME
 
 
 @pytest.mark.asyncio
-async def test_move_to_intro_updates_state_and_applies_access_assets(
+async def test_move_to_intro_updates_state_and_returns_intro_step(
     fake_transaction: FakeTransaction,
 ) -> None:
     now = datetime.now(UTC)
@@ -131,23 +105,19 @@ async def test_move_to_intro_updates_state_and_applies_access_assets(
         updated_at=now,
     )
     repository = FakeOnboardingRepository(state)
-    access = SpyAccessManager()
 
-    await MoveOnboardingToIntroUseCase(repository, fake_transaction, access).execute(
-        zone_id=777,
-        user_id=UserId(100),
-    )
+    result = await MoveOnboardingToIntroUseCase(repository, fake_transaction).execute(UserId(100))
 
     assert state.current_step == OnboardingStep.INTRO
     assert fake_transaction.commit_calls == 1
     assert fake_transaction.rollback_calls == 0
     assert len(repository.logged_events) == 1
     assert repository.logged_events[0].step == OnboardingStep.INTRO
-    assert access.calls == [(777, UserId(100), OnboardingStep.INTRO)]
+    assert result == OnboardingStep.INTRO
 
 
 @pytest.mark.asyncio
-async def test_move_to_rules_updates_state_and_applies_access_assets(
+async def test_move_to_rules_updates_state_and_returns_rules_step(
     fake_transaction: FakeTransaction,
 ) -> None:
     now = datetime.now(UTC)
@@ -159,23 +129,19 @@ async def test_move_to_rules_updates_state_and_applies_access_assets(
         updated_at=now,
     )
     repository = FakeOnboardingRepository(state)
-    access = SpyAccessManager()
 
-    await MoveOnboardingToRulesUseCase(repository, fake_transaction, access).execute(
-        zone_id=777,
-        user_id=UserId(100),
-    )
+    result = await MoveOnboardingToRulesUseCase(repository, fake_transaction).execute(UserId(100))
 
     assert state.current_step == OnboardingStep.RULES
     assert fake_transaction.commit_calls == 1
     assert fake_transaction.rollback_calls == 0
     assert len(repository.logged_events) == 1
     assert repository.logged_events[0].step == OnboardingStep.RULES
-    assert access.calls == [(777, UserId(100), OnboardingStep.RULES)]
+    assert result == OnboardingStep.RULES
 
 
 @pytest.mark.asyncio
-async def test_accept_rules_moves_state_and_applies_access_assets(
+async def test_accept_rules_moves_state_and_returns_registration_step(
     fake_transaction: FakeTransaction,
 ) -> None:
     now = datetime.now(UTC)
@@ -187,19 +153,15 @@ async def test_accept_rules_moves_state_and_applies_access_assets(
         updated_at=now,
     )
     repository = FakeOnboardingRepository(state)
-    access = SpyAccessManager()
 
-    await AcceptOnboardingRulesUseCase(repository, fake_transaction, access).execute(
-        zone_id=777,
-        user_id=UserId(100),
-    )
+    result = await AcceptOnboardingRulesUseCase(repository, fake_transaction).execute(UserId(100))
 
     assert state.current_step == OnboardingStep.REGISTRATION
     assert fake_transaction.commit_calls == 1
     assert fake_transaction.rollback_calls == 0
     assert len(repository.logged_events) == 1
     assert repository.logged_events[0].step == OnboardingStep.REGISTRATION
-    assert access.calls == [(777, UserId(100), OnboardingStep.REGISTRATION)]
+    assert result == OnboardingStep.REGISTRATION
 
 
 @pytest.mark.asyncio
@@ -215,12 +177,8 @@ async def test_complete_onboarding_marks_state_as_completed(
         updated_at=now,
     )
     repository = FakeOnboardingRepository(state)
-    access = SpyAccessManager()
 
-    await CompleteOnboardingUseCase(repository, fake_transaction, access).execute(
-        zone_id=777,
-        user_id=UserId(100),
-    )
+    result = await CompleteOnboardingUseCase(repository, fake_transaction).execute(UserId(100))
 
     assert state.current_step == OnboardingStep.COMPLETED
     assert state.is_complete is True
@@ -229,7 +187,7 @@ async def test_complete_onboarding_marks_state_as_completed(
     assert fake_transaction.rollback_calls == 0
     assert len(repository.logged_events) == 1
     assert repository.logged_events[0].step == OnboardingStep.COMPLETED
-    assert access.calls == [(777, UserId(100), OnboardingStep.COMPLETED)]
+    assert result == OnboardingStep.COMPLETED
 
 
 @pytest.mark.asyncio
@@ -237,18 +195,13 @@ async def test_move_to_intro_raises_when_onboarding_state_is_missing(
     fake_transaction: FakeTransaction,
 ) -> None:
     repository = FakeOnboardingRepository(None)
-    access = SpyAccessManager()
 
     with pytest.raises(OnboardingNotFoundError):
-        await MoveOnboardingToIntroUseCase(repository, fake_transaction, access).execute(
-            zone_id=777,
-            user_id=UserId(100),
-        )
+        await MoveOnboardingToIntroUseCase(repository, fake_transaction).execute(UserId(100))
 
     assert fake_transaction.commit_calls == 0
     assert fake_transaction.rollback_calls == 1
     assert repository.logged_events == []
-    assert access.calls == []
 
 
 @pytest.mark.asyncio
@@ -264,19 +217,14 @@ async def test_move_to_rules_rolls_back_for_invalid_transition(
         updated_at=now,
     )
     repository = FakeOnboardingRepository(state)
-    access = SpyAccessManager()
 
     with pytest.raises(OnboardingTransitionError):
-        await MoveOnboardingToRulesUseCase(repository, fake_transaction, access).execute(
-            zone_id=777,
-            user_id=UserId(100),
-        )
+        await MoveOnboardingToRulesUseCase(repository, fake_transaction).execute(UserId(100))
 
     assert state.current_step == OnboardingStep.WELCOME
     assert fake_transaction.commit_calls == 0
     assert fake_transaction.rollback_calls == 1
     assert repository.logged_events == []
-    assert access.calls == []
 
 
 @pytest.mark.asyncio
@@ -292,19 +240,14 @@ async def test_accept_rules_raises_when_rules_are_already_accepted(
         updated_at=now,
     )
     repository = FakeOnboardingRepository(state)
-    access = SpyAccessManager()
 
     with pytest.raises(OnboardingRulesAlreadyAcceptedError):
-        await AcceptOnboardingRulesUseCase(repository, fake_transaction, access).execute(
-            zone_id=777,
-            user_id=UserId(100),
-        )
+        await AcceptOnboardingRulesUseCase(repository, fake_transaction).execute(UserId(100))
 
     assert state.current_step == OnboardingStep.REGISTRATION
     assert fake_transaction.commit_calls == 0
     assert fake_transaction.rollback_calls == 1
     assert repository.logged_events == []
-    assert access.calls == []
 
 
 @pytest.mark.asyncio
@@ -321,19 +264,15 @@ async def test_complete_onboarding_is_idempotent_when_state_is_already_completed
         completed_at=now,
     )
     repository = FakeOnboardingRepository(state)
-    access = SpyAccessManager()
 
-    await CompleteOnboardingUseCase(repository, fake_transaction, access).execute(
-        zone_id=777,
-        user_id=UserId(100),
-    )
+    result = await CompleteOnboardingUseCase(repository, fake_transaction).execute(UserId(100))
 
     assert state.current_step == OnboardingStep.COMPLETED
     assert state.is_complete is True
     assert fake_transaction.commit_calls == 0
     assert fake_transaction.rollback_calls == 0
     assert repository.logged_events == []
-    assert access.calls == []
+    assert result is None
 
 
 @pytest.mark.asyncio
@@ -350,17 +289,12 @@ async def test_accept_rules_raises_when_button_is_pressed_after_completion(
         completed_at=now,
     )
     repository = FakeOnboardingRepository(state)
-    access = SpyAccessManager()
 
     with pytest.raises(OnboardingRulesAlreadyAcceptedError):
-        await AcceptOnboardingRulesUseCase(repository, fake_transaction, access).execute(
-            zone_id=777,
-            user_id=UserId(100),
-        )
+        await AcceptOnboardingRulesUseCase(repository, fake_transaction).execute(UserId(100))
 
     assert state.current_step == OnboardingStep.COMPLETED
     assert state.is_complete is True
     assert fake_transaction.commit_calls == 0
     assert fake_transaction.rollback_calls == 1
     assert repository.logged_events == []
-    assert access.calls == []
