@@ -3,12 +3,13 @@ from contextlib import suppress
 import crescent
 import hikari
 
-from marionette.application.protocols.roleplay_moderation_protocol import RoleplayModeration
-from marionette.application.protocols.types import LocationId
-from marionette.application.usecases.delete_offtopic_message_usecase import DeleteOfftopicMessageUseCase
+from marionette.application.usecases.delete_offtopic_message_usecase import (
+    DeleteOfftopicMessageUseCase,
+)
 from marionette.bootstrap.config import config
 from marionette.bootstrap.di.container import CrescentContainer
 from marionette.bootstrap.di.inject import Inject, inject
+from marionette.presentation.discord.helpers import get_or_fetch_channel
 
 plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 
@@ -19,24 +20,43 @@ plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 async def message_create_event(
     event: hikari.GuildMessageCreateEvent,
     moderation_usecase: Inject[DeleteOfftopicMessageUseCase],
-    moderation_service: Inject[RoleplayModeration],
 ) -> None:
     """Нужно для отcлеживания нахождения игрока в РП канале
-
-    Если игрок пытается писать что-либо в РП канал, при этом НЕ находясь в нём (/entrance) - сообщения игрока будут удаляться
+    Если игрок пытается писать что-либо в РП канал, при этом НЕ находясь в нём (/enter) - сообщения игрока будут удаляться
     Удаляться они будут при условии, если префикс не сопадает: //
     """
-    if not event.is_human:
+    if not event.is_human or not event.message.content:
         return
 
-    if not await moderation_service.is_rp_location(LocationId(event.channel_id)):
+    channel = await get_or_fetch_channel(plugin.app.rest, plugin.app.cache, event.channel_id)
+    if not isinstance(channel, hikari.GuildChannel) or channel.parent_id is None:
         return
 
-    if await moderation_usecase.execute(
-        user_id=event.author_id, channel_id=event.channel_id, message_content=event.message.content
-    ):
-        with suppress(hikari.NotFoundError):
-            await plugin.app.rest.delete_message(channel=event.channel_id, message=event.message_id)
+    parent = await get_or_fetch_channel(plugin.app.rest, plugin.app.cache, channel.parent_id)
+    if not isinstance(parent, hikari.GuildChannel):
+        return
+
+    if parent.parent_id is not None:
+        parent = await get_or_fetch_channel(plugin.app.rest, plugin.app.cache, parent.parent_id)
+        if not isinstance(parent, hikari.GuildChannel):
+            return
+
+    if parent.id not in config.discord.rp_categories:
+        return
+
+    should_delete = await moderation_usecase.execute(
+        user_id=event.author_id,
+        channel_id=event.channel_id,
+        message_content=event.message.content,
+    )
+    if not should_delete:
+        return
+
+    with suppress(hikari.NotFoundError, hikari.ForbiddenError):
+        await plugin.app.rest.delete_message(
+            channel=event.channel_id,
+            message=event.message_id,
+        )
 
 
 @plugin.include
