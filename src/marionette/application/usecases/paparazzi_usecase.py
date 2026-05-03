@@ -1,11 +1,17 @@
 import random
+from dataclasses import dataclass
 from datetime import UTC, datetime
 
-from marionette.application.dto.paparazzi import PaparazziExposeData
 from marionette.application.protocols import Transaction
 from marionette.domain.entities.character import Character
 from marionette.domain.policies.paparazzi_policy import PaparazziPolicy
 from marionette.domain.services.rating_service import RatingService
+
+
+@dataclass
+class PaparazziExposeData:
+    exposed_character_name: str
+    expose_channel_id: int
 
 
 class PaparazziUseCase:
@@ -15,7 +21,7 @@ class PaparazziUseCase:
 
     async def expose(self, character: Character) -> PaparazziExposeData | None:
         PaparazziPolicy.ensure_character_in_location(character)
-        if character.entranced_channel_id is None:
+        if character.entered_channel_id is None:
             return None
 
         now = datetime.now(UTC)
@@ -33,11 +39,11 @@ class PaparazziUseCase:
                 )
                 PaparazziPolicy.ensure_character_in_agency(character)
 
-                character.agency.rating = new_agency_rating  # pyright: ignore[reportOptionalMemberAccess]
+                character.agency.rating = new_agency_rating
 
             await transaction.commit()
 
         return PaparazziExposeData(
             exposed_character_name=character.name,
-            expose_channel_id=character.entranced_channel_id,
+            expose_channel_id=character.entered_channel_id,
         )
