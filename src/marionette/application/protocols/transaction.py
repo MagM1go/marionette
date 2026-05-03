@@ -3,13 +3,25 @@ from typing import Protocol, Self
 
 
 class Transaction(Protocol):
-    async def commit(self) -> None: ...
-    async def rollback(self) -> None: ...
+    """Управляет атомарным изменением состояния хранилища."""
 
-    async def __aenter__(self) -> Self: ...
+    async def commit(self) -> None:
+        """Фиксирует изменения текущей транзакции."""
+        ...
+
+    async def rollback(self) -> None:
+        """Откатывает изменения текущей транзакции."""
+        ...
+
+    async def __aenter__(self) -> Self:
+        """Открывает транзакционный контекст."""
+        ...
+
     async def __aexit__(
         self,
         exc_type: type[BaseException] | None = None,
         exc: BaseException | None = None,
         exc_traceback: TracebackType | None = None,
-    ) -> None: ...
+    ) -> None:
+        """Закрывает транзакционный контекст."""
+        ...
