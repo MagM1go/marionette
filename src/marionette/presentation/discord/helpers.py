@@ -1,5 +1,7 @@
-from collections.abc import Mapping, Sequence
 import typing as t
+from collections.abc import Mapping, Sequence
+
+import hikari
 
 
 class UserInterfaceHelper:
@@ -48,3 +50,12 @@ class UserInterfaceHelper:
     @staticmethod
     def get_modal_value(modal: Mapping[str, str], custom_id: str) -> str:
         return modal.get(custom_id, "unresolved")
+
+
+async def get_or_fetch_channel(
+    rest: hikari.api.RESTClient, cache: hikari.api.Cache, channel_id: int
+) -> hikari.PartialChannel:
+    if not (channel := cache.get_guild_channel(channel_id)):
+        return await rest.fetch_channel(channel_id)
+
+    return channel
