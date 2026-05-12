@@ -27,9 +27,9 @@ class VoteUseCase:
             VotePolicy.ensure_character_exists(character, character_name)
 
             assert character is not None
-            new_rating = self._rating_service.inc_character_rating(
+            d_rating = self._rating_service.inc_character_rating(
                 rating=5, reason=RatingChangeReason.VOTE, in_agency=character.agency_id is not None
             )
-            character.rating = new_rating
+            character.rating += d_rating
 
             await self._transaction.commit()
