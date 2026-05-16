@@ -7,7 +7,7 @@ from marionette.domain.statuses import CharacterStatus
 
 
 class VotePolicy:
-    VOTE_COOLDOWN = timedelta(hours=6)
+    VOTE_COOLDOWN = timedelta(hours=24)
 
     @staticmethod
     def ensure_character_exists(character: Character | None, expected_name: str) -> None:

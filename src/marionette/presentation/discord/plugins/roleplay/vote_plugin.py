@@ -14,7 +14,7 @@ plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 @crescent.command(
     guild=config.discord.main_guild_id,
     name="vote",
-    description="Отдать свой голос кому-либо (раз в 6 часов)",
+    description="Отдать свой голос кому-либо (раз в 24 часа)",
 )
 class VoteCommand:
     user = crescent.option(hikari.User, "Пользователь")

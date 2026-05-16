@@ -31,8 +31,11 @@ class ErrorPresenter:
             case exc.WrongChannel(expected_channel_id=cid):
                 text = f"Выйти можно только из канала <#{cid}>!"
             case exc.VoteOnCooldown(character_name=name, remaining_time=time):
-                text = f"Вы уже проголосовали за **{name}**. " \
-                    f"Следующий раз доступен в **{(datetime.now(UTC) + time).strftime('%m.%d, %H:%M:%S')}** (часовой пояс бота: +3 от Москвы)"
+                text = (
+                    f"За **{name}** уже недавно голосовали. "
+                    f"Следующий голос доступен в **{(datetime.now(UTC) + time).strftime('%d.%m, %H:%M:%S')}** "
+                    "(часовой пояс бота: +3 от Москвы)"
+                )
             case _:
                 text = _MESSAGES.get(type(e), "Произошла неизвестная ошибка.")
 
