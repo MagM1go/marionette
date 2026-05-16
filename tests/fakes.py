@@ -3,9 +3,11 @@ from datetime import date, datetime
 from types import TracebackType
 from typing import Self
 
+from marionette.application.protocols.types import AgencyId, CharacterId, UserId
 from marionette.domain.entities.agency import Agency
 from marionette.domain.entities.character import Character
 from marionette.domain.entities.onboarding import OnboardingEvent, OnboardingState, OnboardingStep
+from marionette.domain.entities.vote import Vote
 from marionette.domain.roles import Roles
 from marionette.domain.statuses import CharacterStatus
 
@@ -16,7 +18,7 @@ class FakeCharacterRepository:
 
     def create(
         self,
-        user_id: int,
+        user_id: UserId,
         name: str,
         role: Roles,
         birthday: date | datetime,
@@ -46,28 +48,28 @@ class FakeCharacterRepository:
     async def get_all(self) -> Sequence[Character]:
         return self.characters
 
-    async def set_active(self, user_id: int, name: str, is_active: bool) -> None:
+    async def set_active(self, user_id: UserId, name: str, is_active: bool) -> None:
         for character in self.characters:
             if character.user_id == user_id and character.name == name:
                 character.is_active = is_active
                 return
 
-    async def get_by_user_id_and_name(self, user_id: int, name: str) -> Character | None:
+    async def get_by_user_id_and_name(self, user_id: UserId, name: str) -> Character | None:
         for character in self.characters:
             if character.user_id == user_id and character.name == name:
                 return character
         return None
 
-    async def get_all_characters_by_user_id(self, user_id: int) -> Sequence[Character]:
+    async def get_all_characters_by_user_id(self, user_id: UserId) -> Sequence[Character]:
         return [character for character in self.characters if character.user_id == user_id]
 
-    async def get_by_character_id(self, character_id: int) -> Character | None:
+    async def get_by_character_id(self, character_id: CharacterId) -> Character | None:
         for character in self.characters:
             if character.id == character_id:
                 return character
         return None
 
-    async def get_entered_character_by_user_id(self, user_id: int) -> Character | None:
+    async def get_entered_character_by_user_id(self, user_id: UserId) -> Character | None:
         for character in self.characters:
             if character.user_id == user_id and character.entered_channel_id is not None:
                 return character
@@ -81,7 +83,7 @@ class FakeAgencyRepository:
     def __init__(self, agencies: list[Agency] | None = None) -> None:
         self.agencies = agencies or []
 
-    def create(self, owner_id: int, name: str) -> Agency:
+    def create(self, owner_id: UserId, name: str) -> Agency:
         agency = Agency(
             id=len(self.agencies) + 1,
             owner_id=owner_id,
@@ -94,7 +96,7 @@ class FakeAgencyRepository:
     async def get_all(self) -> Sequence[Agency]:
         return self.agencies
 
-    async def get_agency_by_id(self, agency_id: int) -> Agency | None:
+    async def get_agency_by_id(self, agency_id: AgencyId) -> Agency | None:
         for agency in self.agencies:
             if agency.id == agency_id:
                 return agency
@@ -130,7 +132,7 @@ class FakeOnboardingRepository:
         self.state = state
         self.logged_events: list[OnboardingEvent] = []
 
-    async def create(self, user_id: int, created_at: datetime) -> OnboardingState:
+    async def create(self, user_id: UserId, created_at: datetime) -> OnboardingState:
         if self.state is None:
             self.state = OnboardingState(
                 user_id=user_id,
@@ -142,7 +144,7 @@ class FakeOnboardingRepository:
 
         return self.state
 
-    async def reset(self, user_id: int, created_at: datetime) -> OnboardingState:
+    async def reset(self, user_id: UserId, created_at: datetime) -> OnboardingState:
         if self.state is None:
             self.state = OnboardingState(
                 user_id=user_id,
@@ -154,8 +156,24 @@ class FakeOnboardingRepository:
 
         return self.state
 
-    async def get_by_user_id(self, user_id: int) -> OnboardingState | None:
+    async def get_by_user_id(self, user_id: UserId) -> OnboardingState | None:
         return self.state
 
     async def log_event(self, event: OnboardingEvent) -> None:
         self.logged_events.append(event)
+
+
+class FakeVoteRepository:
+    def __init__(self, votes: list[Vote] | None = None) -> None:
+        self.votes = votes or []
+
+    def create(self, character_id: CharacterId, vote_time: datetime, voted_by: UserId) -> Vote:
+        vote = Vote(character_id=character_id, voted_at=vote_time, voted_by=voted_by)
+        self.votes.append(vote)
+        return vote
+
+    async def get_vote_by_character_id(self, character_id: CharacterId) -> Vote | None:
+        for vote in self.votes:
+            if vote.character_id == character_id:
+                return vote
+        return None

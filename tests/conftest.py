@@ -1,6 +1,6 @@
 import sys
 from collections.abc import Callable
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 
 import pytest
@@ -12,9 +12,15 @@ if str(SRC) not in sys.path:
 
 from marionette.domain.entities.agency import Agency
 from marionette.domain.entities.character import Character
+from marionette.domain.entities.vote import Vote
 from marionette.domain.roles import Roles
 from marionette.domain.statuses import CharacterStatus
-from tests.fakes import FakeAgencyRepository, FakeCharacterRepository, FakeTransaction
+from tests.fakes import (
+    FakeAgencyRepository,
+    FakeCharacterRepository,
+    FakeTransaction,
+    FakeVoteRepository,
+)
 
 
 @pytest.fixture
@@ -91,6 +97,31 @@ def character_repo_factory() -> Callable[[list[Character] | None], FakeCharacter
 def agency_repo_factory() -> Callable[[list[Agency]], FakeAgencyRepository]:
     def factory(agencies: list[Agency]) -> FakeAgencyRepository:
         return FakeAgencyRepository(agencies)
+
+    return factory
+
+
+@pytest.fixture
+def vote_factory() -> Callable[..., Vote]:
+    def factory(
+        *,
+        character_id: int = 100,
+        voted_by: int = 101,
+        voted_at: datetime | None = None,
+    ) -> Vote:
+        return Vote(
+            character_id=character_id,
+            voted_by=voted_by,
+            voted_at=voted_at or datetime.now(UTC),
+        )
+
+    return factory
+
+
+@pytest.fixture
+def vote_repo_factory() -> Callable[[list[Vote] | None], FakeVoteRepository]:
+    def factory(votes: list[Vote] | None = None) -> FakeVoteRepository:
+        return FakeVoteRepository(votes)
 
     return factory
 

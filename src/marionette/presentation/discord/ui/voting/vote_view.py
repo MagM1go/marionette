@@ -23,12 +23,13 @@ class VoteView(miru.View):
     async def on_error(
         self,
         error: Exception,
-        item: InteractiveViewItem,
-        context: miru.ViewContext,
+        item: InteractiveViewItem | None = None,
+        context: miru.ViewContext | None = None,
         /,
     ) -> None:
         await super().on_error(error, item, context)
-        await context.respond(ErrorPresenter.present(error), flags=hikari.MessageFlag.EPHEMERAL)
+        if context is not None:
+            await context.respond(ErrorPresenter.present(error), flags=hikari.MessageFlag.EPHEMERAL)
 
     @miru.button(label="Проголосовать")
     async def vote_button(self, context: miru.ViewContext, _: miru.Button) -> None:
