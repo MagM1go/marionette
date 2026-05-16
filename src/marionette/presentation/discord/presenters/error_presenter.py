@@ -1,3 +1,5 @@
+from datetime import UTC, datetime
+
 import hikari
 
 from marionette.domain import exceptions as exc
@@ -10,7 +12,7 @@ _MESSAGES: dict[type, str] = {
     exc.CharacterBirthdayIncorrect: "Убедитесь, что вы правильно ввели дату рождения персонажа. Формат: `дд-мм-гггг`",
     exc.TooManyCharacters: "Кажется, у вас слишком много персонажей. Увы, но более трёх создать нельзя.",
     exc.OnboardingRulesAlreadyAcceptedError: "Вы уже приняли правила. Повторно нажимать на кнопку не нужно.",
-    dis_exc.DmsNotAllowed: "Команду нельзя использовать в личных сообщениях."
+    dis_exc.DmsNotAllowed: "Команду нельзя использовать в личных сообщениях.",
 }
 
 
@@ -28,6 +30,9 @@ class ErrorPresenter:
                 text = f"У вас уже есть активный персонаж! Вы забыли про **{name}**?"
             case exc.WrongChannel(expected_channel_id=cid):
                 text = f"Выйти можно только из канала <#{cid}>!"
+            case exc.VoteOnCooldown(character_name=name, remaining_time=time):
+                text = f"Вы уже проголосовали за **{name}**. " \
+                    f"Следующий раз доступен в **{(datetime.now(UTC) + time).strftime('%m.%d, %H:%M:%S')}** (часовой пояс бота: +3 от Москвы)"
             case _:
                 text = _MESSAGES.get(type(e), "Произошла неизвестная ошибка.")
 
