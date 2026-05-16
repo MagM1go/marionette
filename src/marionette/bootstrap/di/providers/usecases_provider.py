@@ -17,6 +17,8 @@ from marionette.presentation.discord.ui.onboarding.step_assets import Onboarding
 
 from marionette.application.usecases.register_usecase import RegisterUseCase
 
+from marionette.application.usecases.vote_usecase import VoteUseCase
+
 
 class UseCaseProvider(Provider):
     scope = Scope.REQUEST
@@ -37,3 +39,4 @@ class UseCaseProvider(Provider):
     moderation_usecase = provide(DeleteOfftopicMessageUseCase)
     season_reset_usecase = provide(ResetSeasonRatingUseCase)
     register_usecase = provide(RegisterUseCase)
+    vote_usecase = provide(VoteUseCase)

@@ -1,3 +1,6 @@
+from datetime import timedelta
+
+
 class DomainException(Exception): ...
 
 
@@ -53,3 +56,10 @@ class OnboardingRulesAlreadyAcceptedError(DomainException): ...
 
 
 class CharacterBirthdayIncorrect(DomainException): ...
+
+
+class VoteOnCooldown(DomainException):
+    def __init__(self, character_name: str, remaining_time: timedelta) -> None:
+        super().__init__()
+        self.character_name = character_name
+        self.remaining_time = remaining_time

@@ -17,3 +17,6 @@ class VoteRepository(Protocol):
             voted_by: Discord ID пользователя, который проголосовал.
         """
         ...
+
+    async def get_vote_by_character_id(self, character_id: CharacterId) -> Vote:
+        ...
