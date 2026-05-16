@@ -30,7 +30,7 @@ class Character(Base):
     user_id: Mapped[int] = mapped_column(BigInteger, index=True)
     name: Mapped[str] = mapped_column(String(255))
     role: Mapped[Roles | None] = mapped_column()
-    agency_role: Mapped[AgencyRoles | None] = mapped_column()
+    agency_role: Mapped[AgencyRoles | None] = mapped_column(server_default=None)
     biography: Mapped[str] = mapped_column()
     rating: Mapped[int] = mapped_column(default=0)
     birthday: Mapped[datetime] = mapped_column(DateTime(timezone=True))
