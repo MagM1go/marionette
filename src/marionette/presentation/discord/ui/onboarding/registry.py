@@ -21,7 +21,6 @@ from marionette.presentation.discord.ui.onboarding.steps import (
     ONBOARDING_REGISTRATION_CUSTOM_ID,
     ONBOARDING_RULES_CUSTOM_ID_ACCEPT,
 )
-
 from marionette.presentation.discord.ui.registration.registration_view import RegistrationView
 
 type ScreenPresenter = (
