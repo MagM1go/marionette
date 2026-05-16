@@ -18,5 +18,5 @@ class VoteRepository(Protocol):
         """
         ...
 
-    async def get_vote_by_character_id(self, character_id: CharacterId) -> Vote:
+    async def get_vote_by_character_id(self, character_id: CharacterId) -> Vote | None:
         ...
