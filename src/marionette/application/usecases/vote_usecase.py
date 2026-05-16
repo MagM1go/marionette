@@ -48,8 +48,12 @@ class VoteUseCase:
                 rating=5, reason=RatingChangeReason.VOTE, in_agency=character.agency_id is not None
             )
             character.rating += d_rating
-            self._vote_repository.create(
-                character_id=CharacterId(character.id), vote_time=now, voted_by=voted_by
-            )
+            if vote is None:
+                self._vote_repository.create(
+                    character_id=CharacterId(character.id), vote_time=now, voted_by=voted_by
+                )
+            else:
+                vote.voted_at = now
+                vote.voted_by = voted_by
 
             await self._transaction.commit()
