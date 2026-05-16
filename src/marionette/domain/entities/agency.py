@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-# pyright: reportImportCycles=false
-# базедпурайт говорит циклический импорт :muscle:
 import typing as t
 
 from sqlalchemy.orm import Mapped, mapped_column, relationship
