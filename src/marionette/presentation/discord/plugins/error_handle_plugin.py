@@ -11,12 +11,12 @@ plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 
 @plugin.include
 @crescent.catch_command(DomainException, DiscordException)
-async def catch_command_exception(exception: DomainException, context: crescent.Context) -> None:
+async def catch_command_exception(exception: DomainException | DiscordException, context: crescent.Context) -> None:
     await context.respond(embed=ErrorPresenter.present(exception), ephemeral=True)
 
 
 @plugin.include
-@crescent.catch_event(DomainException)
+@crescent.catch_event(DomainException, DiscordException)
 async def catch_modal_interaction_event_exception(
     exception: DomainException, event: hikari.Event
 ) -> None:
