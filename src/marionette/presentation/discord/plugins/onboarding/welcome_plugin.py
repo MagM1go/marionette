@@ -2,12 +2,8 @@ import crescent
 import hikari
 
 from marionette.application.protocols import UserId
-from marionette.application.usecases.onboarding.reset_onboarding_usecase import (
-    OnboardingResetUseCase,
-)
-from marionette.application.usecases.onboarding.start_onboarding_usecase import (
-    StartOnboardingUseCase,
-)
+from marionette.application.usecases.onboarding.reset_onboarding_usecase import OnboardingResetUseCase
+from marionette.application.usecases.onboarding.start_onboarding_usecase import StartOnboardingUseCase
 from marionette.bootstrap.config import config
 from marionette.bootstrap.di.container import CrescentContainer
 from marionette.bootstrap.di.inject import Inject, inject
@@ -21,9 +17,7 @@ inject_plugin = inject(lambda: plugin.model.dishka())
 @plugin.include
 @crescent.event
 @inject_plugin
-async def on_user_arrive(
-    event: hikari.MemberCreateEvent, usecase: Inject[StartOnboardingUseCase]
-) -> None:
+async def on_user_arrive(event: hikari.MemberCreateEvent, usecase: Inject[StartOnboardingUseCase]) -> None:
     user_id = UserId(event.user_id)
     await event.app.rest.add_role_to_member(
         guild=config.discord.main_guild_id,
@@ -36,9 +30,7 @@ async def on_user_arrive(
 @plugin.include
 @crescent.event
 @inject_plugin
-async def on_user_leave(
-    event: hikari.MemberDeleteEvent, usecase: Inject[OnboardingResetUseCase]
-) -> None:
+async def on_user_leave(event: hikari.MemberDeleteEvent, usecase: Inject[OnboardingResetUseCase]) -> None:
     await usecase.reset(UserId(event.user_id))
 
 

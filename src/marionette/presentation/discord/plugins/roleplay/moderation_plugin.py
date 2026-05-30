@@ -3,9 +3,7 @@ from contextlib import suppress
 import crescent
 import hikari
 
-from marionette.application.usecases.delete_offtopic_message_usecase import (
-    DeleteOfftopicMessageUseCase,
-)
+from marionette.application.usecases.delete_offtopic_message_usecase import DeleteOfftopicMessageUseCase
 from marionette.bootstrap.config import config
 from marionette.bootstrap.di.container import CrescentContainer
 from marionette.bootstrap.di.inject import Inject, inject

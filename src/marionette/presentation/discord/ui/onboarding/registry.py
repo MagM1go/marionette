@@ -23,9 +23,7 @@ from marionette.presentation.discord.ui.onboarding.steps import (
 )
 from marionette.presentation.discord.ui.registration.registration_view import RegistrationView
 
-type ScreenPresenter = (
-    FaqPresenter | HelloPresenter | IntroPresenter | RulesPresenter | RegistrationPresenter
-)
+type ScreenPresenter = FaqPresenter | HelloPresenter | IntroPresenter | RulesPresenter | RegistrationPresenter
 type ViewFactory = Callable[[], miru.View]
 
 
@@ -104,9 +102,9 @@ onboarding_registry = OnboardingRegistry(
             view_factory=FaqView,
         ),
         OnboardingScreen(
-            screen_id="registration",
-            channel_id=config.discord.registration_channel_id,
-            presenter=RegistrationPresenter,
+            screen_id="registration", 
+            channel_id=config.discord.registration_channel_id, 
+            presenter=RegistrationPresenter, 
             view_factory=RegistrationView
         ),
     ),

@@ -7,12 +7,8 @@ from marionette.application.protocols import (
     VoteRepository,
 )
 from marionette.infrastructure.repositories.agency_repository import SqlAlchemyAgencyRepository
-from marionette.infrastructure.repositories.character_repository import (
-    SqlAlchemyCharacterRepository,
-)
-from marionette.infrastructure.repositories.onboarding_repository import (
-    SqlAlchemyOnboardingRepository,
-)
+from marionette.infrastructure.repositories.character_repository import SqlAlchemyCharacterRepository
+from marionette.infrastructure.repositories.onboarding_repository import SqlAlchemyOnboardingRepository
 from marionette.infrastructure.repositories.vote_repository import SqlAlchemyVoteRepository
 
 
