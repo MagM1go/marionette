@@ -27,6 +27,10 @@ class DiscordConfig:
     start_role_id: int
     unregistered_role_id: int
     text_role_id: int
+    
+    moderator_role_id: int
+    amplua_role_id: int
+    
     paparazzi_trigger_channel_prefix: str = "PP"
     rp_categories: list[int] = field(default_factory=list)
 
