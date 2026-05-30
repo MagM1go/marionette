@@ -37,8 +37,7 @@ class SqlAlchemyOnboardingRepository(OnboardingRepository):
 
     async def get_by_user_id(self, user_id: UserId) -> OnboardingState | None:
         stmt = select(OnboardingState).where(OnboardingState.user_id == user_id)
-        result = await self._session.execute(stmt)
-        return result.scalar_one_or_none()
+        return await self._session.scalar(stmt)
 
     async def reset(self, user_id: UserId, updated_at: datetime) -> OnboardingState:
         stmt = (

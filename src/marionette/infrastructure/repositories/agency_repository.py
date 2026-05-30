@@ -10,21 +10,20 @@ from marionette.domain.entities.agency import Agency
 
 class SqlAlchemyAgencyRepository(AgencyRepository):
     def __init__(self, session: AsyncSession) -> None:
-        self.session = session
+        self._session = session
 
     @t.override
     def create(self, owner_id: int, name: str) -> Agency | None:
         agency = Agency(owner_id=owner_id, name=name)
-        self.session.add(agency)
+        self._session.add(agency)
         return agency
 
     @t.override
     async def get_all(self) -> Sequence[Agency]:
-        result = await self.session.execute(select(Agency))
-        return result.scalars().all()
+        result = await self._session.scalars(select(Agency))
+        return result.all()
 
     @t.override
     async def get_agency_by_id(self, id: int) -> Agency | None:
         stmt = select(Agency).where(Agency.id == id)
-        result = await self.session.execute(stmt)
-        return result.scalar_one_or_none()
+        return await self._session.scalar(stmt)
