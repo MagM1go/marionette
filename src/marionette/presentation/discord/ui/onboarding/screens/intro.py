@@ -2,6 +2,7 @@ import hikari
 import miru
 
 from marionette.presentation.discord.exceptions import DmsNotAllowed
+from marionette.presentation.discord.presenters.onboarding.intro_presenter import IntroPresenter
 from marionette.presentation.discord.ui.onboarding.steps import (
     ONBOARDING_INTRO_CUSTOM_ID_ABOUT,
     ONBOARDING_INTRO_CUSTOM_ID_NEXT,
@@ -17,15 +18,15 @@ class IntroView(miru.View):
         if context.guild_id is None:
             raise DmsNotAllowed()
 
-        await context.respond("ну вот это", flags=hikari.MessageFlag.EPHEMERAL)
-        
+        await context.respond(IntroPresenter.present_what(), flags=hikari.MessageFlag.EPHEMERAL)
+
     @miru.button("Особенности", custom_id="what_better")
     async def onboarding_intro_button_what_better(self, context: miru.ViewContext, _: miru.Button) -> None:
         if context.guild_id is None:
             raise DmsNotAllowed()
 
-        await context.respond("ну вот это", flags=hikari.MessageFlag.EPHEMERAL)
-        
+        await context.respond(IntroPresenter.present_features(), flags=hikari.MessageFlag.EPHEMERAL)
+
     @miru.button("Что дальше?", custom_id="what_next")
     async def onboarding_intro_button_what_next(self, context: miru.ViewContext, _: miru.Button) -> None:
         if context.guild_id is None:
@@ -33,7 +34,7 @@ class IntroView(miru.View):
 
         view = miru.View()
         view.add_item(NextButton())
-        await context.respond("ну вот это", flags=hikari.MessageFlag.EPHEMERAL, components=view)
+        await context.respond(IntroPresenter.present_next(), flags=hikari.MessageFlag.EPHEMERAL, components=view)
         context.client.start_view(view=view)
 
 
@@ -45,4 +46,4 @@ class NextButton(miru.Button):
         if context.guild_id is None:
             raise DmsNotAllowed()
 
-        await context.respond("ого", flags=hikari.MessageFlag.EPHEMERAL)
+        await context.respond("...", flags=hikari.MessageFlag.EPHEMERAL)
