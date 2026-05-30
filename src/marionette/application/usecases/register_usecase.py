@@ -2,9 +2,10 @@ from datetime import datetime
 
 from marionette.application.protocols import CharacterRepository
 from marionette.application.protocols.transaction import Transaction
-from marionette.application.protocols.types import UserId
-from marionette.domain.roles import Roles
+from marionette.application.protocols.types import CharacterId, UserId
 from marionette.domain.exceptions import TooManyCharacters
+from marionette.domain.roles import Roles
+from marionette.domain.statuses import CharacterStatus
 
 
 class RegisterUseCase:
@@ -19,19 +20,21 @@ class RegisterUseCase:
         role: Roles,
         birthday: datetime,
         biography: str,
-    ) -> None:
+    ) -> CharacterId:
         async with self._transaction:
-            characters = await self._repository.get_all_characters_by_user_id(user_id=user_id)
-            
+            characters = await self._repository.get_active_characters_by_user_id(user_id=user_id)
+
             if len(characters) >= 3:
                 raise TooManyCharacters()
-                    
-            self._repository.create(
+
+            character = self._repository.create(
                 user_id=user_id,
                 name=name,
                 role=role,
                 birthday=birthday,
                 biography=biography,
             )
-            
+
             await self._transaction.commit()
+
+            return character.id # pyright: ignore[reportReturnType, reportOptionalMemberAccess]

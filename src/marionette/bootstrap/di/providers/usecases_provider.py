@@ -1,8 +1,11 @@
 from dishka import Provider, Scope, provide
 
+from marionette.application.usecases.delete_offtopic_message_usecase import DeleteOfftopicMessageUseCase
 from marionette.application.usecases.enter_location_usecase import EnterLocationUseCase
 from marionette.application.usecases.exit_usecase import ExitLocationUseCase
-from marionette.application.usecases.delete_offtopic_message_usecase import DeleteOfftopicMessageUseCase
+from marionette.application.usecases.moderation.approve_character_usecase import ApproveCharacterUseCase
+from marionette.application.usecases.moderation.ban_character_usecase import BanCharacterUseCase
+from marionette.application.usecases.moderation.decline_character_usecase import DeclineCharacterUseCase
 from marionette.application.usecases.onboarding.accept_onboarding_rules_usecase import AcceptOnboardingRulesUseCase
 from marionette.application.usecases.onboarding.complete_onboarding_usecase import CompleteOnboardingUseCase
 from marionette.application.usecases.onboarding.move_onboarding_to_intro_usecase import MoveOnboardingToIntroUseCase
@@ -10,14 +13,12 @@ from marionette.application.usecases.onboarding.move_onboarding_to_rules_usecase
 from marionette.application.usecases.onboarding.reset_onboarding_usecase import OnboardingResetUseCase
 from marionette.application.usecases.onboarding.start_onboarding_usecase import StartOnboardingUseCase
 from marionette.application.usecases.paparazzi_usecase import PaparazziUseCase
+from marionette.application.usecases.register_usecase import RegisterUseCase
 from marionette.application.usecases.season_reset_usecase import ResetSeasonRatingUseCase
+from marionette.application.usecases.vote_usecase import VoteUseCase
 from marionette.domain.services.rating_service import RatingService
 from marionette.presentation.discord.ui.onboarding.dispatcher import OnboardingActionDispatcher
 from marionette.presentation.discord.ui.onboarding.step_assets import OnboardingStepAssets
-
-from marionette.application.usecases.register_usecase import RegisterUseCase
-
-from marionette.application.usecases.vote_usecase import VoteUseCase
 
 
 class UseCaseProvider(Provider):
@@ -40,3 +41,6 @@ class UseCaseProvider(Provider):
     season_reset_usecase = provide(ResetSeasonRatingUseCase)
     register_usecase = provide(RegisterUseCase)
     vote_usecase = provide(VoteUseCase)
+    approve_usecase = provide(ApproveCharacterUseCase)
+    decline_usecase = provide(DeclineCharacterUseCase)
+    ban_usecase = provide(BanCharacterUseCase)
