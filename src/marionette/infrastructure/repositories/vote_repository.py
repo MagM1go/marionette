@@ -22,4 +22,4 @@ class SqlAlchemyVoteRepository(VoteRepository):
     @t.override
     async def get_vote_by_character_id(self, character_id: CharacterId) -> Vote | None:
         stmt = select(Vote).where(Vote.character_id == character_id)
-        return await self._session.scalar(stmt)
+        return await self._session.scalar(stmt)  # type: ignore[no-any-return]

@@ -26,4 +26,4 @@ class SqlAlchemyAgencyRepository(AgencyRepository):
     @t.override
     async def get_agency_by_id(self, id: int) -> Agency | None:
         stmt = select(Agency).where(Agency.id == id)
-        return await self._session.scalar(stmt)
+        return await self._session.scalar(stmt)  # type: ignore[no-any-return]

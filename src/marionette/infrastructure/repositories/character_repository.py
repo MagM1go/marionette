@@ -43,7 +43,7 @@ class SqlAlchemyCharacterRepository(CharacterRepository):
             .options(joinedload(Character.agency))
             .where(Character.name == name, Character.user_id == user_id)
         )
-        return await self._session.scalar(stmt)
+        return await self._session.scalar(stmt)  # type: ignore[no-any-return]
 
     @t.override
     async def get_by_character_id(self, character_id: int) -> Character | None:
@@ -52,7 +52,7 @@ class SqlAlchemyCharacterRepository(CharacterRepository):
             .options(joinedload(Character.agency))
             .where(Character.id == character_id)
         )
-        return await self._session.scalar(stmt)
+        return await self._session.scalar(stmt)  # type: ignore[no-any-return]
 
     @t.override
     async def get_all_characters_by_user_id(self, user_id: int) -> Sequence[Character]:
@@ -81,7 +81,7 @@ class SqlAlchemyCharacterRepository(CharacterRepository):
             .options(joinedload(Character.agency))
             .where(Character.user_id == user_id, Character.entered_channel_id.is_not(None))
         )
-        return await self._session.scalar(stmt)
+        return await self._session.scalar(stmt)  # type: ignore[no-any-return]
 
     @t.override
     async def get_all(self) -> Sequence[Character]:

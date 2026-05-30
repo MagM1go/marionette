@@ -5,7 +5,6 @@ from marionette.application.protocols.transaction import Transaction
 from marionette.application.protocols.types import CharacterId, UserId
 from marionette.domain.exceptions import TooManyCharacters
 from marionette.domain.roles import Roles
-from marionette.domain.statuses import CharacterStatus
 
 
 class RegisterUseCase:
@@ -37,4 +36,4 @@ class RegisterUseCase:
 
             await self._transaction.commit()
 
-            return character.id # pyright: ignore[reportReturnType, reportOptionalMemberAccess]
+            return character.id  # type: ignore
