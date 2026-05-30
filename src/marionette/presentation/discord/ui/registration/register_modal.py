@@ -36,6 +36,7 @@ class RegistrationModal(ModalV2):
         label="Биография (коротко, мин. 200 символов)",
         required=True,
         min_length=200,
+        max_length=4000,
         style=hikari.TextInputStyle.PARAGRAPH,
     )
     role = StringSelect(
@@ -54,19 +55,9 @@ class RegistrationModal(ModalV2):
             return False
 
     async def callback(self, context: miru.ModalContext) -> None:
-        name = t.cast(str, self.name.value)
         birthday = t.cast(str, self.birthday.value)
-        bio = t.cast(str, self.mini_bio.value)
-        role = t.cast(str, self.role.value)
 
         if age_from_birthday(birthday) < 13:
             raise CharacterIsTooYoung()
 
-        await context.respond(
-            RegistrationPresenter.present_user(), flags=hikari.MessageFlag.EPHEMERAL
-        )
-        await context.client.rest.create_message(
-            config.discord.moderation_channel_id,
-            component=RegistrationPresenter.present_moderation(context.user.id, name, birthday, role, bio),
-            flags=hikari.MessageFlag.IS_COMPONENTS_V2,
-        )
+        await context.respond(RegistrationPresenter.present_user(), flags=hikari.MessageFlag.EPHEMERAL)
