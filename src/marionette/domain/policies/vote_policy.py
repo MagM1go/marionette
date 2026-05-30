@@ -10,11 +10,6 @@ class VotePolicy:
     VOTE_COOLDOWN = timedelta(hours=24)
 
     @staticmethod
-    def ensure_character_exists(character: Character | None, expected_name: str) -> None:
-        if character is None:
-            raise CharacterNotFound(name=expected_name)
-
-    @staticmethod
     def ensure_character_is_applied(character: Character, expected_name: str) -> None:
         if character.status in (CharacterStatus.MODERATION, CharacterStatus.ABANDONED):
             raise CharacterNotFound(name=expected_name)
