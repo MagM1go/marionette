@@ -4,7 +4,6 @@ from datetime import date
 import hikari
 import miru
 
-from marionette.bootstrap.config import config
 from marionette.domain.exceptions import CharacterIsTooYoung
 from marionette.domain.roles import Roles
 from marionette.presentation.discord.presenters.registration_presenter import (
