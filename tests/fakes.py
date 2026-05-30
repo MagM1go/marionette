@@ -63,6 +63,9 @@ class FakeCharacterRepository:
     async def get_all_characters_by_user_id(self, user_id: UserId) -> Sequence[Character]:
         return [character for character in self.characters if character.user_id == user_id]
 
+    async def get_active_characters_by_user_id(self, user_id: UserId) -> Sequence[Character]:
+        return [character for character in self.characters if character.user_id == user_id and character.status == CharacterStatus.IS_ACTIVE]
+
     async def get_by_character_id(self, character_id: CharacterId) -> Character | None:
         for character in self.characters:
             if character.id == character_id:
@@ -144,14 +147,13 @@ class FakeOnboardingRepository:
 
         return self.state
 
-    async def reset(self, user_id: UserId, created_at: datetime) -> OnboardingState:
+    async def reset(self, user_id: UserId, updated_at: datetime) -> OnboardingState:
         if self.state is None:
             self.state = OnboardingState(
                 user_id=user_id,
                 current_step=OnboardingStep.NEWBIE,
                 is_complete=False,
-                created_at=created_at,
-                updated_at=created_at,
+                updated_at=updated_at,
             )
 
         return self.state
