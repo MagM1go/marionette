@@ -3,21 +3,11 @@ from datetime import UTC, datetime
 import pytest
 
 from marionette.application.protocols import UserId
-from marionette.application.usecases.onboarding.accept_onboarding_rules_usecase import (
-    AcceptOnboardingRulesUseCase,
-)
-from marionette.application.usecases.onboarding.complete_onboarding_usecase import (
-    CompleteOnboardingUseCase,
-)
-from marionette.application.usecases.onboarding.move_onboarding_to_intro_usecase import (
-    MoveOnboardingToIntroUseCase,
-)
-from marionette.application.usecases.onboarding.move_onboarding_to_rules_usecase import (
-    MoveOnboardingToRulesUseCase,
-)
-from marionette.application.usecases.onboarding.start_onboarding_usecase import (
-    StartOnboardingUseCase,
-)
+from marionette.application.usecases.onboarding.accept_onboarding_rules_usecase import AcceptOnboardingRulesUseCase
+from marionette.application.usecases.onboarding.complete_onboarding_usecase import CompleteOnboardingUseCase
+from marionette.application.usecases.onboarding.move_onboarding_to_intro_usecase import MoveOnboardingToIntroUseCase
+from marionette.application.usecases.onboarding.move_onboarding_to_rules_usecase import MoveOnboardingToRulesUseCase
+from marionette.application.usecases.onboarding.start_onboarding_usecase import StartOnboardingUseCase
 from marionette.domain.entities.onboarding import OnboardingState, OnboardingStep
 from marionette.domain.exceptions import (
     OnboardingNotFoundError,
