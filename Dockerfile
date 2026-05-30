@@ -24,12 +24,11 @@ RUN useradd -u 1000 -m appuser
 
 COPY --from=builder /app/.venv /app/.venv
 COPY --from=builder /app/src /app/src
-COPY --from=builder /app/src/marionette/assets /app/src/marionette/assets
 COPY --from=builder /app/alembic.ini /app/alembic.ini
 COPY --from=builder /app/src/marionette/infrastructure/database/alembic /app/src/marionette/infrastructure/database/alembic
 
 ENV PATH="/app/.venv/bin:$PATH"
-ENV PYTHONBUFFERED=1
+ENV PYTHONUNBUFFERED=1
 
 USER appuser
 
