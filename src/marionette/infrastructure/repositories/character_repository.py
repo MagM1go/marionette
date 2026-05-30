@@ -10,10 +10,12 @@ from marionette.application.protocols import CharacterRepository
 from marionette.domain.entities.character import Character
 from marionette.domain.roles import Roles
 
+from marionette.domain.statuses import CharacterStatus
+
 
 class SqlAlchemyCharacterRepository(CharacterRepository):
     def __init__(self, session: AsyncSession) -> None:
-        self.session: AsyncSession = session
+        self._session: AsyncSession = session
 
     @t.override
     def create(
@@ -31,7 +33,7 @@ class SqlAlchemyCharacterRepository(CharacterRepository):
             birthday=birthday,
             biography=biography
         )
-        self.session.add(character)
+        self._session.add(character)
         return character
 
     @t.override
@@ -41,8 +43,7 @@ class SqlAlchemyCharacterRepository(CharacterRepository):
             .options(joinedload(Character.agency))
             .where(Character.name == name, Character.user_id == user_id)
         )
-        result = await self.session.execute(stmt)
-        return result.scalar_one_or_none()
+        return await self._session.scalar(stmt)
 
     @t.override
     async def get_by_character_id(self, character_id: int) -> Character | None:
@@ -51,8 +52,7 @@ class SqlAlchemyCharacterRepository(CharacterRepository):
             .options(joinedload(Character.agency))
             .where(Character.id == character_id)
         )
-        result = await self.session.execute(stmt)
-        return result.scalar_one_or_none()
+        return await self._session.scalar(stmt)
 
     @t.override
     async def get_all_characters_by_user_id(self, user_id: int) -> Sequence[Character]:
@@ -61,8 +61,18 @@ class SqlAlchemyCharacterRepository(CharacterRepository):
             .options(joinedload(Character.agency))
             .where(Character.user_id == user_id)
         )
-        result = await self.session.execute(stmt)
-        return result.scalars().all()
+        result = await self._session.scalars(stmt)
+        return result.all()
+
+    @t.override
+    async def get_active_characters_by_user_id(self, user_id: int) -> Sequence[Character]:
+        stmt = (
+            select(Character)
+            .options(joinedload(Character.agency))
+            .where(Character.user_id == user_id, Character.status == CharacterStatus.IS_ACTIVE)
+        )
+        result = await self._session.scalars(stmt)
+        return result.all()
 
     @t.override
     async def get_entered_character_by_user_id(self, user_id: int) -> Character | None:
@@ -71,15 +81,14 @@ class SqlAlchemyCharacterRepository(CharacterRepository):
             .options(joinedload(Character.agency))
             .where(Character.user_id == user_id, Character.entered_channel_id.is_not(None))
         )
-        result = await self.session.execute(stmt)
-        return result.scalar_one_or_none()
+        return await self._session.scalar(stmt)
 
     @t.override
     async def get_all(self) -> Sequence[Character]:
         stmt = select(Character).options(joinedload(Character.agency))
-        result = await self.session.execute(stmt)
-        return result.scalars().all()
+        result = await self._session.scalars(stmt)
+        return result.all()
 
     @t.override
     async def delete(self, character: Character) -> None:
-        await self.session.delete(character)
+        await self._session.delete(character)

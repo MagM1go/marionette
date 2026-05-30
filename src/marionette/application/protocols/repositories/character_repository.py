@@ -53,7 +53,18 @@ class CharacterRepository(Protocol):
             user_id: Discord ID пользователя.
 
         Returns:
-            Список персонажей. Пустой список если персонажей нет.
+            Список персонажей. Пустой список, если персонажей нет.
+        """
+        ...
+
+    async def get_active_characters_by_user_id(self, user_id: UserId) -> Sequence[Character]:
+        """Возвращает всех действующих персонажей пользователя.
+
+        Args:
+            user_id: Discord ID пользователя.
+
+        Returns:
+            Список действующих персонажей. Пустой список, если персонажей нет.
         """
         ...
 
