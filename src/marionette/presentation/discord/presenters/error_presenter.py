@@ -12,7 +12,11 @@ _MESSAGES: dict[type, str] = {
     exc.CharacterBirthdayIncorrect: "Убедитесь, что вы правильно ввели дату рождения персонажа. Формат: `дд-мм-гггг`",
     exc.TooManyCharacters: "Кажется, у вас слишком много персонажей. Увы, но более трёх создать нельзя.",
     exc.OnboardingRulesAlreadyAcceptedError: "Вы уже приняли правила. Повторно нажимать на кнопку не нужно.",
+    exc.CharacterIsAbandoned: "Персонаж был исключён из системы. Увы, но это действие выполнить над ним нельзя",
+    exc.CharacterAlreadyActive: "Персонаж активен и подобное действие в его состоянии выполнить нельзя",
     dis_exc.DmsNotAllowed: "Команду нельзя использовать в личных сообщениях.",
+    dis_exc.InsufficientPermissions: "У вас недостаточно прав на исполнение. Впрочём, как и обычно.",
+    dis_exc.MemberNotFound: "Участник не был найден. Или вышел, или указан не тот.",
 }
 
 
@@ -21,7 +25,7 @@ class ErrorPresenter:
     def present(e: Exception) -> hikari.Embed:
         match e:
             case exc.CharacterNotFound(name=name):
-                text = f"У вас нет персонажа с именем **{name}**!"
+                text = f"Персонаж **{name}** не найден!"
             case exc.CharacterNotActive(name=name):
                 text = f"Персонаж **{name}** пока не может быть использован. Статус персонажа можно узнать в профиле."
             case exc.AlreadyInLocation(channel_id=cid):
