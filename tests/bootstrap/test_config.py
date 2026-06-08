@@ -47,7 +47,7 @@ def test_load_config_reads_environment_without_dotenv_file(
     _set_required_env(monkeypatch, DATABASE_POOL_SIZE="77")
     config_module = _reload_config_module()
 
-    config = config_module.load_config(env_file=tmp_path / ".env.missing")
+    config = config_module.load_config(filename="MISSING")
 
     assert config.database.url == "postgresql+psycopg://env:pass@localhost:5432/app"
     assert config.database.pool_size == 77
@@ -97,7 +97,7 @@ def test_load_config_prefers_environment_over_dotenv(
     )
     config_module = _reload_config_module()
 
-    config = config_module.load_config(env_file=env_file)
+    config = config_module.load_config(filename=tmp_path / env_file)
 
     assert config.discord.bot_token == "env-token"
     assert config.database.url == "postgresql+psycopg://env:pass@localhost:5432/app"
