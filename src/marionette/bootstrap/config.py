@@ -1,10 +1,7 @@
 from dataclasses import dataclass, field
-from pathlib import Path
 
-from dature import F, Merge, Source, load
+from dature import F, EnvFileSource, EnvSource, load
 from dature.types import FieldMapping
-
-_ENV_FILE = Path(__file__).resolve().parents[3] / ".env"
 
 
 @dataclass
@@ -53,22 +50,20 @@ def _load_section[T](
     dataclass_: type[T],
     *,
     field_mapping: FieldMapping | None = None,
-    env_file: Path = _ENV_FILE,
+    filename: str = ".env"
 ) -> T:
     return load(
-        Merge(
-            Source(
-                file_=env_file,
-                field_mapping=field_mapping,
-                skip_if_broken=True,
-            ),
-            Source(field_mapping=field_mapping)
+        EnvFileSource(
+            file=filename,
+            field_mapping=field_mapping,
+            skip_if_broken=True,
         ),
-        dataclass_,
+        EnvSource(field_mapping=field_mapping),
+        schema=dataclass_,
     )
 
 
-def load_config(*, env_file: Path = _ENV_FILE) -> Config:
+def load_config(filename: str = ".env") -> Config:
     database_config = _load_section(
         DatabaseConfig,
         field_mapping={
@@ -76,7 +71,7 @@ def load_config(*, env_file: Path = _ENV_FILE) -> Config:
             F[DatabaseConfig].pool_size: "database_pool_size",
             F[DatabaseConfig].max_overflow: "database_max_overflow",
         },
-        env_file=env_file,
+        filename=filename
     )
     discord_config = _load_section(
         DiscordConfig,
@@ -84,7 +79,7 @@ def load_config(*, env_file: Path = _ENV_FILE) -> Config:
             F[DiscordConfig].bot_token: "marionette_token",
             F[DiscordConfig].main_guild_id: "main_guild_id",
         },
-        env_file=env_file,
+        filename=filename
     )
     return Config(database=database_config, discord=discord_config)
 
