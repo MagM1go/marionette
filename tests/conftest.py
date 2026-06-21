@@ -5,6 +5,8 @@ from pathlib import Path
 
 import pytest
 
+from marionette.domain.entities.subscription import Subscription
+
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
 if str(SRC) not in sys.path:
@@ -18,6 +20,7 @@ from marionette.domain.statuses import CharacterStatus
 from tests.fakes import (
     FakeAgencyRepository,
     FakeCharacterRepository,
+    FakeSubscriptionRepository,
     FakeTransaction,
     FakeVoteRepository,
 )
@@ -122,6 +125,33 @@ def vote_factory() -> Callable[..., Vote]:
 def vote_repo_factory() -> Callable[[list[Vote] | None], FakeVoteRepository]:
     def factory(votes: list[Vote] | None = None) -> FakeVoteRepository:
         return FakeVoteRepository(votes)
+
+    return factory
+
+
+@pytest.fixture
+def subscription_factory() -> Callable[..., Subscription]:
+    def factory(
+        *,
+        follower_id: int = 101,
+        character_author_id: int = 102,
+        character_id: int = 100,
+        followed_at: datetime | None = None
+    ) -> Subscription:
+        return Subscription(
+            follower_id=follower_id,
+            character_author_id=character_author_id,
+            character_id=character_id,
+            followed_at=followed_at
+        )
+
+    return factory
+
+
+@pytest.fixture
+def subscription_repo_factory() -> Callable[[list[Subscription] | None], FakeSubscriptionRepository]:
+    def factory(subscriptions: list[Subscription] | None = None) -> FakeSubscriptionRepository:
+        return FakeSubscriptionRepository(subscriptions)
 
     return factory
 

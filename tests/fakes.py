@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from types import TracebackType
 from typing import Self
 
@@ -7,6 +7,7 @@ from marionette.application.protocols.types import AgencyId, CharacterId, UserId
 from marionette.domain.entities.agency import Agency
 from marionette.domain.entities.character import Character
 from marionette.domain.entities.onboarding import OnboardingEvent, OnboardingState, OnboardingStep
+from marionette.domain.entities.subscription import Subscription
 from marionette.domain.entities.vote import Vote
 from marionette.domain.roles import Roles
 from marionette.domain.statuses import CharacterStatus
@@ -24,11 +25,7 @@ class FakeCharacterRepository:
         birthday: date | datetime,
         biography: str = "",
     ) -> Character:
-        birthday_datetime = (
-            birthday
-            if isinstance(birthday, datetime)
-            else datetime.combine(birthday, datetime.min.time())
-        )
+        birthday_datetime = birthday if isinstance(birthday, datetime) else datetime.combine(birthday, datetime.min.time())
         character = Character(
             id=len(self.characters) + 1,
             user_id=user_id,
@@ -178,4 +175,23 @@ class FakeVoteRepository:
         for vote in self.votes:
             if vote.character_id == character_id:
                 return vote
+        return None
+
+
+class FakeSubscriptionRepository:
+    def __init__(self, subscriptions: list[Subscription] | None = None) -> None:
+        self.subscriptions = subscriptions or []
+
+    def subscribe(self, user_id: UserId, character_author_id: UserId, character_id: CharacterId) -> Subscription:
+        subscription = Subscription(follower_id=user_id, character_author_id=character_author_id, character_id=character_id, followed_at=datetime.now(UTC))
+        self.subscriptions.append(subscription)
+        return subscription
+
+    async def get_follower_subscriptions(self, user_id: UserId) -> Sequence[Subscription] | None:
+        return [sub for sub in self.subscriptions if sub.follower_id == user_id]
+
+    async def get_follower_subscription_by_character(self, user_id: UserId, character_id: CharacterId) -> Subscription | None:
+        for sub in self.subscriptions:
+            if sub.follower_id == user_id and sub.character_id == character_id:
+                return sub
         return None

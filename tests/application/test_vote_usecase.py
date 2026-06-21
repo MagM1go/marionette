@@ -10,7 +10,8 @@ from marionette.domain.entities.character import Character
 from marionette.domain.entities.vote import Vote
 from marionette.domain.exceptions import CharacterNotFound, VoteOnCooldown
 from marionette.domain.services.rating_service import RatingChangeReason
-from tests.fakes import FakeCharacterRepository, FakeTransaction, FakeVoteRepository
+from marionette.domain.entities.subscription import Subscription
+from tests.fakes import FakeCharacterRepository, FakeSubscriptionRepository, FakeTransaction, FakeVoteRepository
 
 
 @pytest.mark.asyncio
@@ -18,12 +19,16 @@ async def test_vote_for_increases_character_rating(
     character_factory: Callable[..., Character],
     character_repo_factory: Callable[[list[Character] | None], FakeCharacterRepository],
     vote_repo_factory: Callable[[list[Vote] | None], FakeVoteRepository],
+    subscription_factory: Callable[..., Subscription],
+    subscription_repo_factory: Callable[[list[Subscription] | None], FakeSubscriptionRepository],
     fake_transaction: FakeTransaction,
 ) -> None:
     now = datetime(2026, 1, 1, 12, tzinfo=UTC)
     character = character_factory(user_id=101, rating=20)
     repo = character_repo_factory([character])
     vote_repo = vote_repo_factory(None)
+    subscription = subscription_factory(follower_id=100, character_author_id=101, character_id=character.id)
+    subscription_repo = subscription_repo_factory([subscription])
     rating_service = Mock()
     rating_service.inc_character_rating.return_value = 7
 
@@ -32,6 +37,7 @@ async def test_vote_for_increases_character_rating(
         character_repo=repo,
         vote_repo=vote_repo,
         transaction=fake_transaction,
+        subscription_repo=subscription_repo
     ).vote_for(UserId(100), UserId(101), "Airi", now)
 
     assert character.rating == 27
@@ -53,12 +59,16 @@ async def test_vote_for_passes_agency_flag_when_character_has_agency(
     character_factory: Callable[..., Character],
     character_repo_factory: Callable[[list[Character] | None], FakeCharacterRepository],
     vote_repo_factory: Callable[[list[Vote] | None], FakeVoteRepository],
+    subscription_factory: Callable[..., Subscription],
+    subscription_repo_factory: Callable[[list[Subscription] | None], FakeSubscriptionRepository],
     fake_transaction: FakeTransaction,
 ) -> None:
     now = datetime(2026, 1, 1, 12, tzinfo=UTC)
     character = character_factory(user_id=101, rating=20, agency_id=3)
     repo = character_repo_factory([character])
     vote_repo = vote_repo_factory(None)
+    subscription = subscription_factory(follower_id=100, character_author_id=101, character_id=character.id)
+    subscription_repo = subscription_repo_factory([subscription])
     rating_service = Mock()
     rating_service.inc_character_rating.return_value = 3
 
@@ -67,6 +77,7 @@ async def test_vote_for_passes_agency_flag_when_character_has_agency(
         character_repo=repo,
         vote_repo=vote_repo,
         transaction=fake_transaction,
+        subscription_repo=subscription_repo
     ).vote_for(UserId(100), UserId(101), "Airi", now)
 
     assert character.rating == 23
@@ -85,6 +96,8 @@ async def test_vote_for_raises_when_character_vote_is_on_global_cooldown(
     character_repo_factory: Callable[[list[Character] | None], FakeCharacterRepository],
     vote_factory: Callable[..., Vote],
     vote_repo_factory: Callable[[list[Vote] | None], FakeVoteRepository],
+    subscription_factory: Callable[..., Subscription],
+    subscription_repo_factory: Callable[[list[Subscription] | None], FakeSubscriptionRepository],
     fake_transaction: FakeTransaction,
 ) -> None:
     now = datetime(2026, 1, 1, 12, tzinfo=UTC)
@@ -92,6 +105,8 @@ async def test_vote_for_raises_when_character_vote_is_on_global_cooldown(
     vote = vote_factory(character_id=10, voted_by=999, voted_at=now - timedelta(hours=1))
     repo = character_repo_factory([character])
     vote_repo = vote_repo_factory([vote])
+    subscription = subscription_factory(follower_id=100, character_author_id=101, character_id=character.id)
+    subscription_repo = subscription_repo_factory([subscription])
     rating_service = Mock()
     rating_service.inc_character_rating.return_value = 7
 
@@ -101,6 +116,7 @@ async def test_vote_for_raises_when_character_vote_is_on_global_cooldown(
             character_repo=repo,
             vote_repo=vote_repo,
             transaction=fake_transaction,
+            subscription_repo=subscription_repo
         ).vote_for(UserId(100), UserId(101), "Airi", now)
 
     assert error.value.character_name == "Airi"
@@ -118,6 +134,8 @@ async def test_vote_for_updates_existing_vote_after_cooldown(
     character_repo_factory: Callable[[list[Character] | None], FakeCharacterRepository],
     vote_factory: Callable[..., Vote],
     vote_repo_factory: Callable[[list[Vote] | None], FakeVoteRepository],
+    subscription_factory: Callable[..., Subscription],
+    subscription_repo_factory: Callable[[list[Subscription] | None], FakeSubscriptionRepository],
     fake_transaction: FakeTransaction,
 ) -> None:
     now = datetime(2026, 1, 1, 12, tzinfo=UTC)
@@ -125,6 +143,8 @@ async def test_vote_for_updates_existing_vote_after_cooldown(
     vote = vote_factory(character_id=10, voted_by=999, voted_at=now - timedelta(hours=25))
     repo = character_repo_factory([character])
     vote_repo = vote_repo_factory([vote])
+    subscription = subscription_factory(follower_id=100, character_author_id=101, character_id=character.id)
+    subscription_repo = subscription_repo_factory([subscription])
     rating_service = Mock()
     rating_service.inc_character_rating.return_value = 4
 
@@ -133,6 +153,7 @@ async def test_vote_for_updates_existing_vote_after_cooldown(
         character_repo=repo,
         vote_repo=vote_repo,
         transaction=fake_transaction,
+        subscription_repo=subscription_repo
     ).vote_for(UserId(100), UserId(101), "Airi", now)
 
     assert character.rating == 24
@@ -147,10 +168,13 @@ async def test_vote_for_updates_existing_vote_after_cooldown(
 async def test_vote_for_raises_when_character_missing(
     character_repo_factory: Callable[[list[Character] | None], FakeCharacterRepository],
     vote_repo_factory: Callable[[list[Vote] | None], FakeVoteRepository],
+    subscription_factory: Callable[..., Subscription],
+    subscription_repo_factory: Callable[[list[Subscription] | None], FakeSubscriptionRepository],
     fake_transaction: FakeTransaction,
 ) -> None:
     now = datetime(2026, 1, 1, 12, tzinfo=UTC)
     repo = character_repo_factory([])
+    subscription_repo = subscription_repo_factory([])
     vote_repo = vote_repo_factory([])
     rating_service = Mock()
 
@@ -160,6 +184,7 @@ async def test_vote_for_raises_when_character_missing(
             character_repo=repo,
             vote_repo=vote_repo,
             transaction=fake_transaction,
+            subscription_repo=subscription_repo
         ).vote_for(UserId(100), UserId(101), "Airi", now)
 
     assert error.value.name == "Airi"
