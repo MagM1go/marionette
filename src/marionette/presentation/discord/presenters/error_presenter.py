@@ -14,6 +14,8 @@ _MESSAGES: dict[type, str] = {
     exc.OnboardingRulesAlreadyAcceptedError: "Вы уже приняли правила. Повторно нажимать на кнопку не нужно.",
     exc.CharacterIsAbandoned: "Персонаж был исключён из системы. Увы, но это действие выполнить над ним нельзя",
     exc.CharacterAlreadyActive: "Персонаж активен и подобное действие в его состоянии выполнить нельзя",
+    exc.CanNotVoteYourself: "Вы хитры. Но голосовать за себя нельзя.",
+    exc.MustBeSubscribed: "Для голосования за персонажа нужно быть его подписчиком.",
     dis_exc.DmsNotAllowed: "Команду нельзя использовать в личных сообщениях.",
     dis_exc.InsufficientPermissions: "У вас недостаточно прав на исполнение. Впрочём, как и обычно.",
     dis_exc.MemberNotFound: "Участник не был найден. Или вышел, или указан не тот.",

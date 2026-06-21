@@ -3,6 +3,7 @@ from .repositories import (
     CharacterRepository,
     OnboardingRepository,
     VoteRepository,
+    SubscriptionRepository
 )
 from .transaction import Transaction
 from .types import AgencyId, CharacterId, LocationId, RoleId, UserId
@@ -15,6 +16,7 @@ __all__ = (
     "LocationId",
     "OnboardingRepository",
     "RoleId",
+    "SubscriptionRepository",
     "Transaction",
     "UserId",
     "VoteRepository",

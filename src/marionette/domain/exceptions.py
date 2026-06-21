@@ -69,3 +69,12 @@ class VoteOnCooldown(DomainException):
         super().__init__()
         self.character_name = character_name
         self.remaining_time = remaining_time
+
+
+class MustBeSubscribed(DomainException): ...
+
+
+class HasNoCharacters(DomainException): ...
+
+
+class CanNotVoteYourself(DomainException): ...
