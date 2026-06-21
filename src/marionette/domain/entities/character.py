@@ -29,15 +29,13 @@ class Character(Base):
 
     user_id: Mapped[int] = mapped_column(BigInteger, index=True)
     name: Mapped[str] = mapped_column(String(255))
-    role: Mapped[Roles | None] = mapped_column()
+    role: Mapped[Roles] = mapped_column()
     agency_role: Mapped[AgencyRoles | None] = mapped_column(server_default=None)
     biography: Mapped[str] = mapped_column()
     rating: Mapped[int] = mapped_column(default=0)
     birthday: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
-    )
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     agency_id: Mapped[int | None] = mapped_column(ForeignKey("agencies.id"))
     agency: Mapped[Agency] = relationship("Agency", back_populates="characters")
     entered_channel_id: Mapped[int | None] = mapped_column(BigInteger)
@@ -47,26 +45,16 @@ class Character(Base):
 
     @t.override
     def __repr__(self) -> str:
-        return (
-            f"<Character(id={self.id}, user_id={self.user_id}, "
-            f"name='{self.name}', role={self.role}, "
-            f"is_active={self.is_active}, rating={self.rating})>"
-        )
+        return f"<Character(id={self.id}, user_id={self.user_id}, name='{self.name}', role={self.role}, is_active={self.is_active}, rating={self.rating})>"
 
     @property
     def age(self) -> int:
         today = datetime.now(UTC)
-        return (
-            today.year
-            - self.birthday.year
-            - ((today.month, today.day) < (self.birthday.month, self.birthday.day))
-        )
+        return today.year - self.birthday.year - ((today.month, today.day) < (self.birthday.month, self.birthday.day))
 
     def abandon(self) -> None:
         if self.status == CharacterStatus.MODERATION or self.status == CharacterStatus.ABANDONED:
-            raise ValueError(
-                "Cannot abandon a character that has not passed moderation or is already abandoned."
-            )
+            raise ValueError("Cannot abandon a character that has not passed moderation or is already abandoned.")
 
         self.status = CharacterStatus.ABANDONED
 
