@@ -3,7 +3,7 @@ from dishka import Provider, Scope, provide
 from marionette.application.protocols import AgencyRepository, CharacterRepository, OnboardingRepository, SubscriptionRepository, VoteRepository
 from marionette.infrastructure.repositories.agency_repository import SqlAlchemyAgencyRepository
 from marionette.infrastructure.repositories.character_repository import SqlAlchemyCharacterRepository
-from marionette.infrastructure.repositories.follower_repository import SqlAlchemySubscriptionRepository
+from marionette.infrastructure.repositories.subscription_repository import SqlAlchemySubscriptionRepository
 from marionette.infrastructure.repositories.onboarding_repository import SqlAlchemyOnboardingRepository
 from marionette.infrastructure.repositories.vote_repository import SqlAlchemyVoteRepository
 

@@ -25,4 +25,4 @@ class SqlAlchemySubscriptionRepository(SubscriptionRepository):
 
     async def get_follower_subscription_by_character(self, user_id: UserId, character_id: CharacterId) -> Subscription | None:
         stmt = select(Subscription).where(Subscription.follower_id == user_id, Subscription.character_id == character_id)
-        return await self._session.scalar(stmt)
+        return await self._session.scalar(stmt)  # type: ignore[no-any-return]
