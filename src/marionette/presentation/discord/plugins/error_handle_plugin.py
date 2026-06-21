@@ -12,9 +12,6 @@ plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 @plugin.include
 @crescent.catch_command(DomainException, DiscordException, TimeoutError)
 async def catch_command_exception(exception: DomainException | DiscordException, context: crescent.Context) -> None:
-    if exception is hikari.NotFoundError:
-        return
-
     if context._has_deferred_response:
         await context.edit(content=None, embed=ErrorPresenter.present(exception), components=None)
     else:

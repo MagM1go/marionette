@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 
 from marionette.application.protocols import CharacterRepository, Transaction
-from marionette.application.protocols.types import AgencyId, UserId
+from marionette.application.protocols.types import UserId
 from marionette.domain.policies.character_policy import CharacterPolicy
 
 from marionette.domain.roles import Roles
@@ -16,7 +16,7 @@ class CharacterInfo:
     birthday: datetime
     rating: int
     is_in_location: bool
-    agency_id: AgencyId | None
+    agency_id: int | None
     
 
 class CharacterLookupByUserUseCase:
@@ -39,5 +39,5 @@ class CharacterLookupByUserUseCase:
                 birthday=character.birthday,
                 rating=character.rating,
                 is_in_location=character.is_active,
-                agency_id=character.agency_id 
+                agency_id=character.agency_id
             )
