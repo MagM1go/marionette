@@ -12,6 +12,8 @@ from marionette.bootstrap.di.providers.infra_provider import InfrastructureProvi
 from marionette.bootstrap.di.providers.repository_provider import RepositoryProvider
 from marionette.bootstrap.di.providers.usecases_provider import UseCaseProvider
 
+from marionette.bootstrap.di.providers.queries_provider import QueryProvider
+
 
 def _init_container(context: dict[Any, Any]) -> AsyncContainer:
     providers = (
@@ -19,6 +21,7 @@ def _init_container(context: dict[Any, Any]) -> AsyncContainer:
         InfrastructureProvider(),
         UseCaseProvider(),
         RepositoryProvider(),
+        QueryProvider()
     )
     return make_async_container(*providers, context=context)
 
