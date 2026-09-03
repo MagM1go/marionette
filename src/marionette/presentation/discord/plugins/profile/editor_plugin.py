@@ -12,4 +12,5 @@ plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 @profile_group.child
 @crescent.command(guild=config.discord.main_guild_id, name="editor", description="Команда, позволяющая менять свой профиль")
 class ProfileEditorCommand:
-    async def callback(self, ctx: crescent.Context) -> None: ...
+    async def callback(self, ctx: crescent.Context) -> None:
+        await ctx.respond("ничо нет(", ephemeral=True)

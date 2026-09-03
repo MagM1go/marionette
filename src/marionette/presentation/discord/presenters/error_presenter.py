@@ -16,6 +16,7 @@ _MESSAGES: dict[type, str] = {
     exc.CharacterAlreadyActive: "Персонаж активен и подобное действие в его состоянии выполнить нельзя",
     exc.CanNotVoteYourself: "Вы хитры. Но голосовать за себя нельзя.",
     exc.MustBeSubscribed: "Для голосования за персонажа нужно быть его подписчиком.",
+    exc.CharacterIsEqual: "У вас уже есть похожий персонаж. Создайте что-нибудь новое.",
     dis_exc.DmsNotAllowed: "Команду нельзя использовать в личных сообщениях.",
     dis_exc.InsufficientPermissions: "У вас недостаточно прав на исполнение. Впрочём, как и обычно.",
     dis_exc.MemberNotFound: "Участник не был найден. Или вышел, или указан не тот.",

@@ -13,6 +13,7 @@ from marionette.application.usecases.onboarding.move_onboarding_to_rules_usecase
 from marionette.application.usecases.onboarding.reset_onboarding_usecase import OnboardingResetUseCase
 from marionette.application.usecases.onboarding.start_onboarding_usecase import StartOnboardingUseCase
 from marionette.application.usecases.paparazzi_usecase import PaparazziUseCase
+from marionette.application.usecases.profile.summary_usecase import ProfileSummaryUseCase
 from marionette.application.usecases.register_usecase import RegisterUseCase
 from marionette.application.usecases.season_reset_usecase import ResetSeasonRatingUseCase
 from marionette.application.usecases.vote_usecase import VoteUseCase
@@ -44,3 +45,4 @@ class UseCaseProvider(Provider):
     approve_usecase = provide(ApproveCharacterUseCase)
     decline_usecase = provide(DeclineCharacterUseCase)
     ban_usecase = provide(BanCharacterUseCase)
+    summary_usecase = provide(ProfileSummaryUseCase)
