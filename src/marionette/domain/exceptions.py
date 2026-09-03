@@ -43,6 +43,9 @@ class CharacterNotActive(DomainException):
         self.name = name
 
 
+class CharacterIsEqual(DomainException): ...
+
+
 class TooManyCharacters(DomainException): ...
 
 

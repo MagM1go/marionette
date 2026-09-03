@@ -44,6 +44,17 @@ class Character(Base):
     status: Mapped[CharacterStatus] = mapped_column(default=CharacterStatus.MODERATION)
 
     @t.override
+    def __eq__(self, value: object, /) -> bool:
+        if isinstance(value, Character):
+            return hash(self) == hash(value)
+
+        return True
+
+    @t.override
+    def __hash__(self) -> int:
+        return hash(self.name) + hash(self.biography)
+
+    @t.override
     def __repr__(self) -> str:
         return f"<Character(id={self.id}, user_id={self.user_id}, name='{self.name}', role={self.role}, is_active={self.is_active}, rating={self.rating})>"
 
