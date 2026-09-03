@@ -2,6 +2,7 @@ import typing as t
 
 import attrs
 import hikari
+from hikari.api.special_endpoints import LabelComponentBuilder
 import miru
 from hikari.impl import entity_factory as hikari_entity_factory
 from hikari.impl import special_endpoints as hikari_impl
@@ -85,7 +86,8 @@ class StringSelect(ModalItemV2):
     def value(self) -> str | None:
         return self._values[0] if self._values else None
 
-    def build_modal_component(self) -> t.Any:
+    @t.override
+    def build_modal_component(self) -> LabelComponentBuilder:
         menu = hikari_impl.TextSelectMenuBuilder(
             custom_id=self.custom_id,
             placeholder=self.placeholder or hikari.UNDEFINED,

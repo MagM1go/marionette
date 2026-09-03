@@ -13,24 +13,26 @@ from marionette.presentation.discord.presenters.registration_presenter import (
 from marionette.presentation.discord.ui.wrapper.modal_v2 import ModalV2
 from marionette.presentation.discord.ui.wrapper.string_select_menu import StringSelect
 
+from marionette.presentation.discord.ui.wrapper.text_input_extension import TextInputExtension
+
 
 class RegistrationModal(ModalV2):
     def __init__(self) -> None:
         super().__init__("Регистрация", custom_id="registration_window", timeout=None)
 
-    name = miru.TextInput(
+    name = TextInputExtension(
         custom_id="name",
         label="Имя или псевдоним персонажа",
         required=True,
         placeholder="Серафим / Анна Браун / Фантом",
     )
-    birthday = miru.TextInput(
+    birthday = TextInputExtension(
         custom_id="birthday",
         label="День рождения персонажа (дд.мм.гггг)",
         required=True,
         placeholder="31.10.2010",
     )
-    mini_bio = miru.TextInput(
+    mini_bio = TextInputExtension(
         custom_id="mini_bio",
         label="Биография (коротко, мин. 200 символов)",
         required=True,

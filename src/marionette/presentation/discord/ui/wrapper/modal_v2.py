@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import asyncio
-from abc import ABC, abstractmethod
 import itertools
 import sys
 import typing as t
+from abc import ABC, abstractmethod
 
 import hikari
 import miru
@@ -17,9 +17,7 @@ class ModalItemV2(miru.abc.ModalItem, ABC):
         raise NotImplementedError
 
     def _build(self, action_row: hikari.api.ModalActionRowBuilder) -> None:
-        raise RuntimeError(
-            f"{type(self).__name__} is a modal v2 item and cannot be built into ModalActionRowBuilder"
-        )
+        raise RuntimeError(f"{type(self).__name__} is a modal v2 item and cannot be built into ModalActionRowBuilder")
 
 
 class ModalV2(miru.Modal):
@@ -27,24 +25,18 @@ class ModalV2(miru.Modal):
         if not self.children:
             return []
 
-        self._children.sort(
-            key=lambda i: i._rendered_row if i._rendered_row is not None else sys.maxsize
-        )
+        self._children.sort(key=lambda i: i._rendered_row if i._rendered_row is not None else sys.maxsize)
 
         components: list[t.Any] = []
 
         for _, items in itertools.groupby(self.children, lambda i: i._rendered_row):
-            s_items = sorted(
-                items, key=lambda i: i.position if i.position is not None else sys.maxsize
-            )
+            s_items = sorted(items, key=lambda i: i.position if i.position is not None else sys.maxsize)
 
             v2_items = [item for item in s_items if isinstance(item, ModalItemV2)]
             legacy_items = [item for item in s_items if not isinstance(item, ModalItemV2)]
 
             if v2_items and legacy_items:
-                raise RuntimeError(
-                    "Cannot mix legacy modal items and v2 modal items in the same row"
-                )
+                raise RuntimeError("Cannot mix legacy modal items and v2 modal items in the same row")
 
             if v2_items:
                 for v2_item in v2_items:
