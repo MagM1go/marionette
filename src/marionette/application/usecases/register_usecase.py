@@ -3,7 +3,7 @@ from datetime import datetime
 from marionette.application.protocols import CharacterRepository
 from marionette.application.protocols.transaction import Transaction
 from marionette.application.protocols.types import CharacterId, UserId
-from marionette.domain.exceptions import TooManyCharacters
+from marionette.domain.exceptions import CharacterIsEqual, TooManyCharacters
 from marionette.domain.roles import Roles
 
 
@@ -33,6 +33,11 @@ class RegisterUseCase:
                 birthday=birthday,
                 biography=biography,
             )
+
+            for c in characters:
+                if c == character:
+                    await self._transaction.rollback()
+                    raise CharacterIsEqual()
 
             await self._transaction.commit()
 
