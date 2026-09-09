@@ -18,3 +18,5 @@ alembic/versions/*
 .nox
 .coverage
 coverage.xml
+
+tmp/
