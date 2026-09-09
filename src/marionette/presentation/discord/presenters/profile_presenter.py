@@ -15,8 +15,8 @@ class ProfilePresenter:
             description=f"Подписан на **{len(summary.subscriptions)}** инфлюенсеров\n"
             + f"Любимая маска: `{most_chosen_role}`\n"
             + f"Средний возраст куколок: `{summary.average_age or 'отсутствует'}`",
-            footer=hikari.EmbedFooter(text=f"Вызвал {issuer_id}", icon=icon_url),  # pyright: ignore[reportArgumentType]
-            thumbnail=hikari.EmbedImage(resource=icon_url),  # pyright: ignore[reportArgumentType]
+            footer=hikari.EmbedFooter(text=f"Вызвал {issuer_id}", icon=icon_url),  # type: ignore
+            thumbnail=hikari.EmbedImage(resource=icon_url),  # type: ignore
         )
 
         return embed
