@@ -16,7 +16,7 @@ from marionette.domain.entities.agency import Agency
 from marionette.domain.entities.character import Character
 from marionette.domain.entities.vote import Vote
 from marionette.domain.roles import Roles
-from marionette.domain.statuses import CharacterStatus
+from marionette.domain.entities.character import CharacterStatus
 from tests.fakes import (
     FakeAgencyRepository,
     FakeCharacterRepository,

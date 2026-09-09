@@ -3,21 +3,14 @@ from datetime import datetime
 from typing import Protocol
 
 from marionette.application.protocols.types import CharacterId, UserId
-from marionette.domain.entities.character import Character
+from marionette.domain.entities.character import Character, CharacterGender
 from marionette.domain.roles import Roles
 
 
 class CharacterRepository(Protocol):
     """Хранилище персонажей игроков."""
 
-    def create(
-        self,
-        user_id: UserId,
-        name: str,
-        role: Roles,
-        birthday: datetime,
-        biography: str
-    ) -> Character | None:
+    def create(self, user_id: UserId, name: str, role: Roles, birthday: datetime, biography: str, gender: CharacterGender) -> Character | None:
         """Создаёт нового персонажа.
 
         Args:

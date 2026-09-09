@@ -27,6 +27,14 @@ class ProfilePresenter:
             hikari.Embed(
                 title=f"{character.name} [{character.id}]",
                 description=character.biography[:4096],
+            ).add_field(
+                name="Дополнительная информация",
+                value=f"Дата рождения: `{character.birthday}` ({character.age})\n"
+                + f"Пол персонажа: `{character.gender}`\n"
+                + f"Агенство: {character.agency} ({character.agency_role})" if character.agency else "",
+            ).add_field(
+                name="Основная роль",
+                value=character.role
             )
             for character in summary.characters
         ]

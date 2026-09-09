@@ -47,6 +47,7 @@ async def tabloid_event(
         response = PaparazziPresenter.present(
             channel_id=entered_character.entered_channel_id,
             character_name=entered_character.name,
+            gender=entered_character.gender
         )
         await event.app.rest.create_message(
             channel=config.discord.tabloid_channel_id, embed=response

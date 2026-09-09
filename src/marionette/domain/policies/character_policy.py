@@ -1,6 +1,6 @@
 from marionette.domain.entities.character import Character
 from marionette.domain.exceptions import CharacterAlreadyActive, CharacterIsAbandoned, CharacterNotFound
-from marionette.domain.statuses import CharacterStatus
+from marionette.domain.entities.character import CharacterStatus
 
 
 class CharacterPolicy:

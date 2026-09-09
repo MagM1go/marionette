@@ -5,12 +5,12 @@ from typing import Self
 
 from marionette.application.protocols.types import AgencyId, CharacterId, UserId
 from marionette.domain.entities.agency import Agency
-from marionette.domain.entities.character import Character
+from marionette.domain.entities.character import Character, CharacterGender
 from marionette.domain.entities.onboarding import OnboardingEvent, OnboardingState, OnboardingStep
 from marionette.domain.entities.subscription import Subscription
 from marionette.domain.entities.vote import Vote
 from marionette.domain.roles import Roles
-from marionette.domain.statuses import CharacterStatus
+from marionette.domain.entities.character import CharacterStatus
 
 
 class FakeCharacterRepository:
@@ -24,6 +24,7 @@ class FakeCharacterRepository:
         role: Roles,
         birthday: date | datetime,
         biography: str = "",
+        gender: CharacterGender = CharacterGender.FEMALE
     ) -> Character:
         birthday_datetime = birthday if isinstance(birthday, datetime) else datetime.combine(birthday, datetime.min.time())
         character = Character(
@@ -38,6 +39,7 @@ class FakeCharacterRepository:
             is_in_performance=False,
             last_exposed_at=None,
             status=CharacterStatus.MODERATION,
+            gender=gender
         )
         self.characters.append(character)
         return character

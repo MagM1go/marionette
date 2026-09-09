@@ -8,7 +8,7 @@ from marionette.application.usecases.exit_usecase import ExitLocationUseCase
 from marionette.bootstrap.config import config
 from marionette.bootstrap.di.container import CrescentContainer
 from marionette.bootstrap.di.inject import Inject, inject
-from marionette.domain.statuses import CharacterStatus
+from marionette.domain.entities.character import CharacterStatus
 from marionette.presentation.discord.presenters.entrance_presenter import EntryExitPresenter
 
 plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()

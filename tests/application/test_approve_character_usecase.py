@@ -12,7 +12,7 @@ from marionette.domain.exceptions import (
     CharacterIsAbandoned,
     CharacterNotFound,
 )
-from marionette.domain.statuses import CharacterStatus
+from marionette.domain.entities.character import CharacterStatus
 from tests.fakes import FakeCharacterRepository, FakeTransaction
 
 

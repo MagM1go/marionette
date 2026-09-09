@@ -1,3 +1,4 @@
+from enum import StrEnum
 import typing as t
 from datetime import UTC, datetime
 
@@ -8,10 +9,23 @@ from sqlalchemy.schema import CheckConstraint, ForeignKey
 from marionette.domain.entities.base import Base
 from marionette.domain.policies.paparazzi_policy import PaparazziPolicy
 from marionette.domain.roles import AgencyRoles, Roles
-from marionette.domain.statuses import CharacterStatus
 
 if t.TYPE_CHECKING:
     from marionette.domain.entities.agency import Agency
+
+
+class CharacterStatus(StrEnum):
+    IS_ACTIVE = "active"
+    """Персонаж играбелен. Не путать с `Character.is_active`."""
+
+    ABANDONED = "abandoned"
+    MODERATION = "moderation"
+
+
+# "оно" не будет, не просите
+class CharacterGender(StrEnum):
+    MALE = "муж."
+    FEMALE = "жен."
 
 
 class Character(Base):
@@ -42,13 +56,14 @@ class Character(Base):
     is_in_performance: Mapped[bool] = mapped_column(Boolean, default=False)
     last_exposed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     status: Mapped[CharacterStatus] = mapped_column(default=CharacterStatus.MODERATION)
+    gender: Mapped[CharacterGender] = mapped_column()
 
     @t.override
     def __eq__(self, value: object, /) -> bool:
         if isinstance(value, Character):
             return hash(self) == hash(value)
 
-        return True
+        return super().__eq__(value)
 
     @t.override
     def __hash__(self) -> int:

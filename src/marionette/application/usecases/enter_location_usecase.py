@@ -8,7 +8,7 @@ from marionette.domain.exceptions import (
     CharacterNotActive,
     CharacterNotFound,
 )
-from marionette.domain.statuses import CharacterStatus
+from marionette.domain.entities.character import CharacterStatus
 
 
 @dataclass

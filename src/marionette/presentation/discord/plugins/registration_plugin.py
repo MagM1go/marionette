@@ -13,6 +13,8 @@ from marionette.domain.roles import Roles
 from marionette.presentation.discord.helpers import UserInterfaceHelper
 from marionette.presentation.discord.presenters.registration_presenter import RegistrationPresenter
 
+from marionette.domain.entities.character import CharacterGender
+
 plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 
 
@@ -37,6 +39,7 @@ async def on_register_modal_submit(
     role = UserInterfaceHelper.get_modal_value(raw_modal, "role")
     biography = UserInterfaceHelper.get_modal_value(raw_modal, "mini_bio")
     raw_birthday = UserInterfaceHelper.get_modal_value(raw_modal, "birthday")
+    gender = UserInterfaceHelper.get_modal_value(raw_modal, "gender")
 
     character_id = await usecase.register(
         user_id=UserId(event.interaction.user.id),
@@ -44,6 +47,7 @@ async def on_register_modal_submit(
         role=Roles(role),
         birthday=birthday,
         biography=biography,
+        gender=CharacterGender(gender)
     )
     await plugin.app.rest.create_message(
         config.discord.moderation_channel_id,

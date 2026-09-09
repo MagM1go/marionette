@@ -3,7 +3,7 @@ from marionette.application.protocols.repositories import CharacterRepository
 from marionette.application.protocols.types import CharacterId
 from marionette.domain.exceptions import CharacterIsAbandoned
 from marionette.domain.policies.character_policy import CharacterPolicy
-from marionette.domain.statuses import CharacterStatus
+from marionette.domain.entities.character import CharacterStatus
 
 
 class BanCharacterUseCase:

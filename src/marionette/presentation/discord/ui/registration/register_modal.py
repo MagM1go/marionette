@@ -12,8 +12,9 @@ from marionette.presentation.discord.presenters.registration_presenter import (
 )
 from marionette.presentation.discord.ui.wrapper.modal_v2 import ModalV2
 from marionette.presentation.discord.ui.wrapper.string_select_menu import StringSelect
-
 from marionette.presentation.discord.ui.wrapper.text_input_extension import TextInputExtension
+
+from marionette.domain.entities.character import CharacterGender
 
 
 class RegistrationModal(ModalV2):
@@ -44,6 +45,11 @@ class RegistrationModal(ModalV2):
         custom_id="role",
         label="Роль в шоу",
         options=[miru.SelectOption(label=r, value=r) for r in Roles],
+    )
+    gender = StringSelect(
+        custom_id="gender",
+        label="Пол персонажа",
+        options=[miru.SelectOption(label=r, value=r) for r in CharacterGender],
     )
 
     async def modal_check(self, context: miru.ModalContext) -> bool:

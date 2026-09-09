@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from marionette.domain.entities.character import Character
 from marionette.domain.entities.vote import Vote
 from marionette.domain.exceptions import CharacterNotFound
-from marionette.domain.statuses import CharacterStatus
+from marionette.domain.entities.character import CharacterStatus
 
 
 class VotePolicy:
