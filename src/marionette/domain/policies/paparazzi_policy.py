@@ -1,6 +1,7 @@
 import typing as t
 
 from marionette.domain.exceptions import CharacterNotInLocation, CharacterWithoutAgencyError
+from marionette.domain.roles import Roles
 from marionette.domain.services.rating_service import RatingChangeReason, RatingService
 
 if t.TYPE_CHECKING:
@@ -12,10 +13,14 @@ class PaparazziPolicy:
     EXPOSE_CHANCE: tuple[float, float] = (0.2, 0.24)
 
     @staticmethod
+    def is_viewer(character: Character) -> bool:
+        return character.role == Roles.VIEWER
+
+    @staticmethod
     def ensure_character_in_location(character: Character) -> None:
         if not character.entered_channel_id:
             raise CharacterNotInLocation()
-            
+
     @staticmethod
     def ensure_character_in_agency(character: Character) -> None:
         if character.agency is None:
@@ -26,22 +31,16 @@ class PaparazziPolicy:
         return cls.EXPOSE_CHANCE[0] < random_value < cls.EXPOSE_CHANCE[1]
 
     @classmethod
-    def calculate_character_rating(
-        cls, service: RatingService, character: Character
-    ) -> tuple[int, int]:
-        character_new_rating = service.dec_character_rating(
-            rating=character.rating, reason=RatingChangeReason.NEWS_NEGATIVE
-        )
+    def calculate_character_rating(cls, service: RatingService, character: Character) -> tuple[int, int]:
+        character_new_rating = service.dec_character_rating(rating=character.rating, reason=RatingChangeReason.NEWS_NEGATIVE)
         character_loss = character.rating - character_new_rating
 
         return character_new_rating, character_loss
 
     @classmethod
-    def calculate_agency_rating(
-        cls, service: RatingService, character: Character, character_loss: int
-    ) -> int:
+    def calculate_agency_rating(cls, service: RatingService, character: Character, character_loss: int) -> int:
         cls.ensure_character_in_agency(character)
-        
+
         return service.dec_agency_rating_from_member(
             agency_rating=character.agency.rating,
             character_loss=character_loss,
@@ -49,13 +48,9 @@ class PaparazziPolicy:
 
     @staticmethod
     def recalculate_exposed_rating(service: RatingService, character: Character) -> None:
-        character_new_rating, character_loss = PaparazziPolicy.calculate_character_rating(
-            service, character
-        )
+        character_new_rating, character_loss = PaparazziPolicy.calculate_character_rating(service, character)
 
         if character.agency_id:
-            character.agency.rating = PaparazziPolicy.calculate_agency_rating(
-                service, character, character_loss
-            )
+            character.agency.rating = PaparazziPolicy.calculate_agency_rating(service, character, character_loss)
 
         character.rating = character_new_rating

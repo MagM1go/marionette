@@ -4,6 +4,7 @@ from datetime import UTC, datetime
 
 from marionette.application.protocols import Transaction
 from marionette.domain.entities.character import Character
+from marionette.domain.exceptions import CharacterIsViewer
 from marionette.domain.policies.paparazzi_policy import PaparazziPolicy
 from marionette.domain.services.rating_service import RatingService
 
@@ -20,6 +21,9 @@ class PaparazziUseCase:
         self._transaction = transaction
 
     async def expose(self, character: Character) -> PaparazziExposeData | None:
+        if PaparazziPolicy.is_viewer(character):
+            raise CharacterIsViewer()
+
         PaparazziPolicy.ensure_character_in_location(character)
         if character.entered_channel_id is None:
             return None
@@ -29,14 +33,11 @@ class PaparazziUseCase:
             return None
 
         new_char_rating, loss = PaparazziPolicy.calculate_character_rating(self._service, character)
-
         async with self._transaction as transaction:
             character.expose_to_paparazzi(new_char_rating, now)
 
             if character.agency_id:
-                new_agency_rating = PaparazziPolicy.calculate_agency_rating(
-                    self._service, character, loss
-                )
+                new_agency_rating = PaparazziPolicy.calculate_agency_rating(self._service, character, loss)
                 PaparazziPolicy.ensure_character_in_agency(character)
 
                 character.agency.rating = new_agency_rating

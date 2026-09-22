@@ -37,6 +37,9 @@ class CharacterNotInLocation(DomainException): ...
 class CharacterIsTooYoung(DomainException): ...
 
 
+class CharacterIsViewer(DomainException): ...
+
+
 class CharacterNotActive(DomainException):
     def __init__(self, name: str) -> None:
         super().__init__()

@@ -2,6 +2,7 @@ from enum import StrEnum
 
 
 class Roles(StrEnum):
+    VIEWER = "Зритель"
     IDOL = "Айдол"
     ACTOR = "Актёр"
     MANGAKA = "Мангака"
