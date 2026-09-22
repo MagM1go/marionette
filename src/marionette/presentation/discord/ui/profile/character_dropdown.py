@@ -36,14 +36,11 @@ class ProfileCheckCharacterTextSelect(miru.TextSelect):
         character_index = next(i for i in range(len(self.summary.characters)) if self.summary.characters[i].name == self.values[0])
 
         pages = ProfilePresenter.present_character_pages(self.summary.characters)
-        character_biographies = {
-            i: ProfilePresenter.present_character_biography_pages(self.summary.characters[i])
-            for i in range(len(self.summary.characters))
-        }
+        character_biographies = {i: ProfilePresenter.present_character_biography_pages(self.summary.characters[i]) for i in range(len(self.summary.characters))}
 
         navigator = nav.NavigatorView(pages=pages)
         navigator.add_item(BiographyButton(character_biographies))
-        
+
         builder = await navigator.build_response_async(context.client, start_at=character_index)
         builder.set_flags(hikari.MessageFlag.EPHEMERAL)
         await builder.create_initial_response(context.interaction)
