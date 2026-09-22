@@ -7,9 +7,23 @@ from marionette.application.usecases.profile.summary_usecase import SummaryData
 from marionette.presentation.discord.presenters.profile_presenter import ProfilePresenter
 
 
-class MyNavButton(nav.NavButton):
+class BiographyButton(nav.NavButton):
+    def __init__(self, biographies: dict[int, list[hikari.Embed]]) -> None:
+        super().__init__("Биография")
+
+        self.biographies = biographies
+
+    async def callback(self, context: ViewContext, /) -> None:
+        navigator = nav.NavigatorView(pages=self.biographies[self.view.current_page])
+
+        builder = await navigator.build_response_async(context.client)
+        builder.set_flags(hikari.MessageFlag.EPHEMERAL)
+        await builder.create_initial_response(context.interaction)
+
+        context.client.start_view(navigator)
+
     async def before_page_change(self) -> None:
-        self.label = f"Страница: {self.view.current_page + 1}"
+        self.view._children[-1] = self
 
 
 class ProfileCheckCharacterTextSelect(miru.TextSelect):
@@ -19,18 +33,20 @@ class ProfileCheckCharacterTextSelect(miru.TextSelect):
         self.summary = summary
 
     async def callback(self, context: ViewContext, /) -> None:
-        biography_buttons = [
-            nav.FirstButton(),
-            nav.PrevButton(),
-            nav.NextButton(),
-            nav.LastButton(),
-            nav.NavButton(label="Страница", disabled=True),
-        ]
-        navigator = nav.NavigatorView(pages=ProfilePresenter.present_character_pages(self.summary), items=biography_buttons)
+        character_index = next(i for i in range(len(self.summary.characters)) if self.summary.characters[i].name == self.values[0])
 
-        builder = await navigator.build_response_async(context.client)
+        pages = ProfilePresenter.present_character_pages(self.summary.characters)
+        character_biographies = {
+            i: ProfilePresenter.present_character_biography_pages(self.summary.characters[i])
+            for i in range(len(self.summary.characters))
+        }
+
+        navigator = nav.NavigatorView(pages=pages)
+        navigator.add_item(BiographyButton(character_biographies))
+        
+        builder = await navigator.build_response_async(context.client, start_at=character_index)
         builder.set_flags(hikari.MessageFlag.EPHEMERAL)
-        await builder.send_to_channel(context.channel_id)
+        await builder.create_initial_response(context.interaction)
 
         context.client.start_view(navigator)
 
