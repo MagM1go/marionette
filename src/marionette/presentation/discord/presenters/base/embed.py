@@ -17,6 +17,6 @@ def bot_embed(
     return (
         hikari.Embed(title=title, description=description, color=_EMBED_COLOR, timestamp=datetime.now(UTC))
         .set_footer(text=footer.text, icon=footer.icon)
-
+        .set_image(image)
         .set_thumbnail(thumbnail)
     )

@@ -26,8 +26,11 @@ class ProfileCheckCommand:
         if summary.characters:
             profile_view = ProfileCheckCharacterDropdown(summary)
             await ctx.respond(
-                embed=ProfilePresenter.present(ctx.user.id, ctx.user.make_avatar_url(), self.user.username, summary=summary), components=profile_view
+                embed=ProfilePresenter.present(ctx.user.id, ctx.user.make_avatar_url(), self.user.make_avatar_url(), self.user.username, summary=summary),
+                components=profile_view,
             )
             plugin.model.component_client.start_view(profile_view)
         else:
-            await ctx.respond(embed=ProfilePresenter.present(ctx.user.id, ctx.user.make_avatar_url(), self.user.username, summary=summary))
+            await ctx.respond(
+                embed=ProfilePresenter.present(ctx.user.id, ctx.user.make_avatar_url(), self.user.make_avatar_url(), self.user.username, summary=summary)
+            )
