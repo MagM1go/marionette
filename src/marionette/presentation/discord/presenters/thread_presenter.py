@@ -7,10 +7,5 @@ class ThreadPresenter:
         return "Ветка успешно создана"
 
     @staticmethod
-    def present(name: str, description: str) -> hikari.impl.ContainerComponentBuilder:
-        return (
-            hikari.impl.ContainerComponentBuilder()
-            .add_text_display(content=f"# > {name}")
-            .add_text_display(content=description)
-            .add_text_display(content="-# Будь осторожен.")
-        )
+    def present(name: str, description: str) -> hikari.impl.TextDisplayComponentBuilder:
+        return hikari.impl.TextDisplayComponentBuilder(content=f"# {name}\n```{description}```")
