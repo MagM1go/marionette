@@ -4,4 +4,7 @@ from marionette.domain.entities.thread import Thread
 
 
 class ThreadRepository(t.Protocol):
-    def create(self, name: str, description: str) -> Thread: ...
+    def create(self, name: str, description: str) -> Thread:
+        """Создание ролевой ветки."""
+        ...
+        

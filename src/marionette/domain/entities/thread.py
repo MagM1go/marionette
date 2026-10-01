@@ -1,6 +1,3 @@
-from typing import Any
-
-from sqlalchemy import JSON
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm.base import Mapped
 
@@ -13,9 +10,4 @@ class Thread(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column()
     description: Mapped[str] = mapped_column()
-    payload: Mapped[dict[str, Any]] = mapped_column(
-        "metadata",
-        JSON,
-        nullable=False,
-        default=dict,
-    )
+    is_paparazzi_trigger: Mapped[bool] = mapped_column(default=False)
