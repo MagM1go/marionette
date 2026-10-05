@@ -8,7 +8,6 @@ from marionette.bootstrap.config import config
 from marionette.bootstrap.di.container import CrescentContainer
 from marionette.bootstrap.di.inject import Inject, inject
 from marionette.domain.exceptions import CharacterNotFound
-
 from marionette.presentation.discord.presenters.subscribe_presenter import SubscribePresenter
 
 plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
