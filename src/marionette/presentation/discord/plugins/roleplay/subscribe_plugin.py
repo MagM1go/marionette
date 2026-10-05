@@ -16,7 +16,6 @@ inject_plugin = inject(lambda: plugin.model.dishka())
 
 @plugin.include
 @crescent.command(guild=config.discord.main_guild_id, name="subscribe", description="Начать отслеживать понравившегося автора.")
-@inject_plugin
 class SubscribeCommand:
     owner = crescent.option(hikari.User, "автор персонажа")
     character = crescent.option(str, "персонаж, за которым хотите следить")

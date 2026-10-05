@@ -16,6 +16,7 @@ from marionette.application.usecases.paparazzi_usecase import PaparazziUseCase
 from marionette.application.usecases.profile.summary_usecase import ProfileSummaryUseCase
 from marionette.application.usecases.register_usecase import RegisterUseCase
 from marionette.application.usecases.season_reset_usecase import ResetSeasonRatingUseCase
+from marionette.application.usecases.subscribe_usecase import SubscribeUseCase
 from marionette.application.usecases.vote_usecase import VoteUseCase
 from marionette.domain.services.rating_service import RatingService
 from marionette.presentation.discord.ui.onboarding.dispatcher import OnboardingActionDispatcher
@@ -46,3 +47,4 @@ class UseCaseProvider(Provider):
     decline_usecase = provide(DeclineCharacterUseCase)
     ban_usecase = provide(BanCharacterUseCase)
     summary_usecase = provide(ProfileSummaryUseCase)
+    subscribe_usecase = provide(SubscribeUseCase)
