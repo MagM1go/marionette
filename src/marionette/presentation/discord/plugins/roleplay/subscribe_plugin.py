@@ -9,6 +9,8 @@ from marionette.bootstrap.di.container import CrescentContainer
 from marionette.bootstrap.di.inject import Inject, inject
 from marionette.domain.exceptions import CharacterNotFound
 
+from marionette.presentation.discord.presenters.subscribe_presenter import SubscribePresenter
+
 plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 inject_plugin = inject(lambda: plugin.model.dishka())
 
@@ -18,7 +20,7 @@ inject_plugin = inject(lambda: plugin.model.dishka())
 @inject_plugin
 class SubscribeCommand:
     owner = crescent.option(hikari.User, "автор персонажа")
-    character = crescent.option(str, "персонаж, за которой хотите следить")
+    character = crescent.option(str, "персонаж, за которым хотите следить")
 
     @inject_plugin
     async def callback(self, ctx: crescent.Context, character_queries: Inject[CharacterQueries], usecase: Inject[SubscribeUseCase]) -> None:
@@ -28,4 +30,4 @@ class SubscribeCommand:
             raise CharacterNotFound(self.character)
 
         await usecase.subscribe(UserId(ctx.user.id), UserId(self.owner.id), CharacterId(character.id))
-        await ctx.respond(f"Вы подписались на, дай боже Вам сил, на **{character.name}**.", ephemeral=True)
+        await ctx.respond(SubscribePresenter.present(character.name), ephemeral=True)

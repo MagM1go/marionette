@@ -9,6 +9,7 @@ from marionette.application.protocols.types import CharacterId, UserId
 from marionette.domain.entities.subscription import Subscription
 
 
+# TODO: Надо бы наверное ещё отписки добавить...
 class SqlAlchemySubscriptionRepository(SubscriptionRepository):
     def __init__(self, session: AsyncSession) -> None:
         self._session = session
