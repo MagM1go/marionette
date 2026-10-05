@@ -11,7 +11,8 @@ from marionette.presentation.discord.ui.onboarding.steps import (
 )
 
 _RULES_OPTIONS: t.Final[Sequence[miru.SelectOption]] = [
-    miru.SelectOption(label="Общие правила", value=RulesPresenter.general_rules())
+    miru.SelectOption(label="Общие правила", value=RulesPresenter.general_rules()),
+    miru.SelectOption(label="РП правила", value=RulesPresenter.roleplay_rules()),
 ]
 
 
@@ -24,8 +25,6 @@ class RulesView(miru.View):
         await context.respond(select.values[0], flags=hikari.MessageFlag.EPHEMERAL)
 
     # TODO: добавить ошибку при повторном нажатии
-    @miru.button(
-        "Я прочитал и принимаю правила", emoji="✅", custom_id=ONBOARDING_RULES_CUSTOM_ID_ACCEPT
-    )
+    @miru.button("Я прочитал и принимаю правила", emoji="✅", custom_id=ONBOARDING_RULES_CUSTOM_ID_ACCEPT)
     async def accept_rules(self, context: miru.ViewContext, _: miru.Button) -> None:
         await context.respond("✅", flags=hikari.MessageFlag.EPHEMERAL)
