@@ -20,9 +20,9 @@ inject_plugin = inject(lambda: plugin.model.dishka())
 async def on_user_arrive(event: hikari.MemberCreateEvent, usecase: Inject[StartOnboardingUseCase]) -> None:
     user_id = UserId(event.user_id)
     await event.app.rest.add_role_to_member(
-        guild=config.discord.main_guild_id,
+        guild=config.discord.guild.main,
         user=event.user_id,
-        role=config.discord.unverified_role_id,
+        role=config.discord.roles.unverified,
     )
     await usecase.execute(user_id)
 

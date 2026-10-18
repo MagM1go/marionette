@@ -13,7 +13,7 @@ plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 
 @plugin.include
 @crescent.command(
-    guild=config.discord.main_guild_id,
+    guild=config.discord.guild.main,
     name="initialize",
     description="Административная команда для инициализации онбординга",
     default_member_permissions=hikari.Permissions.ADMINISTRATOR,

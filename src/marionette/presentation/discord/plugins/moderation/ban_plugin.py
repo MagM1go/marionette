@@ -11,7 +11,7 @@ plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 
 
 @plugin.include
-@crescent.command(name="ban", description="Исключение персонажа из РП", guild=config.discord.main_guild_id)
+@crescent.command(name="ban", description="Исключение персонажа из РП", guild=config.discord.guild.main)
 class BanCommand:
     character_id = crescent.option(int, "идентификатор персонажа")
 

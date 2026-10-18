@@ -20,6 +20,9 @@ text_channels:
 
    moderation: 1234567890123456789
 
+forum_channels:
+   character: 1234567890123456789
+
 roles:
    unverified: 1234567890123456789
    unregistered: 1234567890123456789

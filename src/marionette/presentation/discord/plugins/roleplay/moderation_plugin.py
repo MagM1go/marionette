@@ -39,7 +39,7 @@ async def message_create_event(
         if not isinstance(parent, hikari.GuildChannel):
             return
 
-    if parent.id not in config.discord.rp_categories:
+    if parent.id not in config.discord.category.roleplay:
         return
 
     should_delete = await moderation_usecase.execute(
@@ -60,12 +60,12 @@ async def message_create_event(
 @plugin.include
 @crescent.event
 async def on_started(_: hikari.StartedEvent) -> None:
-    guild = await plugin.app.rest.fetch_guild(config.discord.main_guild_id)
+    guild = await plugin.app.rest.fetch_guild(config.discord.guild.main)
     threads = await plugin.app.rest.fetch_active_threads(guild)
 
     for thread in threads:
         channel = plugin.app.cache.get_guild_channel(thread.parent_id)
-        if channel and channel.parent_id in config.discord.rp_categories:
+        if channel and channel.parent_id in config.discord.category.roleplay:
             await plugin.app.rest.join_thread(thread.id)
 
 

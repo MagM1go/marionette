@@ -330,14 +330,19 @@ wheels = [
 
 [[package]]
 name = "dature"
-version = "0.20.0"
+version = "1.6.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "adaptix" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a5/48/23f0cdb7c0878ed28705aa9acc41ad86025a589ce2212cd832bd1edb3158/dature-0.20.0.tar.gz", hash = "sha256:83d6a7d2e22502b72599dbf017c01364857fec3284fc376b13200e7fb1eee1fd", size = 320458, upload-time = "2026-06-02T19:59:34.866Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/81/09/be02fbd9b7489596c77eb253028f1b4634e948ce6757309f54cdcdaecae1/dature-1.6.1.tar.gz", hash = "sha256:52b36d287bf2a68e1c9096c22b8b55ba98359dc69aee59d1f9baa11d41fb8741", size = 646368, upload-time = "2026-10-16T07:36:08.095Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c4/47/50300fbfa8c1745941704ae1e6da2f011c22e13bfe64b2af4d8f700eea2e/dature-0.20.0-py3-none-any.whl", hash = "sha256:0810c7e78b87eba7b9d81935c12bba9e792a784e3bd36af9f17982a83fd7dc5d", size = 118633, upload-time = "2026-06-02T19:59:33.396Z" },
+    { url = "https://files.pythonhosted.org/packages/ed/d4/23b510257344f2642458174d0d475b07402b5733133ac8c6944f9dd867b5/dature-1.6.1-py3-none-any.whl", hash = "sha256:a23a1ae6b816e7302210962184c60ef1e04c2b7957fd7751e8074a54f1039ef8", size = 220503, upload-time = "2026-10-16T07:36:06.259Z" },
+]
+
+[package.optional-dependencies]
+yaml = [
+    { name = "ruamel-yaml" },
 ]
 
 [[package]]
@@ -601,7 +606,7 @@ source = { editable = "." }
 dependencies = [
     { name = "alembic" },
     { name = "celery" },
-    { name = "dature" },
+    { name = "dature", extra = ["yaml"] },
     { name = "dishka" },
     { name = "hikari" },
     { name = "hikari-crescent" },
@@ -625,7 +630,7 @@ dev = [
 requires-dist = [
     { name = "alembic", specifier = ">=1.18.4" },
     { name = "celery", specifier = ">=5.6.2" },
-    { name = "dature", specifier = ">=0.16.0" },
+    { name = "dature", extras = ["yaml"], specifier = ">=1.6.1" },
     { name = "dishka", specifier = ">=1.8.0" },
     { name = "hikari", git = "https://github.com/mplatypus/hikari.git?branch=feature%2Fmodals-v2" },
     { name = "hikari-crescent", specifier = ">=1.4.0" },
@@ -998,6 +1003,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/53/ae/ed461cca5780b5fc8b9fe8ca0ed98d89508645fb9d880c24cc42c087678f/redis-8.0.0.tar.gz", hash = "sha256:a00c5355432051ac14e593b8b197fc76c887ee12d55a0984f69328a1115fdc49", size = 5101591, upload-time = "2026-05-28T12:45:13.5Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/27/e3/b519734372d305bd547534a9f32e4ce9f98552af753dce72cf3483a0ff0b/redis-8.0.0-py3-none-any.whl", hash = "sha256:c938c18338585009f0bc310f4c7e4e4b4d37639356c4ac072cedf3af570c8dc7", size = 499870, upload-time = "2026-05-28T12:45:11.697Z" },
+]
+
+[[package]]
+name = "ruamel-yaml"
+version = "0.19.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/c7/3b/ebda527b56beb90cb7652cb1c7e4f91f48649fbcd8d2eb2fb6e77cd3329b/ruamel_yaml-0.19.1.tar.gz", hash = "sha256:53eb66cd27849eff968ebf8f0bf61f46cdac2da1d1f3576dd4ccee9b25c31993", size = 142709, upload-time = "2026-01-02T16:50:31.84Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b8/0c/51f6841f1d84f404f92463fc2b1ba0da357ca1e3db6b7fbda26956c3b82a/ruamel_yaml-0.19.1-py3-none-any.whl", hash = "sha256:27592957fedf6e0b62f281e96effd28043345e0e66001f97683aa9a40c667c93", size = 118102, upload-time = "2026-01-02T16:50:29.201Z" },
 ]
 
 [[package]]

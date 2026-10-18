@@ -50,5 +50,5 @@ async def tabloid_event(
             gender=entered_character.gender
         )
         await event.app.rest.create_message(
-            channel=config.discord.tabloid_channel_id, embed=response
+            channel=config.discord.text_channels.tabloid, embed=response
         )

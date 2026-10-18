@@ -17,7 +17,7 @@ plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 
 @plugin.include
 @crescent.command(
-    guild=config.discord.main_guild_id,
+    guild=config.discord.guild.main,
     name="vote",
     description="Отдать свой голос кому-либо (раз в 24 часа)",
 )

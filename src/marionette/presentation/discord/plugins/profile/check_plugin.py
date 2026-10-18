@@ -15,7 +15,7 @@ plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 
 @plugin.include
 @profile_group.child
-@crescent.command(guild=config.discord.main_guild_id, name="check", description="Посмотреть профиль пользователя")
+@crescent.command(guild=config.discord.guild.main, name="check", description="Посмотреть профиль пользователя")
 class ProfileCheckCommand:
     user = crescent.option(hikari.User, "пользователь", default=None)
 

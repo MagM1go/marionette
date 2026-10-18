@@ -10,7 +10,7 @@ plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 
 @plugin.include
 @crescent.command(
-    name="thread", description="Создать РП ветку", guild=config.discord.main_guild_id, default_member_permissions=hikari.Permissions.ADMINISTRATOR
+    name="thread", description="Создать РП ветку", guild=config.discord.guild.main, default_member_permissions=hikari.Permissions.ADMINISTRATOR
 )
 class RoleplayThreadCreateCommand:
     name = crescent.option(str, "название ветки")

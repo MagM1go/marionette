@@ -11,7 +11,7 @@ requires-python = ">=3.14"
 dependencies = [
     "alembic>=1.18.4",
     "celery>=5.6.2",
-    "dature>=0.16.0",
+    "dature[yaml]>=1.6.1",
     "dishka>=1.8.0",
     "hikari",
     "hikari-crescent>=1.4.0",

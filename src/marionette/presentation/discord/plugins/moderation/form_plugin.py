@@ -15,7 +15,7 @@ inject_plugin = inject(lambda: plugin.model.dishka())
 
 
 @plugin.include
-@crescent.command(name="approve", description="Принять анкету персонажа", guild=config.discord.main_guild_id)
+@crescent.command(name="approve", description="Принять анкету персонажа", guild=config.discord.guild.main)
 class ApproveCommand:
     user_id = crescent.option(hikari.User, "пользователь, чьего персонажа принимаем")
     character_id = crescent.option(int, "идентификатор персонажа")
@@ -26,14 +26,14 @@ class ApproveCommand:
         if context.guild is None:
             raise DmsNotAllowed()
             
-        if context.member is None or config.discord.moderator_role_id not in context.member.role_ids:
+        if context.member is None or config.discord.roles.moderator not in context.member.role_ids:
             raise InsufficientPermissions()
 
         character_owner = context.guild.get_member(self.user_id)
         if character_owner is None:
             raise MemberNotFound()
             
-        if (amplua_role := config.discord.amplua_role_id) not in character_owner.role_ids:
+        if (amplua_role := config.discord.roles.amplua) not in character_owner.role_ids:
             await character_owner.add_role(amplua_role, reason=f"Approved by moderator ({context.user.id})")
 
         ids = list(map(int, self.biography.split(",")))
@@ -43,13 +43,13 @@ class ApproveCommand:
 
 
 @plugin.include
-@crescent.command(name="decline", description="Отказать анкету персонажа", guild=config.discord.main_guild_id)
+@crescent.command(name="decline", description="Отказать анкету персонажа", guild=config.discord.guild.main)
 class DeclineCommand:
     character_id = crescent.option(int, "идентификатор персонажа")
 
     @inject_plugin
     async def callback(self, context: crescent.Context, usecase: Inject[DeclineCharacterUseCase]) -> None:
-        if context.member is None or config.discord.moderator_role_id not in context.member.role_ids:
+        if context.member is None or config.discord.roles.moderator not in context.member.role_ids:
             raise InsufficientPermissions()
 
         await usecase.decline(CharacterId(self.character_id))

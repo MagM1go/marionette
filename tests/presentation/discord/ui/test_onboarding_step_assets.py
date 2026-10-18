@@ -25,8 +25,8 @@ async def test_onboarding_step_assets_applies_intro_roles() -> None:
     await step_assets.apply(zone_id=777, user_id=UserId(100), step=OnboardingStep.INTRO)
 
     assert rest.calls == [
-        ("add", 777, UserId(100), RoleId(config.discord.start_role_id)),
-        ("remove", 777, UserId(100), RoleId(config.discord.unverified_role_id)),
+        ("add", 777, UserId(100), RoleId(config.discord.roles.start)),
+        ("remove", 777, UserId(100), RoleId(config.discord.roles.unverified)),
     ]
 
 

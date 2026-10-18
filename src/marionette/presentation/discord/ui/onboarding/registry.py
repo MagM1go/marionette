@@ -79,31 +79,31 @@ onboarding_registry = OnboardingRegistry(
     screens=(
         OnboardingScreen(
             screen_id="hello",
-            channel_id=config.discord.onboarding_welcome_channel_id,
+            channel_id=config.discord.text_channels.onboarding.welcome,
             presenter=HelloPresenter,
             view_factory=HelloView,
         ),
         OnboardingScreen(
             screen_id="intro",
-            channel_id=config.discord.onboarding_intro_channel_id,
+            channel_id=config.discord.text_channels.onboarding.intro,
             presenter=IntroPresenter,
             view_factory=IntroView,
         ),
         OnboardingScreen(
             screen_id="rules",
-            channel_id=config.discord.onboarding_rules_channel_id,
+            channel_id=config.discord.text_channels.onboarding.rules,
             presenter=RulesPresenter,
             view_factory=RulesView,
         ),
         OnboardingScreen(
             screen_id="faq",
-            channel_id=config.discord.onboarding_faq_channel_id,
+            channel_id=config.discord.text_channels.onboarding.faq,
             presenter=FaqPresenter,
             view_factory=FaqView,
         ),
         OnboardingScreen(
             screen_id="registration", 
-            channel_id=config.discord.registration_channel_id, 
+            channel_id=config.discord.text_channels.registration, 
             presenter=RegistrationPresenter, 
             view_factory=RegistrationView
         ),
