@@ -28,7 +28,7 @@ async def test_approve_marks_character_active_and_returns_name(
     result = await ApproveCharacterUseCase(
         transaction=fake_transaction,
         character_repo=repo,
-    ).approve(CharacterId(10))
+    ).approve(CharacterId(10), "")
 
     assert result == "Airi"
     assert character.status == CharacterStatus.IS_ACTIVE
@@ -47,7 +47,7 @@ async def test_approve_raises_when_character_missing(
         await ApproveCharacterUseCase(
             transaction=fake_transaction,
             character_repo=repo,
-        ).approve(CharacterId(42))
+        ).approve(CharacterId(42), "")
 
     assert error.value.name == "42"
     assert fake_transaction.commit_calls == 0
@@ -67,7 +67,7 @@ async def test_approve_raises_when_character_already_active(
         await ApproveCharacterUseCase(
             transaction=fake_transaction,
             character_repo=repo,
-        ).approve(CharacterId(10))
+        ).approve(CharacterId(10), "")
 
     assert character.status == CharacterStatus.IS_ACTIVE
     assert fake_transaction.commit_calls == 0
@@ -87,7 +87,7 @@ async def test_approve_raises_when_character_abandoned(
         await ApproveCharacterUseCase(
             transaction=fake_transaction,
             character_repo=repo,
-        ).approve(CharacterId(10))
+        ).approve(CharacterId(10), "")
 
     assert character.status == CharacterStatus.ABANDONED
     assert fake_transaction.commit_calls == 0
