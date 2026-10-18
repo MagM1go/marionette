@@ -1,7 +1,6 @@
 import crescent
 import hikari
 
-from hikari.channels import GuildThreadChannel, PermissibleGuildChannel
 from marionette.application.protocols.types import CharacterId
 from marionette.application.usecases.moderation.approve_character_usecase import ApproveCharacterUseCase
 from marionette.application.usecases.moderation.decline_character_usecase import DeclineCharacterUseCase

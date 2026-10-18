@@ -14,13 +14,14 @@ from marionette.application.usecases.onboarding.reset_onboarding_usecase import 
 from marionette.application.usecases.onboarding.start_onboarding_usecase import StartOnboardingUseCase
 from marionette.application.usecases.paparazzi_usecase import PaparazziUseCase
 from marionette.application.usecases.profile.summary_usecase import ProfileSummaryUseCase
-from marionette.application.usecases.register_usecase import RegisterUseCase
 from marionette.application.usecases.season_reset_usecase import ResetSeasonRatingUseCase
 from marionette.application.usecases.subscribe_usecase import SubscribeUseCase
 from marionette.application.usecases.vote_usecase import VoteUseCase
 from marionette.domain.services.rating_service import RatingService
 from marionette.presentation.discord.ui.onboarding.dispatcher import OnboardingActionDispatcher
 from marionette.presentation.discord.ui.onboarding.step_assets import OnboardingStepAssets
+
+from marionette.application.usecases.character.register_character_usecase import RegisterUseCase
 
 
 class UseCaseProvider(Provider):

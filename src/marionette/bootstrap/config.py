@@ -1,5 +1,4 @@
 from dataclasses import dataclass, field
-from sys import int_info
 
 from dature import F, EnvFileSource, EnvSource, load
 from dature.types import FieldMapping
