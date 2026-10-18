@@ -1,5 +1,5 @@
 from contextlib import suppress
-from typing import TypedDict
+from typing import TypedDict, Final
 
 import hikari
 
@@ -14,6 +14,21 @@ class StepAssets(TypedDict):
 
 
 class OnboardingStepAssets:
+    CONFIGS: Final[dict[OnboardingStep, StepAssets]] = {
+        OnboardingStep.INTRO: {
+            "add": (RoleId(config.discord.roles.start),),
+            "remove": (RoleId(config.discord.roles.unverified),),
+        },
+        OnboardingStep.RULES: {
+            "add": (RoleId(config.discord.roles.unregistered),),
+            "remove": (RoleId(config.discord.roles.start),),
+        },
+        OnboardingStep.REGISTRATION: {
+            "add": (RoleId(config.discord.roles.text),),
+            "remove": (),
+        },
+    }
+    
     def __init__(self, rest: hikari.api.RESTClient) -> None:
         self._rest = rest
 
@@ -26,22 +41,7 @@ class OnboardingStepAssets:
             await self._rest.remove_role_from_member(guild=zone_id, user=user_id, role=role_id)
 
     async def apply(self, zone_id: int, user_id: UserId, step: OnboardingStep) -> None:
-        configs: dict[OnboardingStep, StepAssets] = {
-            OnboardingStep.INTRO: {
-                "add": (RoleId(config.discord.roles.start),),
-                "remove": (RoleId(config.discord.roles.unverified),),
-            },
-            OnboardingStep.RULES: {
-                "add": (RoleId(config.discord.roles.unregistered),),
-                "remove": (RoleId(config.discord.roles.start),),
-            },
-            OnboardingStep.REGISTRATION: {
-                "add": (RoleId(config.discord.roles.text),),
-                "remove": (),
-            },
-        }
-
-        assets = configs.get(step)
+        assets = self.CONFIGS.get(step)
         if assets is None:
             return
 

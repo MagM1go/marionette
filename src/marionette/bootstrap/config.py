@@ -30,6 +30,7 @@ class TextChannelIds:
     registration: int
     moderation: int
     onboarding: OnboardingChannelIds
+    general: int
 
 
 @dataclass(frozen=True)

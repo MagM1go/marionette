@@ -29,6 +29,7 @@ text_channels:
      rules: 48
      faq: 49
 
+   general: 58
    moderation: 54
 
 forum_channels:
@@ -75,9 +76,7 @@ def _set_required_env(monkeypatch: pytest.MonkeyPatch, **overrides: str) -> None
         monkeypatch.setenv(key, values[key])
 
 
-def test_load_config_maps_yaml_sections_and_env_secrets(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
-) -> None:
+def test_load_config_maps_yaml_sections_and_env_secrets(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     _set_required_env(monkeypatch)
     config_dir = _write_config_dir(tmp_path)
     config_module = _reload_config_module()
@@ -95,6 +94,7 @@ def test_load_config_maps_yaml_sections_and_env_secrets(
     assert config.discord.text_channels.onboarding.intro == 47
     assert config.discord.text_channels.onboarding.rules == 48
     assert config.discord.text_channels.onboarding.faq == 49
+    assert config.discord.text_channels.general == 58
     assert config.discord.forum_channels.character == 57
     assert config.discord.roles.unverified == 50
     assert config.discord.roles.unregistered == 52
@@ -110,9 +110,7 @@ def test_load_config_maps_yaml_sections_and_env_secrets(
     assert config.database.max_overflow == 22
 
 
-def test_load_config_prefers_environment_over_dotenv(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
-) -> None:
+def test_load_config_prefers_environment_over_dotenv(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     env_file = tmp_path / ".env"
     env_file.write_text(
         "\n".join(
@@ -146,9 +144,7 @@ def test_load_config_prefers_environment_over_dotenv(
     assert config.database.pool_size == 11
 
 
-def test_load_config_fails_when_yaml_and_env_are_missing(
-    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
-) -> None:
+def test_load_config_fails_when_yaml_and_env_are_missing(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
     _set_required_env(monkeypatch)
     config_module = _reload_config_module()
 

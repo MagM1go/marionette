@@ -7,8 +7,9 @@ from marionette.application.usecases.onboarding.start_onboarding_usecase import 
 from marionette.bootstrap.config import config
 from marionette.bootstrap.di.container import CrescentContainer
 from marionette.bootstrap.di.inject import Inject, inject
+from marionette.presentation.discord.presenters.welcome_presenter import WelcomePresenter
 from marionette.presentation.discord.ui.onboarding.dispatcher import OnboardingActionDispatcher
-from marionette.presentation.discord.ui.onboarding.registry import onboarding_registry
+from marionette.presentation.discord.ui.onboarding.registry import OnboardingAction, onboarding_registry
 
 plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 inject_plugin = inject(lambda: plugin.model.dishka())
@@ -47,6 +48,11 @@ async def handle_interaction_click(
     action = onboarding_registry.get_action(event.interaction.custom_id)
     if action is None:
         return
+
+    if action == OnboardingAction.COMPLETE:
+        await event.app.rest.create_message(
+            channel=config.discord.text_channels.general, content=WelcomePresenter.present_welcome(event.interaction.user.mention)
+        )
 
     user_id = UserId(event.interaction.user.id)
     zone_id = event.interaction.guild_id

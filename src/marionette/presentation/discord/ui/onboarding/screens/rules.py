@@ -4,6 +4,7 @@ from collections.abc import Sequence
 import hikari
 import miru
 
+from marionette.bootstrap.config import config
 from marionette.presentation.discord.presenters.onboarding.rules_presenter import RulesPresenter
 from marionette.presentation.discord.ui.onboarding.steps import (
     ONBOARDING_RULES_CUSTOM_ID,
@@ -14,10 +15,7 @@ _RULES_OPTIONS: t.Final[Sequence[miru.SelectOption]] = [
     miru.SelectOption(label="Общие правила", value="general"),
     miru.SelectOption(label="РП правила", value="roleplay"),
 ]
-_RULES: t.Final[dict[str, str]] = {
-    "general": RulesPresenter.general_rules(),
-    "roleplay": RulesPresenter.roleplay_rules()
-}
+_RULES: t.Final[dict[str, str]] = {"general": RulesPresenter.general_rules(), "roleplay": RulesPresenter.roleplay_rules()}
 
 
 class RulesView(miru.View):
@@ -31,4 +29,8 @@ class RulesView(miru.View):
     # TODO: добавить ошибку при повторном нажатии
     @miru.button("Я прочитал и принимаю правила", emoji="✅", custom_id=ONBOARDING_RULES_CUSTOM_ID_ACCEPT)
     async def accept_rules(self, context: miru.ViewContext, _: miru.Button) -> None:
+        if config.discord.roles.text in context.member.role_ids:  # type: ignore # это никогда не будет в ЛС, соответственно, None тоже никогда не будет
+            await context.respond("Правила игры уже были приняты. Перечитываешь?", flags=hikari.MessageFlag.EPHEMERAL)
+            return
+
         await context.respond("✅", flags=hikari.MessageFlag.EPHEMERAL)

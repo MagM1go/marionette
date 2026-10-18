@@ -17,7 +17,8 @@ text_channels:
      intro: 1234567890123456789
      rules: 1234567890123456789
      faq: 1234567890123456789
-
+     
+   general: 1234567890123456789
    moderation: 1234567890123456789
 
 forum_channels:
