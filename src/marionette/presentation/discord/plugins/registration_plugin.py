@@ -56,4 +56,5 @@ async def on_register_modal_submit(
             biography="",
         ),
         flags=hikari.MessageFlag.IS_COMPONENTS_V2,
+        user_mentions=True
     )
