@@ -6,4 +6,4 @@ class ModerationPolicy:
 
     @classmethod
     def should_delete_message(cls, message_content: str) -> bool:
-        return any(message_content.startswith(prefix) for prefix in cls.NON_RP_PREFIXES)
+        return not any(message_content.startswith(prefix) for prefix in cls.NON_RP_PREFIXES)
