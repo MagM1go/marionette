@@ -46,7 +46,7 @@ async def on_register_modal_submit(
     await plugin.app.rest.create_forum_post(
         config.discord.character_forum_id,
         name,
-        RegistrationPresenter.present_moderation(
+        component=RegistrationPresenter.present_moderation(
             user_id=event.interaction.user.id, character_id=character_id, name=name, birthday=raw_birthday, role=Roles(role), biography=""
         ),
         flags=hikari.MessageFlag.IS_COMPONENTS_V2
