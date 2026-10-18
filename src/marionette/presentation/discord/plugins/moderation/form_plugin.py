@@ -1,6 +1,7 @@
 import crescent
 import hikari
 
+from hikari.channels import GuildThreadChannel, PermissibleGuildChannel
 from marionette.application.protocols.types import CharacterId
 from marionette.application.usecases.moderation.approve_character_usecase import ApproveCharacterUseCase
 from marionette.application.usecases.moderation.decline_character_usecase import DeclineCharacterUseCase
@@ -19,6 +20,7 @@ inject_plugin = inject(lambda: plugin.model.dishka())
 class ApproveCommand:
     user_id = crescent.option(hikari.User, "пользователь, чьего персонажа принимаем")
     character_id = crescent.option(int, "идентификатор персонажа")
+    biography = crescent.option(str, "биография персонажа (айди сообщений с био, через запятую)")
 
     @inject_plugin
     async def callback(self, context: crescent.Context, usecase: Inject[ApproveCharacterUseCase]) -> None:
@@ -34,8 +36,10 @@ class ApproveCommand:
             
         if (amplua_role := config.discord.amplua_role_id) not in character_owner.role_ids:
             await character_owner.add_role(amplua_role, reason=f"Approved by moderator ({context.user.id})")
-            
-        await usecase.approve(CharacterId(self.character_id))
+
+        ids = list(map(int, self.biography.split(",")))
+        messages_content: list[str] = [(await context.channel.fetch_message(id)).content for id in ids]  # type: ignore
+        await usecase.approve(CharacterId(self.character_id), "\n".join(messages_content))
         await context.respond(JudgePresenter.approved())
 
 

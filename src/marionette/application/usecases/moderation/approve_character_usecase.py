@@ -10,7 +10,7 @@ class ApproveCharacterUseCase:
         self._repository = character_repo
         self._transaction = transaction
 
-    async def approve(self, character_id: CharacterId) -> str:
+    async def approve(self, character_id: CharacterId, biography: str) -> str:
         """Всегда возвращает имя одобренного персонажа"""
 
         async with self._transaction:
@@ -20,6 +20,7 @@ class ApproveCharacterUseCase:
             assert character is not None
             CharacterPolicy.ensure_character_can_be_judged(character=character)
 
+            character.biography = biography
             character.status = CharacterStatus.IS_ACTIVE
 
             await self._transaction.commit()

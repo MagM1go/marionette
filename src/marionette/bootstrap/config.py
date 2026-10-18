@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from sys import int_info
 
 from dature import F, EnvFileSource, EnvSource, load
 from dature.types import FieldMapping
@@ -17,6 +18,7 @@ class DiscordConfig:
     onboarding_intro_channel_id: int
     onboarding_rules_channel_id: int
     onboarding_faq_channel_id: int
+    character_forum_id: int
     
     moderation_channel_id: int
 

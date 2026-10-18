@@ -25,21 +25,13 @@ class RegistrationModal(ModalV2):
         custom_id="name",
         label="Имя или псевдоним персонажа",
         required=True,
-        placeholder="Серафим / Анна Браун / Фантом",
+        placeholder="Серафим / Анна Браун / ",
     )
     birthday = TextInputExtension(
         custom_id="birthday",
         label="День рождения персонажа (дд.мм.гггг)",
         required=True,
         placeholder="31.10.2010",
-    )
-    mini_bio = TextInputExtension(
-        custom_id="mini_bio",
-        label="Биография (коротко, мин. 200 символов)",
-        required=True,
-        min_length=200,
-        max_length=4000,
-        style=hikari.TextInputStyle.PARAGRAPH,
     )
     role = StringSelect(
         custom_id="role",

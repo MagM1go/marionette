@@ -17,12 +17,14 @@ plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 @profile_group.child
 @crescent.command(guild=config.discord.main_guild_id, name="check", description="Посмотреть профиль пользователя")
 class ProfileCheckCommand:
-    user = crescent.option(hikari.User, "пользователь")
+    user = crescent.option(hikari.User, "пользователь", default=None)
 
     @inject(lambda: plugin.model.dishka())
     async def callback(self, ctx: crescent.Context, usecase: Inject[ProfileSummaryUseCase]) -> None:
-        summary = await usecase.summary(user_id=UserId(self.user.id))
+        if not self.user:
+            self.user = ctx.user
 
+        summary = await usecase.summary(user_id=UserId(self.user.id))
         if summary.characters:
             profile_view = ProfileCheckCharacterDropdown(summary)
             await ctx.respond(

@@ -91,16 +91,20 @@ def get_rating_divisor(rating: int) -> float:
     for threshold, divisor in RATING_DIVISORS:
         if rating < threshold:
             return divisor
+            
     return 4.0
 
 
 def get_agency_level(agency_rating: int) -> AgencyLevel:
     if agency_rating >= AgencyLevel.S:
         return AgencyLevel.S
+        
     elif agency_rating >= AgencyLevel.A:
         return AgencyLevel.A
+
     elif agency_rating >= AgencyLevel.B:
         return AgencyLevel.B
+        
     return AgencyLevel.D
 
 

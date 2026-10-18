@@ -2,8 +2,8 @@ import typing as t
 
 
 class ModerationPolicy:
-    NON_RP_PREFIX: t.Final[str] = "//"
+    NON_RP_PREFIXES: t.Final[list[str]] = ["//", "((", "OOC", "ООС"]
 
     @classmethod
     def should_delete_message(cls, message_content: str) -> bool:
-        return not message_content.startswith(cls.NON_RP_PREFIX)
+        return any(message_content.startswith(prefix) for prefix in cls.NON_RP_PREFIXES)
