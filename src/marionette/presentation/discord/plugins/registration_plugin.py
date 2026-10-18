@@ -43,11 +43,16 @@ async def on_register_modal_submit(
         user_id=UserId(event.interaction.user.id), name=name, role=Roles(role), birthday=birthday, biography="", gender=CharacterGender(gender)
     )
 
-    await plugin.app.rest.create_forum_post(
+    public_thread = await plugin.app.rest.create_forum_post(
         config.discord.character_forum_id,
         name,
+        event.interaction.user.mention,
         component=RegistrationPresenter.present_moderation(
             user_id=event.interaction.user.id, character_id=character_id, name=name, birthday=raw_birthday, role=Roles(role), biography=""
         ),
-        flags=hikari.MessageFlag.IS_COMPONENTS_V2
+        flags=hikari.MessageFlag.IS_COMPONENTS_V2,
+    )
+
+    await event.app.rest.edit_permission_overwrite(
+        public_thread, event.interaction.user, allow=hikari.Permissions.SEND_MESSAGES | hikari.Permissions.ATTACH_FILES
     )
