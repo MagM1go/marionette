@@ -25,6 +25,7 @@ RUN useradd -u 1000 -m appuser
 COPY --from=builder /app/.venv /app/.venv
 COPY --from=builder /app/src /app/src
 COPY --from=builder /app/alembic.ini /app/alembic.ini
+COPY --from=builder /app/config /app/config
 COPY --from=builder /app/src/marionette/infrastructure/database/alembic /app/src/marionette/infrastructure/database/alembic
 
 ENV PATH="/app/.venv/bin:$PATH"

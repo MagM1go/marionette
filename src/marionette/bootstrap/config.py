@@ -1,39 +1,66 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from pathlib import Path
 
-from dature import F, EnvFileSource, EnvSource, load
-from dature.types import FieldMapping
+from dature import EnvFileSource, EnvSource, F, Yaml12Source, load
+from dature.type_aliases import FieldMapping
 
 
-@dataclass
+@dataclass(frozen=True)
+class GuildIds:
+    main: int
+
+
+@dataclass(frozen=True)
+class CategoryIds:
+    roleplay: list[int]
+
+
+@dataclass(frozen=True)
+class OnboardingChannelIds:
+    welcome: int
+    intro: int
+    rules: int
+    faq: int
+
+
+@dataclass(frozen=True)
+class TextChannelIds:
+    tabloid: int
+    news: int
+    registration: int
+    moderation: int
+    onboarding: OnboardingChannelIds
+
+
+@dataclass(frozen=True)
+class ForumChannelIds:
+    character: int
+
+
+@dataclass(frozen=True)
+class RoleIds:
+    unverified: int
+    unregistered: int
+    start: int
+    text: int
+    amplua: int
+    moderator: int
+
+
+@dataclass(frozen=True)
 class DiscordConfig:
     bot_token: str
 
-    main_guild_id: int
-    news_channel_id: int
-    tabloid_channel_id: int
-    registration_channel_id: int
+    guild: GuildIds
+    category: CategoryIds
+    text_channels: TextChannelIds
+    forum_channels: ForumChannelIds
+    roles: RoleIds
 
-    onboarding_welcome_channel_id: int
-    onboarding_intro_channel_id: int
-    onboarding_rules_channel_id: int
-    onboarding_faq_channel_id: int
-    character_forum_id: int
-    
-    moderation_channel_id: int
-
-    unverified_role_id: int
-    start_role_id: int
-    unregistered_role_id: int
-    text_role_id: int
-    
-    moderator_role_id: int
-    amplua_role_id: int
-    
     paparazzi_trigger_channel_prefix: str = "PP"
-    rp_categories: list[int] = field(default_factory=list)
 
 
-@dataclass
+@dataclass(frozen=True)
 class DatabaseConfig:
     url: str
     redis_url: str
@@ -41,48 +68,39 @@ class DatabaseConfig:
     max_overflow: int = 20
 
 
-@dataclass
+@dataclass(frozen=True)
 class Config:
     discord: DiscordConfig
     database: DatabaseConfig
 
 
-def _load_section[T](
-    dataclass_: type[T],
-    *,
-    field_mapping: FieldMapping | None = None,
-    filename: str = ".env"
-) -> T:
-    return load(
-        EnvFileSource(
-            file=filename,
-            field_mapping=field_mapping,
-            skip_if_broken=True,
-        ),
-        EnvSource(field_mapping=field_mapping),
-        schema=dataclass_,
-    )
+_ENV_DATABASE: FieldMapping = {
+    F[DatabaseConfig].url: "DATABASE_URL",
+    F[DatabaseConfig].redis_url: "REDIS_URL",
+}
+
+_ENV_DISCORD: FieldMapping = {
+    F[DiscordConfig].bot_token: "MARIONETTE_TOKEN",
+    F[DiscordConfig].paparazzi_trigger_channel_prefix: "PAPARAZZI_TRIGGER_CHANNEL_PREFIX",
+}
 
 
-def load_config(filename: str = ".env") -> Config:
-    database_config = _load_section(
-        DatabaseConfig,
-        field_mapping={
-            F[DatabaseConfig].url: "database_url",
-            F[DatabaseConfig].pool_size: "database_pool_size",
-            F[DatabaseConfig].max_overflow: "database_max_overflow",
-        },
-        filename=filename
+def load_config(env_file: str | Path = ".env", config_dir: str | Path = "config") -> Config:
+    config_path = Path(config_dir)
+
+    database = load(
+        Yaml12Source(file=config_path / "infrastructure.yaml", prefix="database", skip_if_missing=True),
+        EnvFileSource(file=env_file, field_mapping=_ENV_DATABASE, skip_if_missing=True),
+        EnvSource(field_mapping=_ENV_DATABASE),
+        schema=DatabaseConfig,
     )
-    discord_config = _load_section(
-        DiscordConfig,
-        field_mapping={
-            F[DiscordConfig].bot_token: "marionette_token",
-            F[DiscordConfig].main_guild_id: "main_guild_id",
-        },
-        filename=filename
+    discord = load(
+        Yaml12Source(file=config_path / "discord" / "ids.yaml", skip_if_missing=True),
+        EnvFileSource(file=env_file, field_mapping=_ENV_DISCORD, skip_if_missing=True),
+        EnvSource(field_mapping=_ENV_DISCORD),
+        schema=DiscordConfig,
     )
-    return Config(database=database_config, discord=discord_config)
+    return Config(discord=discord, database=database)
 
 
 config = load_config()

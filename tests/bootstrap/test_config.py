@@ -4,8 +4,50 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from dature.errors import DatureConfigError
 
 CONFIG_MODULE = "marionette.bootstrap.config"
+
+IDS_YAML = """\
+guild:
+   main: 42
+
+category:
+   roleplay:
+      - 1
+      - 2
+      - 3
+
+text_channels:
+   tabloid: 44
+   news: 43
+   registration: 45
+
+   onboarding:
+     welcome: 46
+     intro: 47
+     rules: 48
+     faq: 49
+
+   moderation: 54
+
+forum_channels:
+   character: 57
+
+roles:
+   unverified: 50
+   unregistered: 52
+   start: 51
+   text: 53
+   amplua: 56
+   moderator: 55
+"""
+
+INFRASTRUCTURE_YAML = """\
+database:
+   pool_size: 11
+   max_overflow: 22
+"""
 
 
 def _reload_config_module() -> Any:
@@ -13,28 +55,19 @@ def _reload_config_module() -> Any:
     return importlib.import_module(CONFIG_MODULE)
 
 
+def _write_config_dir(tmp_path: Path) -> Path:
+    config_dir = tmp_path / "config"
+    (config_dir / "discord").mkdir(parents=True)
+    (config_dir / "discord" / "ids.yaml").write_text(IDS_YAML)
+    (config_dir / "infrastructure.yaml").write_text(INFRASTRUCTURE_YAML)
+    return config_dir
+
+
 def _set_required_env(monkeypatch: pytest.MonkeyPatch, **overrides: str) -> None:
     values = {
         "MARIONETTE_TOKEN": "token",
         "DATABASE_URL": "postgresql+psycopg://env:pass@localhost:5432/app",
         "REDIS_URL": "redis://localhost:6379/0",
-        "MAIN_GUILD_ID": "42",
-        "NEWS_CHANNEL_ID": "43",
-        "TABLOID_CHANNEL_ID": "44",
-        "REGISTRATION_CHANNEL_ID": "45",
-        "RP_CATEGORIES": "[1, 2, 3]",
-        "ONBOARDING_WELCOME_CHANNEL_ID": "46",
-        "ONBOARDING_INTRO_CHANNEL_ID": "47",
-        "ONBOARDING_RULES_CHANNEL_ID": "48",
-        "ONBOARDING_FAQ_CHANNEL_ID": "49",
-        "UNVERIFIED_ROLE_ID": "50",
-        "START_ROLE_ID": "51",
-        "UNREGISTERED_ROLE_ID": "52",
-        "TEXT_ROLE_ID": "53",
-        "MODERATION_CHANNEL_ID": "54",
-        "MODERATOR_ROLE_ID": "55",
-        "AMPLUA_ROLE_ID": "56",
-        "CHARACTER_FORUM_ID": "57"
     }
     values.update(overrides)
 
@@ -42,21 +75,39 @@ def _set_required_env(monkeypatch: pytest.MonkeyPatch, **overrides: str) -> None
         monkeypatch.setenv(key, values[key])
 
 
-def test_load_config_reads_environment_without_dotenv_file(
+def test_load_config_maps_yaml_sections_and_env_secrets(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
-    _set_required_env(monkeypatch, DATABASE_POOL_SIZE="77")
+    _set_required_env(monkeypatch)
+    config_dir = _write_config_dir(tmp_path)
     config_module = _reload_config_module()
 
-    config = config_module.load_config(filename="MISSING")
+    config = config_module.load_config(env_file=tmp_path / "MISSING.env", config_dir=config_dir)
+
+    assert config.discord.bot_token == "token"
+    assert config.discord.guild.main == 42
+    assert config.discord.category.roleplay == [1, 2, 3]
+    assert config.discord.text_channels.tabloid == 44
+    assert config.discord.text_channels.news == 43
+    assert config.discord.text_channels.registration == 45
+    assert config.discord.text_channels.moderation == 54
+    assert config.discord.text_channels.onboarding.welcome == 46
+    assert config.discord.text_channels.onboarding.intro == 47
+    assert config.discord.text_channels.onboarding.rules == 48
+    assert config.discord.text_channels.onboarding.faq == 49
+    assert config.discord.forum_channels.character == 57
+    assert config.discord.roles.unverified == 50
+    assert config.discord.roles.unregistered == 52
+    assert config.discord.roles.start == 51
+    assert config.discord.roles.text == 53
+    assert config.discord.roles.amplua == 56
+    assert config.discord.roles.moderator == 55
+    assert config.discord.paparazzi_trigger_channel_prefix == "PP"
 
     assert config.database.url == "postgresql+psycopg://env:pass@localhost:5432/app"
-    assert config.database.pool_size == 77
-    assert config.database.max_overflow == 20
-    assert config.discord.main_guild_id == 42
-    assert config.discord.paparazzi_trigger_channel_prefix == "PP"
-    assert config.discord.rp_categories == [1, 2, 3]
-    assert config.discord.text_role_id == 53
+    assert config.database.redis_url == "redis://localhost:6379/0"
+    assert config.database.pool_size == 11
+    assert config.database.max_overflow == 22
 
 
 def test_load_config_prefers_environment_over_dotenv(
@@ -68,43 +119,41 @@ def test_load_config_prefers_environment_over_dotenv(
             [
                 "MARIONETTE_TOKEN=file-token",
                 "DATABASE_URL=postgresql+psycopg://file:pass@localhost:5432/app",
-                "DATABASE_POOL_SIZE=11",
-                "DATABASE_MAX_OVERFLOW=22",
                 "REDIS_URL=redis://file:6379/0",
-                "MAIN_GUILD_ID=100",
-                "NEWS_CHANNEL_ID=101",
-                "TABLOID_CHANNEL_ID=102",
-                "REGISTRATION_CHANNEL_ID=103",
                 "PAPARAZZI_TRIGGER_CHANNEL_PREFIX=FILEPP",
-                "RP_CATEGORIES=[4,5]",
-                "ONBOARDING_WELCOME_CHANNEL_ID=104",
-                "ONBOARDING_INTRO_CHANNEL_ID=105",
-                "ONBOARDING_RULES_CHANNEL_ID=106",
-                "ONBOARDING_FAQ_CHANNEL_ID=107",
-                "UNVERIFIED_ROLE_ID=108",
-                "START_ROLE_ID=109",
-                "UNREGISTERED_ROLE_ID=110",
-                "TEXT_ROLE_ID=111",
             ]
         )
     )
+    config_dir = _write_config_dir(tmp_path)
 
     _set_required_env(
         monkeypatch,
         MARIONETTE_TOKEN="env-token",
         DATABASE_URL="postgresql+psycopg://env:pass@localhost:5432/app",
-        RP_CATEGORIES="[9,10]",
-        MAIN_GUILD_ID="999",
     )
     config_module = _reload_config_module()
 
-    config = config_module.load_config(filename=tmp_path / env_file)
+    monkeypatch.delenv("REDIS_URL", raising=False)
+    monkeypatch.delenv("PAPARAZZI_TRIGGER_CHANNEL_PREFIX", raising=False)
+
+    config = config_module.load_config(env_file=env_file, config_dir=config_dir)
 
     assert config.discord.bot_token == "env-token"
     assert config.database.url == "postgresql+psycopg://env:pass@localhost:5432/app"
-    assert config.discord.main_guild_id == 999
-    assert config.discord.rp_categories == [9, 10]
-    assert config.database.pool_size == 11
-    assert config.database.max_overflow == 22
+    assert config.database.redis_url == "redis://file:6379/0"
     assert config.discord.paparazzi_trigger_channel_prefix == "FILEPP"
-    assert config.discord.text_role_id == 53
+    assert config.discord.guild.main == 42
+    assert config.database.pool_size == 11
+
+
+def test_load_config_fails_when_yaml_and_env_are_missing(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    _set_required_env(monkeypatch)
+    config_module = _reload_config_module()
+
+    empty_config_dir = tmp_path / "empty-config"
+    empty_config_dir.mkdir()
+
+    with pytest.raises(DatureConfigError):
+        config_module.load_config(env_file=tmp_path / "MISSING.env", config_dir=empty_config_dir)

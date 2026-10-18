@@ -28,15 +28,15 @@ class OnboardingStepAssets:
     async def apply(self, zone_id: int, user_id: UserId, step: OnboardingStep) -> None:
         configs: dict[OnboardingStep, StepAssets] = {
             OnboardingStep.INTRO: {
-                "add": (RoleId(config.discord.start_role_id),),
-                "remove": (RoleId(config.discord.unverified_role_id),),
+                "add": (RoleId(config.discord.roles.start),),
+                "remove": (RoleId(config.discord.roles.unverified),),
             },
             OnboardingStep.RULES: {
-                "add": (RoleId(config.discord.unregistered_role_id),),
-                "remove": (RoleId(config.discord.start_role_id),),
+                "add": (RoleId(config.discord.roles.unregistered),),
+                "remove": (RoleId(config.discord.roles.start),),
             },
             OnboardingStep.REGISTRATION: {
-                "add": (RoleId(config.discord.text_role_id),),
+                "add": (RoleId(config.discord.roles.text),),
                 "remove": (),
             },
         }

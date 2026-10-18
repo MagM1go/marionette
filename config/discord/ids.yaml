@@ -20,6 +20,9 @@ text_channels:
 
    moderation: 1495846019689218058
 
+forum_channels:
+   character: 1560022170581868684
+
 roles:
    unverified: 1480829582511702017
    unregistered: 1480824077907267675

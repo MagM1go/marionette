@@ -39,7 +39,7 @@ class PostBreakingNewsModal(miru.Modal):
         )
 
         await context.client.rest.create_message(
-            config.discord.news_channel_id,
+            config.discord.text_channels.news,
             components=response,
             flags=hikari.MessageFlag.IS_COMPONENTS_V2,
         )
