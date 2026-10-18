@@ -2,6 +2,8 @@ from datetime import date
 
 import hikari
 
+from hikari.impl import ContainerComponentBuilder
+from hikari.impl import TextDisplayComponentBuilder
 from marionette.application.protocols.types import CharacterId
 
 
@@ -18,17 +20,19 @@ class RegistrationPresenter:
 
     @staticmethod
     def present_moderation(
-        user_id: int, character_id: CharacterId, name: str, birthday: str, role: str, biography: str
-    ) -> hikari.api.ComponentBuilder:
-        return (
-            hikari.impl.ContainerComponentBuilder()
+        user_id: int, user_mention: str, character_id: CharacterId, name: str, birthday: str, role: str, biography: str
+    ) -> list[TextDisplayComponentBuilder | ContainerComponentBuilder]:
+        return [
+            hikari.impl.TextDisplayComponentBuilder(content=user_mention),
+            (hikari.impl.ContainerComponentBuilder()
             .add_text_display(f"Персонаж <@{user_id}> ({user_id}); ID: {character_id}")
             .add_text_display(f"Имя персонажа: `{name}`")
             .add_text_display(
                 f"День рождения персонажа: `{birthday}`, возраст: `{age_from_birthday(birthday)}`"
             )
             .add_text_display(f"Роль: {role}")
-        )
+            )
+        ]
 
     @staticmethod
     def present_user() -> str:
