@@ -49,7 +49,7 @@ async def handle_interaction_click(
     if action is None:
         return
 
-    if action == OnboardingAction.COMPLETE:
+    if action == OnboardingAction.ACCEPT_RULES:
         await event.app.rest.create_message(
             channel=config.discord.text_channels.general, content=WelcomePresenter.present_welcome(event.interaction.user.mention)
         )
