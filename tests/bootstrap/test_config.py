@@ -33,7 +33,8 @@ def _set_required_env(monkeypatch: pytest.MonkeyPatch, **overrides: str) -> None
         "TEXT_ROLE_ID": "53",
         "MODERATION_CHANNEL_ID": "54",
         "MODERATOR_ROLE_ID": "55",
-        "AMPLUA_ROLE_ID": "56"
+        "AMPLUA_ROLE_ID": "56",
+        "CHARACTER_FORUM_ID": "57"
     }
     values.update(overrides)
 
