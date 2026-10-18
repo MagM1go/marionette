@@ -4,6 +4,7 @@ import crescent
 import hikari
 
 from marionette.application.protocols.types import UserId
+from marionette.application.usecases.character.register_character_usecase import RegisterUseCase
 from marionette.bootstrap.config import config
 from marionette.bootstrap.di.container import CrescentContainer
 from marionette.bootstrap.di.inject import Inject, inject
@@ -12,8 +13,6 @@ from marionette.domain.exceptions import CharacterBirthdayIncorrect
 from marionette.domain.roles import Roles
 from marionette.presentation.discord.helpers import UserInterfaceHelper
 from marionette.presentation.discord.presenters.registration_presenter import RegistrationPresenter
-
-from marionette.application.usecases.character.register_character_usecase import RegisterUseCase
 
 plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 
@@ -50,4 +49,5 @@ async def on_register_modal_submit(
         RegistrationPresenter.present_moderation(
             user_id=event.interaction.user.id, character_id=character_id, name=name, birthday=raw_birthday, role=Roles(role), biography=""
         ),
+        flags=hikari.MessageFlag.IS_COMPONENTS_V2
     )
