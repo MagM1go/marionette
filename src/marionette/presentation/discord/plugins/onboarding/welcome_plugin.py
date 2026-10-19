@@ -7,9 +7,10 @@ from marionette.application.usecases.onboarding.start_onboarding_usecase import 
 from marionette.bootstrap.config import config
 from marionette.bootstrap.di.container import CrescentContainer
 from marionette.bootstrap.di.inject import Inject, inject
+from marionette.presentation.discord.events import OnboardingMoveEvent
 from marionette.presentation.discord.presenters.welcome_presenter import WelcomePresenter
 from marionette.presentation.discord.ui.onboarding.dispatcher import OnboardingActionDispatcher
-from marionette.presentation.discord.ui.onboarding.registry import OnboardingAction, onboarding_registry
+from marionette.presentation.discord.ui.onboarding.registry import onboarding_registry
 
 plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 inject_plugin = inject(lambda: plugin.model.dishka())
@@ -37,6 +38,19 @@ async def on_user_leave(event: hikari.MemberDeleteEvent, usecase: Inject[Onboard
 
 @plugin.include
 @crescent.event
+async def on_user_accept_rules(event: OnboardingMoveEvent) -> None:
+    if config.discord.roles.text in event.interaction.member.role_ids:  # type: ignore # never dms
+        return
+
+    await event.interaction.app.rest.create_message(
+        channel=config.discord.text_channels.general, 
+        content=WelcomePresenter.present_welcome(event.interaction.user.mention), 
+        user_mentions=True
+    )
+
+
+@plugin.include
+@crescent.event
 @inject_plugin
 async def handle_interaction_click(
     event: hikari.ComponentInteractionCreateEvent,
@@ -49,12 +63,19 @@ async def handle_interaction_click(
     if action is None:
         return
 
-    if action == OnboardingAction.ACCEPT_RULES:
-        await event.app.rest.create_message(
-            channel=config.discord.text_channels.general, content=WelcomePresenter.present_welcome(event.interaction.user.mention)
-        )
-
     user_id = UserId(event.interaction.user.id)
     zone_id = event.interaction.guild_id
 
+    """
+    user_id: UserId
+    event_name: str
+    step: OnboardingStep
+    created_at: datetime
+    """
+    step = await dispatcher.get_step(action, user_id)
+    plugin.app.event_manager.dispatch(
+        OnboardingMoveEvent(  # type: ignore # hikari сам подставляет тут app
+            user_id=user_id, event_name=f"step_{step}", step=step, interaction=event.interaction
+        )
+    )
     await dispatcher.execute(action, zone_id, user_id)

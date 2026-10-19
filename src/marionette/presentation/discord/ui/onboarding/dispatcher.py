@@ -29,8 +29,11 @@ class OnboardingActionDispatcher:
         }
         self._step_assets = step_assets
 
+    async def get_step(self, action: OnboardingAction, user_id: UserId) -> OnboardingStep | None:
+        return await self._handlers[action](user_id)
+
     async def execute(self, action: OnboardingAction, zone_id: int, user_id: UserId) -> None:
-        step = await self._handlers[action](user_id)
+        step = await self.get_step(action, user_id)
         if step is None:
             return
 

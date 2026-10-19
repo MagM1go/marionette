@@ -4,6 +4,7 @@ from datetime import date
 import hikari
 import miru
 
+from marionette.domain.entities.character import CharacterGender
 from marionette.domain.exceptions import CharacterIsTooYoung
 from marionette.domain.roles import Roles
 from marionette.presentation.discord.presenters.registration_presenter import (
@@ -13,8 +14,6 @@ from marionette.presentation.discord.presenters.registration_presenter import (
 from marionette.presentation.discord.ui.wrapper.modal_v2 import ModalV2
 from marionette.presentation.discord.ui.wrapper.string_select_menu import StringSelect
 from marionette.presentation.discord.ui.wrapper.text_input_extension import TextInputExtension
-
-from marionette.domain.entities.character import CharacterGender
 
 
 class RegistrationModal(ModalV2):
