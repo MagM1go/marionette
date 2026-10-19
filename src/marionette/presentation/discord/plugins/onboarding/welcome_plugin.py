@@ -43,7 +43,7 @@ async def on_user_accept_rules(event: OnboardingMoveEvent) -> None:
     if config.discord.roles.text in event.interaction.member.role_ids:  # type: ignore # never dms
         return
 
-    if event.step is not None and event.step == OnboardingStep.RULES:
+    if event.step is not None and event.step == OnboardingStep.REGISTRATION:
         await event.interaction.app.rest.create_message(
             channel=config.discord.text_channels.general, content=WelcomePresenter.present_welcome(event.interaction.user.mention), user_mentions=True
         )
