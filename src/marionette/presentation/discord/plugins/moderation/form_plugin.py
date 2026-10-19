@@ -35,6 +35,7 @@ class ApproveCommand:
             
         if (amplua_role := config.discord.roles.amplua) not in character_owner.role_ids:
             await character_owner.add_role(amplua_role, reason=f"Approved by moderator ({context.user.id})")
+            await character_owner.remove_role(config.discord.roles.unregistered, reason=f"Approved by moderator ({context.user.id})")
 
         ids = list(map(int, self.biography.split(",")))
         messages_content: list[str] = [(await context.channel.fetch_message(id)).content for id in ids]  # type: ignore
