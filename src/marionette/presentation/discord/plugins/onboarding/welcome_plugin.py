@@ -66,12 +66,9 @@ async def handle_interaction_click(
     user_id = UserId(event.interaction.user.id)
     zone_id = event.interaction.guild_id
 
-    """
-    user_id: UserId
-    event_name: str
-    step: OnboardingStep
-    created_at: datetime
-    """
     step = await dispatcher.get_step(action, user_id)
-    plugin.app.event_manager.dispatch(OnboardingMoveEvent(app=plugin.app, user_id=user_id, event_name=f"step_{step}", step=step, interaction=event.interaction))
-    await dispatcher.execute(action, zone_id, user_id)
+    if step is not None:
+        plugin.app.event_manager.dispatch(
+            OnboardingMoveEvent(app=plugin.app, user_id=user_id, event_name=f"step_{step}", step=step, interaction=event.interaction)
+        )
+        await dispatcher.execute(zone_id, user_id, step)
