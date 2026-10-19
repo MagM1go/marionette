@@ -12,6 +12,8 @@ from marionette.presentation.discord.presenters.welcome_presenter import Welcome
 from marionette.presentation.discord.ui.onboarding.dispatcher import OnboardingActionDispatcher
 from marionette.presentation.discord.ui.onboarding.registry import onboarding_registry
 
+from marionette.domain.entities.onboarding import OnboardingStep
+
 plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 inject_plugin = inject(lambda: plugin.model.dishka())
 
@@ -42,11 +44,12 @@ async def on_user_accept_rules(event: OnboardingMoveEvent) -> None:
     if config.discord.roles.text in event.interaction.member.role_ids:  # type: ignore # never dms
         return
 
-    await event.interaction.app.rest.create_message(
-        channel=config.discord.text_channels.general, 
-        content=WelcomePresenter.present_welcome(event.interaction.user.mention), 
-        user_mentions=True
-    )
+    if event.step is not None and event.step == OnboardingStep.RULES:
+        await event.interaction.app.rest.create_message(
+            channel=config.discord.text_channels.general, 
+            content=WelcomePresenter.present_welcome(event.interaction.user.mention), 
+            user_mentions=True
+        )
 
 
 @plugin.include
