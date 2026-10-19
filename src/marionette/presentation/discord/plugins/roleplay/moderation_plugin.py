@@ -1,3 +1,4 @@
+import asyncio
 from contextlib import suppress
 
 import crescent
@@ -8,6 +9,7 @@ from marionette.bootstrap.config import config
 from marionette.bootstrap.di.container import CrescentContainer
 from marionette.bootstrap.di.inject import Inject, inject
 from marionette.presentation.discord.helpers import get_or_fetch_channel
+from marionette.presentation.discord.presenters.moderation_presenter import ModerationPresenter
 
 plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 
@@ -50,11 +52,16 @@ async def message_create_event(
     if not should_delete:
         return
 
+    await event.message.add_reaction(emoji="❌")
+    notice = await plugin.app.rest.create_message(channel=channel.id, content=ModerationPresenter.present(), reply=event.message)
+    await asyncio.sleep(10)
+
     with suppress(hikari.NotFoundError, hikari.ForbiddenError):
         await plugin.app.rest.delete_message(
             channel=event.channel_id,
             message=event.message_id,
         )
+        await plugin.app.rest.delete_message(channel=event.channel_id, message=notice.id)
 
 
 @plugin.include
