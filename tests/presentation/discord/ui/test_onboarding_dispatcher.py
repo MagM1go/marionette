@@ -39,7 +39,9 @@ async def test_onboarding_dispatcher_routes_action_and_applies_step_assets() -> 
         step_assets=step_assets,  # type: ignore[arg-type]
     )
 
-    await dispatcher.execute(OnboardingAction.ACCEPT_RULES, 777, UserId(100))
+    step = await dispatcher.get_step(OnboardingAction.ACCEPT_RULES, UserId(100))
+    if step:
+        await dispatcher.execute(777, UserId(100), step)
 
     assert intro_usecase.calls == []
     assert rules_usecase.calls == []
@@ -63,7 +65,10 @@ async def test_onboarding_dispatcher_skips_step_assets_when_action_does_not_move
         step_assets=step_assets,  # type: ignore[arg-type]
     )
 
-    await dispatcher.execute(OnboardingAction.GO_TO_INTRO, 777, UserId(100))
+    step = await dispatcher.get_step(OnboardingAction.GO_TO_INTRO, UserId(100))
+
+    if step:
+        await dispatcher.execute(777, UserId(100), step)
 
     assert intro_usecase.calls == [UserId(100)]
     assert step_assets.calls == []
