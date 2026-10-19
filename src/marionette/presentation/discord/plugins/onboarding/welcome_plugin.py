@@ -7,12 +7,11 @@ from marionette.application.usecases.onboarding.start_onboarding_usecase import 
 from marionette.bootstrap.config import config
 from marionette.bootstrap.di.container import CrescentContainer
 from marionette.bootstrap.di.inject import Inject, inject
+from marionette.domain.entities.onboarding import OnboardingStep
 from marionette.presentation.discord.events import OnboardingMoveEvent
 from marionette.presentation.discord.presenters.welcome_presenter import WelcomePresenter
 from marionette.presentation.discord.ui.onboarding.dispatcher import OnboardingActionDispatcher
 from marionette.presentation.discord.ui.onboarding.registry import onboarding_registry
-
-from marionette.domain.entities.onboarding import OnboardingStep
 
 plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 inject_plugin = inject(lambda: plugin.model.dishka())
@@ -46,9 +45,7 @@ async def on_user_accept_rules(event: OnboardingMoveEvent) -> None:
 
     if event.step is not None and event.step == OnboardingStep.RULES:
         await event.interaction.app.rest.create_message(
-            channel=config.discord.text_channels.general, 
-            content=WelcomePresenter.present_welcome(event.interaction.user.mention), 
-            user_mentions=True
+            channel=config.discord.text_channels.general, content=WelcomePresenter.present_welcome(event.interaction.user.mention), user_mentions=True
         )
 
 
@@ -76,9 +73,5 @@ async def handle_interaction_click(
     created_at: datetime
     """
     step = await dispatcher.get_step(action, user_id)
-    plugin.app.event_manager.dispatch(
-        OnboardingMoveEvent(  # type: ignore # hikari сам подставляет тут app
-            user_id=user_id, event_name=f"step_{step}", step=step, interaction=event.interaction
-        )
-    )
+    plugin.app.event_manager.dispatch(OnboardingMoveEvent(app=plugin.app, user_id=user_id, event_name=f"step_{step}", step=step, interaction=event.interaction))
     await dispatcher.execute(action, zone_id, user_id)
