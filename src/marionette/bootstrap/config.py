@@ -58,6 +58,8 @@ class RoleIds:
     lawyer: int
     medicine: int
     stylist: int
+    editor: int
+    viewer: int
 
 
 @dataclass(frozen=True)

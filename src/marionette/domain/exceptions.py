@@ -70,6 +70,9 @@ class OnboardingRulesAlreadyAcceptedError(DomainException): ...
 class CharacterBirthdayIncorrect(DomainException): ...
 
 
+class CharacterSmallBiography(DomainException): ...
+
+
 class VoteOnCooldown(DomainException):
     def __init__(self, character_name: str, remaining_time: timedelta) -> None:
         super().__init__()
