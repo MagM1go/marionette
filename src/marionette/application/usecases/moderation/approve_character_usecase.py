@@ -1,8 +1,17 @@
+from dataclasses import dataclass
+
 from marionette.application.protocols import CharacterRepository
 from marionette.application.protocols.transaction import Transaction
 from marionette.application.protocols.types import CharacterId
-from marionette.domain.policies.character_policy import CharacterPolicy
 from marionette.domain.entities.character import CharacterStatus
+from marionette.domain.policies.character_policy import CharacterPolicy
+from marionette.domain.roles import Roles
+
+
+@dataclass
+class ApproveDTO:
+    name: str
+    role: Roles
 
 
 class ApproveCharacterUseCase:
@@ -10,7 +19,7 @@ class ApproveCharacterUseCase:
         self._repository = character_repo
         self._transaction = transaction
 
-    async def approve(self, character_id: CharacterId, biography: str) -> str:
+    async def approve(self, character_id: CharacterId, biography: str) -> ApproveDTO:
         """Всегда возвращает имя одобренного персонажа"""
 
         async with self._transaction:
@@ -25,4 +34,4 @@ class ApproveCharacterUseCase:
 
             await self._transaction.commit()
 
-            return character.name
+            return ApproveDTO(character.name, character.role)

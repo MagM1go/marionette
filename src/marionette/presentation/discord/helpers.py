@@ -3,6 +3,20 @@ from collections.abc import Mapping, Sequence
 
 import hikari
 
+from marionette.bootstrap.config import config
+from marionette.domain.roles import Roles
+
+ROLEPLAY_ROLE_TO_DISCORD: t.Final[dict[Roles, int]] = {
+    Roles.AGENT: config.discord.roles.agent,
+    Roles.ACTOR: config.discord.roles.actor,
+    Roles.IDOL: config.discord.roles.idol,
+    Roles.LAWYER: config.discord.roles.lawyer,
+    Roles.MANGAKA: config.discord.roles.mangaka,
+    Roles.WRITER: config.discord.roles.writer,
+    Roles.MEDICINE: config.discord.roles.medicine,
+    Roles.STYLIST: config.discord.roles.stylist,
+}
+
 
 class UserInterfaceHelper:
     @staticmethod
@@ -52,10 +66,12 @@ class UserInterfaceHelper:
         return modal.get(custom_id, "unresolved")
 
 
-async def get_or_fetch_channel(
-    rest: hikari.api.RESTClient, cache: hikari.api.Cache, channel_id: int
-) -> hikari.PartialChannel:
+async def get_or_fetch_channel(rest: hikari.api.RESTClient, cache: hikari.api.Cache, channel_id: int) -> hikari.PartialChannel:
     if not (channel := cache.get_guild_channel(channel_id)):
         return await rest.fetch_channel(channel_id)
 
     return channel
+
+
+def character_role_to_discod_role(role: Roles) -> hikari.Snowflakeish:
+    return ROLEPLAY_ROLE_TO_DISCORD[role]

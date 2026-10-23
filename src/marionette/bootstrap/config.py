@@ -47,6 +47,18 @@ class RoleIds:
     amplua: int
     moderator: int
 
+    agency_director: int
+    agency_manager: int
+    idol: int
+    actor: int
+    singer: int
+    mangaka: int
+    writer: int
+    agent: int
+    lawyer: int
+    medicine: int
+    stylist: int
+
 
 @dataclass(frozen=True)
 class DiscordConfig:

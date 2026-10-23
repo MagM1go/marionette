@@ -8,6 +8,7 @@ from marionette.bootstrap.config import config
 from marionette.bootstrap.di.container import CrescentContainer
 from marionette.bootstrap.di.inject import Inject, inject
 from marionette.presentation.discord.exceptions import DmsNotAllowed, InsufficientPermissions, MemberNotFound
+from marionette.presentation.discord.helpers import character_role_to_discod_role
 from marionette.presentation.discord.presenters.judge_presenter import JudgePresenter
 
 plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
@@ -25,21 +26,22 @@ class ApproveCommand:
     async def callback(self, context: crescent.Context, usecase: Inject[ApproveCharacterUseCase]) -> None:
         if context.guild is None:
             raise DmsNotAllowed()
-            
+
         if context.member is None or config.discord.roles.moderator not in context.member.role_ids:
             raise InsufficientPermissions()
 
         character_owner = context.guild.get_member(self.user_id)
         if character_owner is None:
             raise MemberNotFound()
-            
+
         if (amplua_role := config.discord.roles.amplua) not in character_owner.role_ids:
             await character_owner.add_role(amplua_role, reason=f"Approved by moderator ({context.user.id})")
             await character_owner.remove_role(config.discord.roles.unregistered, reason=f"Approved by moderator ({context.user.id})")
 
         ids = list(map(int, self.biography.split(",")))
         messages_content: list[str] = [(await context.channel.fetch_message(id)).content for id in ids]  # type: ignore
-        await usecase.approve(CharacterId(self.character_id), "\n".join(messages_content))
+        character = await usecase.approve(CharacterId(self.character_id), "\n".join(messages_content))
+        await character_owner.add_role(character_role_to_discod_role(character.role))
         await context.respond(JudgePresenter.approved())
 
 

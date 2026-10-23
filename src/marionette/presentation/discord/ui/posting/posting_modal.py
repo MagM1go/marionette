@@ -27,9 +27,8 @@ class PostBreakingNewsModal(miru.Modal):
 
     @override
     async def callback(self, context: miru.ModalContext) -> None:
-        message = cast(
-            str, self.message.value
-        )  # доверяем контракту дискорда, что сообщение будет не пустым (required=True в self.message)
+        # доверяем контракту дискорда, что сообщение будет не пустым (required=True в self.message)
+        message = cast(str, self.message.value)
         response = PostingPresenter.present(
             username=context.user.username,
             author_id=context.user.id,
