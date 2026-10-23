@@ -15,6 +15,8 @@ ROLEPLAY_ROLE_TO_DISCORD: t.Final[dict[Roles, int]] = {
     Roles.WRITER: config.discord.roles.writer,
     Roles.MEDICINE: config.discord.roles.medicine,
     Roles.STYLIST: config.discord.roles.stylist,
+    Roles.EDITOR: config.discord.roles.editor,
+    Roles.VIEWER: config.discord.roles.viewer,
 }
 
 
