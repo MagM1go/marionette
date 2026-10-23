@@ -42,6 +42,18 @@ roles:
    text: 53
    amplua: 56
    moderator: 55
+
+   agency_director: 59
+   agency_manager: 60
+   idol: 61
+   actor: 62
+   singer: 63
+   mangaka: 64
+   writer: 65
+   agent: 66
+   lawyer: 67
+   medicine: 68
+   stylist: 69
 """
 
 INFRASTRUCTURE_YAML = """\
@@ -102,6 +114,17 @@ def test_load_config_maps_yaml_sections_and_env_secrets(monkeypatch: pytest.Monk
     assert config.discord.roles.text == 53
     assert config.discord.roles.amplua == 56
     assert config.discord.roles.moderator == 55
+    assert config.discord.roles.agency_director == 59
+    assert config.discord.roles.agency_manager == 60
+    assert config.discord.roles.idol == 61
+    assert config.discord.roles.actor == 62
+    assert config.discord.roles.singer == 63
+    assert config.discord.roles.mangaka == 64
+    assert config.discord.roles.writer == 65
+    assert config.discord.roles.agent == 66
+    assert config.discord.roles.lawyer == 67
+    assert config.discord.roles.medicine == 68
+    assert config.discord.roles.stylist == 69
     assert config.discord.paparazzi_trigger_channel_prefix == "PP"
 
     assert config.database.url == "postgresql+psycopg://env:pass@localhost:5432/app"

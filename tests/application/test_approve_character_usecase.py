@@ -13,11 +13,12 @@ from marionette.domain.exceptions import (
     CharacterNotFound,
 )
 from marionette.domain.entities.character import CharacterStatus
+from marionette.domain.roles import Roles
 from tests.fakes import FakeCharacterRepository, FakeTransaction
 
 
 @pytest.mark.asyncio
-async def test_approve_marks_character_active_and_returns_name(
+async def test_approve_marks_character_active_and_returns_name_and_role(
     character_factory: Callable[..., Character],
     character_repo_factory: Callable[[list[Character] | None], FakeCharacterRepository],
     fake_transaction: FakeTransaction,
@@ -30,7 +31,8 @@ async def test_approve_marks_character_active_and_returns_name(
         character_repo=repo,
     ).approve(CharacterId(10), "")
 
-    assert result == "Airi"
+    assert result.name == "Airi"
+    assert result.role == Roles.IDOL
     assert character.status == CharacterStatus.IS_ACTIVE
     assert fake_transaction.commit_calls == 1
     assert fake_transaction.rollback_calls == 0
