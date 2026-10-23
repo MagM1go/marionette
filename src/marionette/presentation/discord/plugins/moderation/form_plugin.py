@@ -49,7 +49,11 @@ class ApproveCommand:
             raise CharacterSmallBiography()
 
         character = await usecase.approve(CharacterId(self.character_id), "\n".join(messages_content))
-        await character_owner.add_role(character_role_to_discod_role(character.role))
+
+        role = character_role_to_discod_role(character.role)
+        if role not in character_owner.role_ids:
+            await character_owner.add_role(role)
+
         await context.respond(JudgePresenter.approved())
 
 
