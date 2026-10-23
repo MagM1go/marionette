@@ -127,7 +127,7 @@ def test_load_config_maps_yaml_sections_and_env_secrets(monkeypatch: pytest.Monk
     assert config.discord.roles.lawyer == 67
     assert config.discord.roles.medicine == 68
     assert config.discord.roles.stylist == 69
-    assert config.discord.roles.medicine == 70
+    assert config.discord.roles.editor == 70
     assert config.discord.roles.stylist == 71
     assert config.discord.paparazzi_trigger_channel_prefix == "PP"
 
