@@ -26,7 +26,8 @@ class FakeCharacterRepository:
         role: Roles,
         birthday: date | datetime,
         biography: str = "",
-        gender: CharacterGender = CharacterGender.FEMALE
+        gender: CharacterGender = CharacterGender.FEMALE,
+        image_url: str | None = None
     ) -> Character:
         birthday_datetime = birthday if isinstance(birthday, datetime) else datetime.combine(birthday, datetime.min.time())
         character = Character(
@@ -41,7 +42,8 @@ class FakeCharacterRepository:
             is_in_performance=False,
             last_exposed_at=None,
             status=CharacterStatus.MODERATION,
-            gender=gender
+            gender=gender,
+            image_url=""
         )
         self.characters.append(character)
         return character

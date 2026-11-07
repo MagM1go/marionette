@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import cast
 
 import crescent
 import hikari
@@ -30,17 +31,32 @@ async def on_register_modal_submit(
     raw_modal = UserInterfaceHelper.labeled_modal_map(event.interaction.components)
 
     try:
-        birthday = datetime.strptime(UserInterfaceHelper.get_modal_value(raw_modal, "birthday"), "%d.%m.%Y")
+        birthday = datetime.strptime(cast(str, UserInterfaceHelper.get_modal_value(raw_modal, "birthday")), "%d.%m.%Y")
     except ValueError as exc:
         raise CharacterBirthdayIncorrect() from exc
 
     name = UserInterfaceHelper.get_modal_value(raw_modal, "name")
+    assert name is not None
+    
     role = UserInterfaceHelper.get_modal_value(raw_modal, "role")
+    assert role is not None
+    
     raw_birthday = UserInterfaceHelper.get_modal_value(raw_modal, "birthday")
+    assert raw_birthday is not None
+    
     gender = UserInterfaceHelper.get_modal_value(raw_modal, "gender")
+    assert gender is not None
+    
+    image_url = UserInterfaceHelper.get_modal_value(raw_modal, "image_url")
 
     character_id = await usecase.register(
-        user_id=UserId(event.interaction.user.id), name=name, role=Roles(role), birthday=birthday, biography="", gender=CharacterGender(gender)
+        user_id=UserId(event.interaction.user.id),
+        name=name,
+        role=Roles(role),
+        birthday=birthday,
+        biography="",
+        gender=CharacterGender(gender),
+        image_url=image_url,
     )
 
     await plugin.app.rest.create_forum_post(
@@ -56,5 +72,6 @@ async def on_register_modal_submit(
             biography="",
         ),
         flags=hikari.MessageFlag.IS_COMPONENTS_V2,
-        user_mentions=True
+        user_mentions=True,
+        attachment=image_url or hikari.UNDEFINED
     )

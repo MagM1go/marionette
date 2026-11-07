@@ -44,6 +44,6 @@ class ProfilePresenter:
     @staticmethod
     def present_character_biography_pages(character: Character) -> list[hikari.Embed]:
         return [
-            hikari.Embed(title=f"{character.name} | биография", description=character.biography[i * 4096 : (i + 1) * 4096])
+            hikari.Embed(title=f"{character.name} | биография", description=character.biography[i * 4096 : (i + 1) * 4096]).set_thumbnail(character.image_url)
             for i in range(len(character.biography) // 4096 + 1)
         ]

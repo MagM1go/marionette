@@ -57,6 +57,7 @@ class Character(Base):
     last_exposed_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     status: Mapped[CharacterStatus] = mapped_column(default=CharacterStatus.MODERATION)
     gender: Mapped[CharacterGender] = mapped_column()
+    image_url: Mapped[str] = mapped_column(server_default=None, nullable=True)
 
     @t.override
     def __eq__(self, value: object, /) -> bool:

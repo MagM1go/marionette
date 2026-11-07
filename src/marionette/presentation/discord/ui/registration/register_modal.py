@@ -42,6 +42,11 @@ class RegistrationModal(ModalV2):
         label="Пол персонажа",
         options=[miru.SelectOption(label=r, value=r) for r in CharacterGender],
     )
+    image = TextInputExtension(
+        custom_id="image_url",
+        label="Изображение персонажа",
+        placeholder="https://image-hosting-example.com/..."
+    )
 
     async def modal_check(self, context: miru.ModalContext) -> bool:
         birthday = context.values[self.birthday]

@@ -16,8 +16,10 @@ class SqlAlchemyCharacterRepository(CharacterRepository):
         self._session: AsyncSession = session
 
     @t.override
-    def create(self, user_id: int, name: str, role: Roles, birthday: datetime, biography: str, gender: CharacterGender) -> Character | None:
-        character = Character(user_id=user_id, name=name, role=role, birthday=birthday, biography=biography, gender=gender)
+    def create(
+        self, user_id: int, name: str, role: Roles, birthday: datetime, biography: str, gender: CharacterGender, image_url: str | None
+    ) -> Character | None:
+        character = Character(user_id=user_id, name=name, role=role, birthday=birthday, biography=biography, gender=gender, image_url=image_url)
         self._session.add(character)
         return character
 

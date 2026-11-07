@@ -84,6 +84,7 @@ def character_factory() -> Callable[..., Character]:
             is_in_performance=False,
             last_exposed_at=last_exposed_at,
             status=status,
+            image_url=None
         )
 
     return factory

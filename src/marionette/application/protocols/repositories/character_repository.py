@@ -10,7 +10,7 @@ from marionette.domain.roles import Roles
 class CharacterRepository(Protocol):
     """Хранилище персонажей игроков."""
 
-    def create(self, user_id: UserId, name: str, role: Roles, birthday: datetime, biography: str, gender: CharacterGender) -> Character | None:
+    def create(self, user_id: UserId, name: str, role: Roles, birthday: datetime, biography: str, gender: CharacterGender, image_url: str | None) -> Character | None:
         """Создаёт нового персонажа.
 
         Args:
@@ -19,6 +19,7 @@ class CharacterRepository(Protocol):
             role: Роль персонажа в индустрии.
             birthday: Дата рождения персонажа. Используется для проверки доступа к NSFW каналам.
             biography: Биография персонажа
+            image_url: Изображение персонажа
 
         Returns:
             Созданный персонаж или None, если персонаж с таким именем уже существует у пользователя.

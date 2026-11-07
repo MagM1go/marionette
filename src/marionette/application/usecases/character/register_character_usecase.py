@@ -13,14 +13,18 @@ class RegisterUseCase:
         self._transaction = transaction
         self._repository = repository
 
-    async def register(self, user_id: UserId, name: str, role: Roles, birthday: datetime, biography: str, gender: CharacterGender) -> CharacterId:
+    async def register(
+        self, user_id: UserId, name: str, role: Roles, birthday: datetime, biography: str, gender: CharacterGender, image_url: str | None
+    ) -> CharacterId:
         async with self._transaction:
             characters = await self._repository.get_active_characters_by_user_id(user_id=user_id)
 
             if len(characters) >= 3:
                 raise TooManyCharacters()
 
-            character = self._repository.create(user_id=user_id, name=name, role=role, birthday=birthday, biography=biography, gender=gender)
+            character = self._repository.create(
+                user_id=user_id, name=name, role=role, birthday=birthday, biography=biography, gender=gender, image_url=image_url
+            )
             for c in characters:
                 if c == character:
                     await self._transaction.rollback()

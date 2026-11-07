@@ -64,8 +64,8 @@ class UserInterfaceHelper:
         return UserInterfaceHelper.modal_map(modal_components)
 
     @staticmethod
-    def get_modal_value(modal: Mapping[str, str], custom_id: str) -> str:
-        return modal.get(custom_id, "unresolved")
+    def get_modal_value(modal: Mapping[str, str], custom_id: str) -> str | None:
+        return modal.get(custom_id)
 
 
 async def get_or_fetch_channel(rest: hikari.api.RESTClient, cache: hikari.api.Cache, channel_id: int) -> hikari.PartialChannel:
