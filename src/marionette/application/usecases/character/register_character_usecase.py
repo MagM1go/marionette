@@ -21,12 +21,10 @@ class RegisterUseCase:
                 raise TooManyCharacters()
 
             character = self._repository.create(user_id=user_id, name=name, role=role, birthday=birthday, biography=biography, gender=gender)
-
             for c in characters:
                 if c == character:
                     await self._transaction.rollback()
                     raise CharacterIsEqual()
 
             await self._transaction.commit()
-
             return character.id  # type: ignore
