@@ -3,12 +3,13 @@ from enum import StrEnum
 from typing import Final
 
 from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.sql.sqltypes import BigInteger
+from sqlalchemy.types import ARRAY, String
 
 from marionette.domain.entities.base import Base
 from marionette.domain.permissions.approve_character import ApproveCharacterPermission
 from marionette.domain.permissions.ignore_entrance import IgnoreEntrancePermission
 from marionette.domain.permissions.permission import Permission
-from sqlalchemy.types import ARRAY, String
 
 
 class StaffRoles(StrEnum):
@@ -32,7 +33,7 @@ class Staff(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
 
-    user_id: Mapped[int] = mapped_column()
+    user_id: Mapped[int] = mapped_column(BigInteger())
     """User ID персонала"""
 
     role: Mapped[StaffRoles] = mapped_column()
