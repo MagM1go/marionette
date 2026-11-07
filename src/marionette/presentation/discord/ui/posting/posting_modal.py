@@ -5,9 +5,10 @@ import miru
 
 from marionette.bootstrap.config import config
 from marionette.presentation.discord.presenters.posting_presenter import PostingPresenter
+from marionette.presentation.discord.ui.wrapper.modal_v2 import ModalV2
 
 
-class PostBreakingNewsModal(miru.Modal):
+class PostBreakingNewsModal(ModalV2):
     def __init__(self, title: str, source: str, custom_id: str) -> None:
         self.source = source
 
