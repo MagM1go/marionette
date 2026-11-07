@@ -38,6 +38,7 @@ class ProfilePresenter:
                 inline=True,
             )
             .add_field(name="Основная роль", value=character.role, inline=True)
+            .set_thumbnail(character.image_url)
             for character in characters
         ]
 

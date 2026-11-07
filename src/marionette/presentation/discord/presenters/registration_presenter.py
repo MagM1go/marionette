@@ -19,9 +19,9 @@ class RegistrationPresenter:
 
     @staticmethod
     def present_moderation(
-        user_id: int, user_mention: str, character_id: CharacterId, name: str, birthday: str, role: str, biography: str
+        user_id: int, user_mention: str, character_id: CharacterId, name: str, birthday: str, role: str, image_url: str | None
     ) -> list[TextDisplayComponentBuilder | ContainerComponentBuilder]:
-        return [
+        items = [
             hikari.impl.TextDisplayComponentBuilder(
                 content=f"Раз ты, {user_mention}, собираешься отречься от себя... Вернее, создать ещё одного себя, то соизволь написать ниже биографию (да, прямо в ветке, да, никаких более команд не нужно, стоит лишь упомянуть любого ГМа/анкетолога)"
             ),
@@ -33,6 +33,11 @@ class RegistrationPresenter:
                 .add_text_display(f"Роль: {role}")
             ),
         ]
+
+        if image_url is not None:
+            items[1].add_media_gallery(items=[hikari.impl.MediaGalleryItemBuilder(media=image_url)])
+
+        return items
 
     @staticmethod
     def present_user() -> str:

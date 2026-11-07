@@ -54,7 +54,6 @@ async def on_register_modal_submit(
         name=name,
         role=Roles(role),
         birthday=birthday,
-        biography="",
         gender=CharacterGender(gender),
         image_url=image_url,
     )
@@ -69,9 +68,9 @@ async def on_register_modal_submit(
             name=name,
             birthday=raw_birthday,
             role=Roles(role),
-            biography="",
+            image_url=image_url
         ),
         flags=hikari.MessageFlag.IS_COMPONENTS_V2,
         user_mentions=True,
-        attachment=image_url or hikari.UNDEFINED
+        attachment=image_url if image_url else hikari.UNDEFINED
     )
