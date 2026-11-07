@@ -19,7 +19,7 @@ class DeleteOfftopicMessageUseCase:
     ) -> bool:
         staff = await self._staff_repository.get_by_user_id(user_id=UserId(user_id))
         if staff and staff.role.has_permission(IgnoreEntrancePermission):
-            return True
+            return False
 
         if not message_content:
             return False
