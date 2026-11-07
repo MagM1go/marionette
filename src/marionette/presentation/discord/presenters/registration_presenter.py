@@ -1,9 +1,8 @@
 from datetime import date
 
 import hikari
+from hikari.impl import ContainerComponentBuilder, TextDisplayComponentBuilder
 
-from hikari.impl import ContainerComponentBuilder
-from hikari.impl import TextDisplayComponentBuilder
 from marionette.application.protocols.types import CharacterId
 
 
@@ -23,15 +22,16 @@ class RegistrationPresenter:
         user_id: int, user_mention: str, character_id: CharacterId, name: str, birthday: str, role: str, biography: str
     ) -> list[TextDisplayComponentBuilder | ContainerComponentBuilder]:
         return [
-            hikari.impl.TextDisplayComponentBuilder(content=user_mention),
-            (hikari.impl.ContainerComponentBuilder()
-            .add_text_display(f"Персонаж <@{user_id}> ({user_id}); ID: {character_id}")
-            .add_text_display(f"Имя персонажа: `{name}`")
-            .add_text_display(
-                f"День рождения персонажа: `{birthday}`, возраст: `{age_from_birthday(birthday)}`"
-            )
-            .add_text_display(f"Роль: {role}")
-            )
+            hikari.impl.TextDisplayComponentBuilder(
+                content=f"Раз ты, {user_mention}, собираешься отречься от себя... Вернее, создать ещё одного себя, то соизволь написать ниже биографию (да, прямо в ветке, да, никаких более команд не нужно, стоит лишь упомянуть любого ГМа/анкетолога)"
+            ),
+            (
+                hikari.impl.ContainerComponentBuilder()
+                .add_text_display(f"Персонаж <@{user_id}> ({user_id}); ID: {character_id}")
+                .add_text_display(f"Имя персонажа: `{name}`")
+                .add_text_display(f"День рождения персонажа: `{birthday}`, возраст: `{age_from_birthday(birthday)}`")
+                .add_text_display(f"Роль: {role}")
+            ),
         ]
 
     @staticmethod

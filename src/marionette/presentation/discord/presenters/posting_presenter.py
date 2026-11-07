@@ -8,9 +8,7 @@ class PostingPresenter:
     LOGOS_PATH = Path("src/marionette/presentation/assets/logos")
 
     @staticmethod
-    def present(
-        username: str, author_id: int, source: str, image: str | None, message: str
-    ) -> list[hikari.api.ComponentBuilder]:
+    def present(username: str, author_id: int, source: str, image: str | None, message: str) -> list[hikari.api.ComponentBuilder]:
         components = PostingPresenter._build_message_components(message)
 
         if image:
@@ -29,24 +27,14 @@ class PostingPresenter:
             components.append(hikari.impl.TextDisplayComponentBuilder(content=part.strip()))
 
             if index < len(message_parts) - 1:
-                components.append(
-                    hikari.impl.SeparatorComponentBuilder(
-                        spacing=hikari.SpacingType.SMALL, divider=True
-                    )
-                )
+                components.append(hikari.impl.SeparatorComponentBuilder(spacing=hikari.SpacingType.SMALL, divider=True))
 
         return components
 
     @staticmethod
     def _build_media_image(image: hikari.Resourceish) -> hikari.api.ComponentBuilder:
-        return hikari.impl.MediaGalleryComponentBuilder(
-            items=[hikari.impl.MediaGalleryItemBuilder(media=image)]
-        )
+        return hikari.impl.MediaGalleryComponentBuilder(items=[hikari.impl.MediaGalleryItemBuilder(media=image)])
 
     @staticmethod
-    def _build_author_info(
-        username: str, author_id: int, source: str
-    ) -> hikari.api.ComponentBuilder:
-        return hikari.impl.TextDisplayComponentBuilder(
-            content=f"-# @{username} | {author_id} // {source}"
-        )
+    def _build_author_info(username: str, author_id: int, source: str) -> hikari.api.ComponentBuilder:
+        return hikari.impl.TextDisplayComponentBuilder(content=f"-# @{username} | {author_id} // {source}")
