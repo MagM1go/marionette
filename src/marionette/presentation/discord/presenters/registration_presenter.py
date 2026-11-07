@@ -35,9 +35,9 @@ class RegistrationPresenter:
         ]
 
         if image_url is not None:
-            items[1].add_media_gallery(items=[hikari.impl.MediaGalleryItemBuilder(media=image_url)])
+            items[1].add_media_gallery(items=[hikari.impl.MediaGalleryItemBuilder(media=image_url)])  # type: ignore[attr-defined]
 
-        return items
+        return items  # type: ignore[return-value]
 
     @staticmethod
     def present_user() -> str:
