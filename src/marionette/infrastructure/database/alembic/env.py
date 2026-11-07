@@ -10,6 +10,8 @@ from marionette.domain.entities.character import Character  # noqa: F401
 from marionette.domain.entities.onboarding import OnboardingEvent, OnboardingRoleGrant, OnboardingState
 from marionette.domain.entities.vote import Vote
 from marionette.domain.entities.subscription import Subscription
+from marionette.domain.entities.staff import Staff
+
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
