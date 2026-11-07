@@ -3,6 +3,7 @@ from collections.abc import Sequence
 
 import hikari
 import miru
+from miru.ext import nav
 
 from marionette.bootstrap.config import config
 from marionette.presentation.discord.presenters.onboarding.rules_presenter import RulesPresenter
@@ -15,7 +16,7 @@ _RULES_OPTIONS: t.Final[Sequence[miru.SelectOption]] = [
     miru.SelectOption(label="Общие правила", value="general"),
     miru.SelectOption(label="РП правила", value="roleplay"),
 ]
-_RULES: t.Final[dict[str, str]] = {"general": RulesPresenter.general_rules(), "roleplay": RulesPresenter.roleplay_rules()}
+_RULES: t.Final[dict[str, str | list[str]]] = {"general": RulesPresenter.general_rules(), "roleplay": RulesPresenter.roleplay_rules()}
 
 
 class RulesView(miru.View):
@@ -24,6 +25,18 @@ class RulesView(miru.View):
 
     @miru.text_select(options=_RULES_OPTIONS, custom_id=ONBOARDING_RULES_CUSTOM_ID)
     async def rules(self, context: miru.ViewContext, select: miru.TextSelect) -> None:
+        value = select.values[0]
+
+        if value == "roleplay":
+            navigator = nav.NavigatorView(pages=RulesPresenter.roleplay_rules())
+
+            builder = await navigator.build_response_async(context.client)
+            builder.set_flags(hikari.MessageFlag.EPHEMERAL)
+            await builder.create_initial_response(context.interaction)
+
+            context.client.start_view(navigator)
+            return
+
         await context.respond(_RULES[select.values[0]], flags=hikari.MessageFlag.EPHEMERAL)
 
     # TODO: добавить ошибку при повторном нажатии
