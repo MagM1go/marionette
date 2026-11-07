@@ -6,6 +6,7 @@ import miru
 from marionette.bootstrap.config import config
 from marionette.presentation.discord.presenters.posting_presenter import PostingPresenter
 from marionette.presentation.discord.ui.wrapper.modal_v2 import ModalV2
+from marionette.presentation.discord.ui.wrapper.text_input_extension import TextInputExtension
 
 
 class PostBreakingNewsModal(ModalV2):
@@ -14,13 +15,13 @@ class PostBreakingNewsModal(ModalV2):
 
         super().__init__(title, custom_id=custom_id, timeout=300)
 
-    message = miru.TextInput(
+    message = TextInputExtension(
         label="Новостное сообщение",
         required=True,
         placeholder="Сегодня погиб известный писатель...",
         style=hikari.TextInputStyle.PARAGRAPH,
     )
-    image = miru.TextInput(
+    image = TextInputExtension(
         label="Изображение (большое)",
         required=False,
         placeholder="https://image-hosting.domain/image.png",
