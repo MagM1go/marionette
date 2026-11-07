@@ -1,6 +1,7 @@
 import crescent
 import hikari
 
+from marionette.application.protocols import UserId
 from marionette.application.protocols.types import CharacterId
 from marionette.application.usecases.moderation.approve_character_usecase import ApproveCharacterUseCase
 from marionette.application.usecases.moderation.decline_character_usecase import DeclineCharacterUseCase
@@ -19,7 +20,9 @@ MIN_BIOGRAPHY_LENGTH: int = 350
 
 
 @plugin.include
-@crescent.command(name="approve", description="Принять анкету персонажа", guild=config.discord.guild.main)
+@crescent.command(
+    name="approve", description="Принять анкету персонажа", guild=config.discord.guild.main, default_member_permissions=hikari.Permissions.MANAGE_ROLES
+)
 class ApproveCommand:
     user_id = crescent.option(hikari.User, "пользователь, чьего персонажа принимаем")
     character_id = crescent.option(int, "идентификатор персонажа")
@@ -36,11 +39,7 @@ class ApproveCommand:
         character_owner = context.guild.get_member(self.user_id)
         if character_owner is None:
             raise MemberNotFound()
-
-        if (amplua_role := config.discord.roles.amplua) not in character_owner.role_ids:
-            await character_owner.add_role(amplua_role, reason=f"Approved by moderator ({context.user.id})")
-            await character_owner.remove_role(config.discord.roles.unregistered, reason=f"Approved by moderator ({context.user.id})")
-
+            
         ids = list(map(int, self.biography.split(",")))
         messages_content: list[str] = [(await context.channel.fetch_message(id)).content for id in ids]  # type: ignore
 
@@ -48,7 +47,11 @@ class ApproveCommand:
         if biography_length < MIN_BIOGRAPHY_LENGTH:
             raise CharacterSmallBiography()
 
-        character = await usecase.approve(CharacterId(self.character_id), "\n".join(messages_content))
+        character = await usecase.approve(UserId(context.user.id), CharacterId(self.character_id), "\n".join(messages_content))
+        
+        if (amplua_role := config.discord.roles.amplua) not in character_owner.role_ids:
+            await character_owner.add_role(amplua_role, reason=f"Approved by moderator ({context.user.id})")
+            await character_owner.remove_role(config.discord.roles.unregistered, reason=f"Approved by moderator ({context.user.id})")
 
         role = character_role_to_discod_role(character.role)
         if role not in character_owner.role_ids:

@@ -6,15 +6,16 @@ from marionette.application.usecases.delete_offtopic_message_usecase import (
     DeleteOfftopicMessageUseCase,
 )
 from marionette.domain.entities.character import Character
-from tests.fakes import FakeCharacterRepository
+from tests.fakes import FakeCharacterRepository, FakeStaffRepository
 
 
 @pytest.mark.parametrize("message_content", [None, ""])
 async def test_execute_returns_false_for_empty_message_content(
     character_repo_factory: Callable[..., FakeCharacterRepository],
+    staff_repo_factory: Callable[..., FakeStaffRepository],
     message_content: str | None,
 ) -> None:
-    usecase = DeleteOfftopicMessageUseCase(character_repo_factory())
+    usecase = DeleteOfftopicMessageUseCase(character_repo_factory(), staff_repo_factory())
 
     result = await usecase.execute(
         user_id=100,
@@ -27,10 +28,12 @@ async def test_execute_returns_false_for_empty_message_content(
 
 async def test_execute_returns_false_for_current_character_location_with_rp_message(
     character_factory: Callable[..., Character],
+    staff_repo_factory: Callable[..., FakeStaffRepository],
     character_repo_factory: Callable[..., FakeCharacterRepository],
 ) -> None:
     repo = character_repo_factory([character_factory(entered_channel_id=777)])
-    usecase = DeleteOfftopicMessageUseCase(repo)
+    staff = staff_repo_factory()
+    usecase = DeleteOfftopicMessageUseCase(repo, staff)
 
     result = await usecase.execute(
         user_id=100,
@@ -43,10 +46,11 @@ async def test_execute_returns_false_for_current_character_location_with_rp_mess
 
 async def test_execute_returns_false_for_current_character_location_with_non_rp_message(
     character_factory: Callable[..., Character],
+    staff_repo_factory: Callable[..., FakeStaffRepository],
     character_repo_factory: Callable[..., FakeCharacterRepository],
 ) -> None:
     repo = character_repo_factory([character_factory(entered_channel_id=777)])
-    usecase = DeleteOfftopicMessageUseCase(repo)
+    usecase = DeleteOfftopicMessageUseCase(repo, staff_repo_factory())
 
     result = await usecase.execute(
         user_id=100,
@@ -59,10 +63,11 @@ async def test_execute_returns_false_for_current_character_location_with_non_rp_
 
 async def test_execute_returns_false_for_non_rp_message_from_another_location(
     character_factory: Callable[..., Character],
+    staff_repo_factory: Callable[..., FakeStaffRepository],
     character_repo_factory: Callable[..., FakeCharacterRepository],
 ) -> None:
     repo = character_repo_factory([character_factory(entered_channel_id=321)])
-    usecase = DeleteOfftopicMessageUseCase(repo)
+    usecase = DeleteOfftopicMessageUseCase(repo, staff_repo_factory())
 
     result = await usecase.execute(
         user_id=100,
@@ -75,10 +80,11 @@ async def test_execute_returns_false_for_non_rp_message_from_another_location(
 
 async def test_execute_returns_true_for_rp_message_from_another_location(
     character_factory: Callable[..., Character],
+    staff_repo_factory: Callable[..., FakeStaffRepository],
     character_repo_factory: Callable[..., FakeCharacterRepository],
 ) -> None:
     repo = character_repo_factory([character_factory(entered_channel_id=321)])
-    usecase = DeleteOfftopicMessageUseCase(repo)
+    usecase = DeleteOfftopicMessageUseCase(repo, staff_repo_factory())
 
     result = await usecase.execute(
         user_id=100,
@@ -91,8 +97,9 @@ async def test_execute_returns_true_for_rp_message_from_another_location(
 
 async def test_execute_returns_true_for_rp_message_when_character_is_not_entered(
     character_repo_factory: Callable[..., FakeCharacterRepository],
+    staff_repo_factory: Callable[..., FakeStaffRepository],
 ) -> None:
-    usecase = DeleteOfftopicMessageUseCase(character_repo_factory())
+    usecase = DeleteOfftopicMessageUseCase(character_repo_factory(), staff_repo_factory())
 
     result = await usecase.execute(
         user_id=100,
@@ -105,8 +112,9 @@ async def test_execute_returns_true_for_rp_message_when_character_is_not_entered
 
 async def test_execute_returns_false_for_non_rp_message_when_character_is_not_entered(
     character_repo_factory: Callable[..., FakeCharacterRepository],
+    staff_repo_factory: Callable[..., FakeStaffRepository],
 ) -> None:
-    usecase = DeleteOfftopicMessageUseCase(character_repo_factory())
+    usecase = DeleteOfftopicMessageUseCase(character_repo_factory(), staff_repo_factory())
 
     result = await usecase.execute(
         user_id=100,

@@ -5,7 +5,10 @@ from pathlib import Path
 
 import pytest
 
+from marionette.application.protocols import UserId
+from marionette.domain.entities.staff import Staff, StaffRoles
 from marionette.domain.entities.subscription import Subscription
+from marionette.domain.permissions.permission import Permission
 
 ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT / "src"
@@ -13,13 +16,13 @@ if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
 from marionette.domain.entities.agency import Agency
-from marionette.domain.entities.character import Character
+from marionette.domain.entities.character import Character, CharacterStatus
 from marionette.domain.entities.vote import Vote
 from marionette.domain.roles import Roles
-from marionette.domain.entities.character import CharacterStatus
 from tests.fakes import (
     FakeAgencyRepository,
     FakeCharacterRepository,
+    FakeStaffRepository,
     FakeSubscriptionRepository,
     FakeTransaction,
     FakeVoteRepository,
@@ -131,19 +134,8 @@ def vote_repo_factory() -> Callable[[list[Vote] | None], FakeVoteRepository]:
 
 @pytest.fixture
 def subscription_factory() -> Callable[..., Subscription]:
-    def factory(
-        *,
-        follower_id: int = 101,
-        character_author_id: int = 102,
-        character_id: int = 100,
-        followed_at: datetime | None = None
-    ) -> Subscription:
-        return Subscription(
-            follower_id=follower_id,
-            character_author_id=character_author_id,
-            character_id=character_id,
-            followed_at=followed_at
-        )
+    def factory(*, follower_id: int = 101, character_author_id: int = 102, character_id: int = 100, followed_at: datetime | None = None) -> Subscription:
+        return Subscription(follower_id=follower_id, character_author_id=character_author_id, character_id=character_id, followed_at=followed_at)
 
     return factory
 
@@ -152,6 +144,22 @@ def subscription_factory() -> Callable[..., Subscription]:
 def subscription_repo_factory() -> Callable[[list[Subscription] | None], FakeSubscriptionRepository]:
     def factory(subscriptions: list[Subscription] | None = None) -> FakeSubscriptionRepository:
         return FakeSubscriptionRepository(subscriptions)
+
+    return factory
+
+
+@pytest.fixture
+def staff_factory() -> Callable[..., Staff]:
+    def factory(*, user_id: UserId, role: StaffRoles, permissions: list[Permission]) -> Staff:
+        return Staff(user_id=user_id, role=role, permissions=permissions)
+
+    return factory
+
+
+@pytest.fixture
+def staff_repo_factory() -> Callable[[list[Staff] | None], FakeStaffRepository]:
+    def factory(staff_list: list[Staff] | None = None) -> FakeStaffRepository:
+        return FakeStaffRepository(staff_list)
 
     return factory
 

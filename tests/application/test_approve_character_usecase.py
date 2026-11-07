@@ -2,34 +2,34 @@ from collections.abc import Callable
 
 import pytest
 
+from marionette.application.protocols import UserId
 from marionette.application.protocols.types import CharacterId
 from marionette.application.usecases.moderation.approve_character_usecase import (
     ApproveCharacterUseCase,
 )
-from marionette.domain.entities.character import Character
+from marionette.domain.entities.character import Character, CharacterStatus
 from marionette.domain.exceptions import (
     CharacterAlreadyActive,
     CharacterIsAbandoned,
     CharacterNotFound,
 )
-from marionette.domain.entities.character import CharacterStatus
 from marionette.domain.roles import Roles
-from tests.fakes import FakeCharacterRepository, FakeTransaction
+from tests.fakes import FakeCharacterRepository, FakeStaffRepository, FakeTransaction
 
 
 @pytest.mark.asyncio
 async def test_approve_marks_character_active_and_returns_name_and_role(
     character_factory: Callable[..., Character],
     character_repo_factory: Callable[[list[Character] | None], FakeCharacterRepository],
+    staff_repo_factory: Callable[..., FakeStaffRepository],
     fake_transaction: FakeTransaction,
 ) -> None:
     character = character_factory(id=10, name="Airi", status=CharacterStatus.MODERATION)
     repo = character_repo_factory([character])
 
-    result = await ApproveCharacterUseCase(
-        transaction=fake_transaction,
-        character_repo=repo,
-    ).approve(CharacterId(10), "")
+    result = await ApproveCharacterUseCase(transaction=fake_transaction, character_repo=repo, staff_repository=staff_repo_factory()).approve(
+        UserId(123), CharacterId(10), ""
+    )
 
     assert result.name == "Airi"
     assert result.role == Roles.IDOL
@@ -41,15 +41,15 @@ async def test_approve_marks_character_active_and_returns_name_and_role(
 @pytest.mark.asyncio
 async def test_approve_raises_when_character_missing(
     character_repo_factory: Callable[[list[Character] | None], FakeCharacterRepository],
+    staff_repo_factory: Callable[..., FakeStaffRepository],
     fake_transaction: FakeTransaction,
 ) -> None:
     repo = character_repo_factory([])
 
     with pytest.raises(CharacterNotFound) as error:
-        await ApproveCharacterUseCase(
-            transaction=fake_transaction,
-            character_repo=repo,
-        ).approve(CharacterId(42), "")
+        await ApproveCharacterUseCase(transaction=fake_transaction, character_repo=repo, staff_repository=staff_repo_factory()).approve(
+            UserId(123), CharacterId(42), ""
+        )
 
     assert error.value.name == "42"
     assert fake_transaction.commit_calls == 0
@@ -60,16 +60,16 @@ async def test_approve_raises_when_character_missing(
 async def test_approve_raises_when_character_already_active(
     character_factory: Callable[..., Character],
     character_repo_factory: Callable[[list[Character] | None], FakeCharacterRepository],
+    staff_repo_factory: Callable[..., FakeStaffRepository],
     fake_transaction: FakeTransaction,
 ) -> None:
     character = character_factory(id=10, status=CharacterStatus.IS_ACTIVE)
     repo = character_repo_factory([character])
 
     with pytest.raises(CharacterAlreadyActive):
-        await ApproveCharacterUseCase(
-            transaction=fake_transaction,
-            character_repo=repo,
-        ).approve(CharacterId(10), "")
+        await ApproveCharacterUseCase(transaction=fake_transaction, character_repo=repo, staff_repository=staff_repo_factory()).approve(
+            UserId(123), CharacterId(10), ""
+        )
 
     assert character.status == CharacterStatus.IS_ACTIVE
     assert fake_transaction.commit_calls == 0
@@ -80,16 +80,16 @@ async def test_approve_raises_when_character_already_active(
 async def test_approve_raises_when_character_abandoned(
     character_factory: Callable[..., Character],
     character_repo_factory: Callable[[list[Character] | None], FakeCharacterRepository],
+    staff_repo_factory: Callable[..., FakeStaffRepository],
     fake_transaction: FakeTransaction,
 ) -> None:
     character = character_factory(id=10, status=CharacterStatus.ABANDONED)
     repo = character_repo_factory([character])
 
     with pytest.raises(CharacterIsAbandoned):
-        await ApproveCharacterUseCase(
-            transaction=fake_transaction,
-            character_repo=repo,
-        ).approve(CharacterId(10), "")
+        await ApproveCharacterUseCase(transaction=fake_transaction, character_repo=repo, staff_repository=staff_repo_factory()).approve(
+            UserId(123), CharacterId(10), ""
+        )
 
     assert character.status == CharacterStatus.ABANDONED
     assert fake_transaction.commit_calls == 0

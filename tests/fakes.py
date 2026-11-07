@@ -7,8 +7,10 @@ from marionette.application.protocols.types import AgencyId, CharacterId, UserId
 from marionette.domain.entities.agency import Agency
 from marionette.domain.entities.character import Character, CharacterGender
 from marionette.domain.entities.onboarding import OnboardingEvent, OnboardingState, OnboardingStep
+from marionette.domain.entities.staff import Staff, StaffRoles
 from marionette.domain.entities.subscription import Subscription
 from marionette.domain.entities.vote import Vote
+from marionette.domain.permissions.permission import Permission
 from marionette.domain.roles import Roles
 from marionette.domain.entities.character import CharacterStatus
 
@@ -197,3 +199,17 @@ class FakeSubscriptionRepository:
             if sub.follower_id == user_id and sub.character_id == character_id:
                 return sub
         return None
+
+
+class FakeStaffRepository:
+    def __init__(self, staff_list: list[Staff] | None = None) -> None:
+        self._staff = staff_list or []
+
+    def create(self, user_id: UserId, role: StaffRoles, permissions: Sequence[Permission]) -> Staff | None:
+        s = Staff(user_id=user_id, role=role, permissions=[i.code() for i in permissions])
+        self._staff.append(s)
+        return s
+
+    async def get_by_user_id(self, user_id: UserId) -> Staff | None:
+        return next((i for i in self._staff if i.user_id == user_id), None)
+    
