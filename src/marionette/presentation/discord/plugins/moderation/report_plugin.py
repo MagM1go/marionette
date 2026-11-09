@@ -25,9 +25,9 @@ class ReportCommand:
             raise IsNotId()
 
         await usecase.report(UserId(ctx.user.id), UserId(self.user.id), self.reason)
-        message = await ctx.respond(ReportPresenter.present(self.user.mention), user_mentions=True)
+        message = await ctx.respond(ReportPresenter.present(self.user.mention), user_mentions=True, ensure_message=True)
         assert message is not None
-        
+
         await ctx.client.app.rest.create_message(
             channel=config.discord.text_channels.reports,
             embed=ReportPresenter.present_moderator_embed(
