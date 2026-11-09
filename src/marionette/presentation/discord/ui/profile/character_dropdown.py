@@ -52,4 +52,4 @@ class ProfileCheckCharacterDropdown(miru.View):
     def __init__(self, summary: SummaryData) -> None:
         super().__init__()
 
-        self.add_item(ProfileCheckCharacterTextSelect([miru.SelectOption(label=c.name) for c in summary.characters], summary))
+        self.add_item(ProfileCheckCharacterTextSelect([miru.SelectOption(label=f"{c.name} [ID: {c.id}]") for c in summary.characters], summary))

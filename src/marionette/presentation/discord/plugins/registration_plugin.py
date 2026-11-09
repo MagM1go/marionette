@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import cast
 
+import aiohttp
 import crescent
 import hikari
 
@@ -16,6 +17,15 @@ from marionette.presentation.discord.helpers import UserInterfaceHelper
 from marionette.presentation.discord.presenters.registration_presenter import RegistrationPresenter
 
 plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
+http_session = aiohttp.ClientSession()
+
+
+async def is_image(url: str | None) -> bool:
+    if url is None:
+        return False
+        
+    async with http_session.get(url) as response:
+        return "image" in response.content_type
 
 
 @plugin.include
@@ -37,16 +47,16 @@ async def on_register_modal_submit(
 
     name = UserInterfaceHelper.get_modal_value(raw_modal, "name")
     assert name is not None
-    
+
     role = UserInterfaceHelper.get_modal_value(raw_modal, "role")
     assert role is not None
-    
+
     raw_birthday = UserInterfaceHelper.get_modal_value(raw_modal, "birthday")
     assert raw_birthday is not None
-    
+
     gender = UserInterfaceHelper.get_modal_value(raw_modal, "gender")
     assert gender is not None
-    
+
     image_url = UserInterfaceHelper.get_modal_value(raw_modal, "image_url")
 
     character_id = await usecase.register(
@@ -68,9 +78,15 @@ async def on_register_modal_submit(
             name=name,
             birthday=raw_birthday,
             role=Roles(role),
-            image_url=image_url
+            image_url=image_url,
         ),
         flags=hikari.MessageFlag.IS_COMPONENTS_V2,
         user_mentions=True,
-        attachment=image_url if image_url else hikari.UNDEFINED
+        attachment=image_url if image_url and await is_image(image_url) else hikari.UNDEFINED,
     )
+
+
+@plugin.include
+@crescent.event
+async def on_shutdown(_: hikari.events.StoppingEvent) -> None:
+    await http_session.close()
