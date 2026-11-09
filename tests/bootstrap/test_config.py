@@ -31,6 +31,7 @@ text_channels:
 
    general: 58
    moderation: 54
+   reports: 72
 
 forum_channels:
    character: 57

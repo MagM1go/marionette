@@ -31,6 +31,7 @@ class TextChannelIds:
     moderation: int
     onboarding: OnboardingChannelIds
     general: int
+    reports: int
 
 
 @dataclass(frozen=True)
