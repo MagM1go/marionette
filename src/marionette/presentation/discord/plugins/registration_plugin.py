@@ -32,7 +32,7 @@ async def is_image(url: str | None) -> bool:
     try:
         async with http_session.get(url) as response:
             return "image" in response.content_type
-    except aiohttp.InvalidUrlClientError:
+    except Exception:  # ваще пахую, любая ошибка -- нахуй.
         return False
 
 
