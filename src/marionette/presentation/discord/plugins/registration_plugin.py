@@ -66,6 +66,7 @@ async def on_register_modal_submit(
     assert gender is not None
 
     image_url = UserInterfaceHelper.get_modal_value(raw_modal, "image_url")
+    image_url = image_url if image_url and await is_image(image_url) else None
 
     character_id = await usecase.register(
         user_id=UserId(event.interaction.user.id),
@@ -90,7 +91,7 @@ async def on_register_modal_submit(
         ),
         flags=hikari.MessageFlag.IS_COMPONENTS_V2,
         user_mentions=True,
-        attachment=image_url if image_url and await is_image(image_url) else hikari.UNDEFINED,
+        attachment=image_url if image_url else hikari.UNDEFINED,
     )
 
 
