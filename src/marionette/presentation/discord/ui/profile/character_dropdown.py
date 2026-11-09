@@ -33,7 +33,7 @@ class ProfileCheckCharacterTextSelect(miru.TextSelect):
         self.summary = summary
 
     async def callback(self, context: ViewContext, /) -> None:
-        character_index = next(i for i in range(len(self.summary.characters)) if self.summary.characters[i].id == self.values[0])
+        character_index = next(i for i in range(len(self.summary.characters)) if self.summary.characters[i].id == int(self.values[0]))
 
         pages = ProfilePresenter.present_character_pages(self.summary.characters)
         character_biographies = {i: ProfilePresenter.present_character_biography_pages(self.summary.characters[i]) for i in range(len(self.summary.characters))}

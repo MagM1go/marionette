@@ -25,8 +25,10 @@ class RegisterUseCase:
             character = self._repository.create(
                 user_id=user_id, name=name, role=role, birthday=birthday, biography="", gender=gender, image_url=image_url
             )
+            assert character is not None
+            
             for c in characters:
-                if c == character:
+                if c.name == character.name:
                     await self._transaction.rollback()
                     raise CharacterIsEqual()
 
