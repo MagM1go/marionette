@@ -29,8 +29,11 @@ async def is_image(url: str | None) -> bool:
     if url is None:
         return False
 
-    async with http_session.get(url) as response:
-        return "image" in response.content_type
+    try:
+        async with http_session.get(url) as response:
+            return "image" in response.content_type
+    except aiohttp.InvalidUrlClientError:
+        return False
 
 
 @plugin.include
