@@ -11,6 +11,7 @@ from marionette.domain.entities.onboarding import OnboardingEvent, OnboardingRol
 from marionette.domain.entities.vote import Vote
 from marionette.domain.entities.subscription import Subscription
 from marionette.domain.entities.staff import Staff
+from marionette.domain.entities.report import Report
 
 
 # this is the Alembic Config object, which provides
