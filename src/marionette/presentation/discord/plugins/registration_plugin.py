@@ -17,13 +17,18 @@ from marionette.presentation.discord.helpers import UserInterfaceHelper
 from marionette.presentation.discord.presenters.registration_presenter import RegistrationPresenter
 
 plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
-http_session = aiohttp.ClientSession()
+http_session = None
 
 
 async def is_image(url: str | None) -> bool:
+    global http_session
+
+    if http_session is None:
+        http_session = aiohttp.ClientSession()
+
     if url is None:
         return False
-        
+
     async with http_session.get(url) as response:
         return "image" in response.content_type
 
@@ -89,4 +94,5 @@ async def on_register_modal_submit(
 @plugin.include
 @crescent.event
 async def on_shutdown(_: hikari.events.StoppingEvent) -> None:
-    await http_session.close()
+    if http_session:
+        await http_session.close()
