@@ -7,6 +7,7 @@ from marionette.application.usecases.exit_usecase import ExitLocationUseCase
 from marionette.application.usecases.moderation.approve_character_usecase import ApproveCharacterUseCase
 from marionette.application.usecases.moderation.ban_character_usecase import BanCharacterUseCase
 from marionette.application.usecases.moderation.decline_character_usecase import DeclineCharacterUseCase
+from marionette.application.usecases.moderation.report_usecase import ReportUseCase
 from marionette.application.usecases.onboarding.accept_onboarding_rules_usecase import AcceptOnboardingRulesUseCase
 from marionette.application.usecases.onboarding.complete_onboarding_usecase import CompleteOnboardingUseCase
 from marionette.application.usecases.onboarding.move_onboarding_to_intro_usecase import MoveOnboardingToIntroUseCase
@@ -50,3 +51,4 @@ class UseCaseProvider(Provider):
     summary_usecase = provide(ProfileSummaryUseCase)
     subscribe_usecase = provide(SubscribeUseCase)
     promote_usecase = provide(PromoteStaffUseCase)
+    report_usecase = provide(ReportUseCase)
