@@ -33,7 +33,7 @@ class ProfileCheckCharacterTextSelect(miru.TextSelect):
         self.summary = summary
 
     async def callback(self, context: ViewContext, /) -> None:
-        character_index = next(i for i in range(len(self.summary.characters)) if self.summary.characters[i].name == self.values[0])
+        character_index = next(i for i in range(len(self.summary.characters)) if self.summary.characters[i].id == self.values[0])
 
         pages = ProfilePresenter.present_character_pages(self.summary.characters)
         character_biographies = {i: ProfilePresenter.present_character_biography_pages(self.summary.characters[i]) for i in range(len(self.summary.characters))}
@@ -52,4 +52,6 @@ class ProfileCheckCharacterDropdown(miru.View):
     def __init__(self, summary: SummaryData) -> None:
         super().__init__()
 
-        self.add_item(ProfileCheckCharacterTextSelect([miru.SelectOption(label=f"{c.name} [ID: {c.id}]") for c in summary.characters], summary))
+        self.add_item(
+            ProfileCheckCharacterTextSelect([miru.SelectOption(label=f"{c.name} [ID: {c.id}]", value=str(c.id)) for c in summary.characters], summary)
+        )
