@@ -3,12 +3,14 @@ import hikari
 
 from marionette.bootstrap.config import config
 from marionette.bootstrap.di.container import CrescentContainer
-from marionette.presentation.discord.ui.posting.posting_modal import PostBreakingNewsModal
+from marionette.presentation.discord.plugins.roleplay.posting.posting_group import posting
+from marionette.presentation.discord.ui.posting.breaking_modal import PostBreakingNewsModal
 
 plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 
 
 @plugin.include
+@posting.child
 @crescent.command(
     guild=config.discord.guild.main,
     name="breaking",
