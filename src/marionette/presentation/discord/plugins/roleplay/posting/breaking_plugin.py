@@ -15,7 +15,6 @@ plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
     guild=config.discord.guild.main,
     name="breaking",
     description="Опубликовать важное сообщение (staff only)",
-    default_member_permissions=hikari.Permissions.MANAGE_MESSAGES,
 )
 class BreakingNewsCommand:
     title = crescent.option(str, "Заголовок новости", max_length=45)
