@@ -19,7 +19,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.add_column("votes", sa.Column("obtained", server_default="0", default=False, nullable=False))
+    op.add_column("votes", sa.Column("obtained", sa.Boolean(), server_default="0", default=False, nullable=False))
 
 def downgrade() -> None:
     op.drop_column("votes", "obtained")
