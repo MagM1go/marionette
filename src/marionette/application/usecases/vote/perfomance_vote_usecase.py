@@ -7,13 +7,16 @@ from marionette.application.protocols.transaction import Transaction
 from marionette.domain.entities.vote import VoteSource
 from marionette.domain.exceptions import AlreadyVotedForPerfomance, CanNotVoteYourself
 from marionette.domain.policies.character_policy import CharacterPolicy
+from marionette.domain.services.rating_service import RatingChangeReason, RatingService
 
 
 class PerfomanceVoteUseCase:
-    def __init__(self, transaction: Transaction, vote_repository: VoteRepository, character_repository: CharacterRepository) -> None:
+    def __init__(self, transaction: Transaction, vote_repository: VoteRepository, character_repository: CharacterRepository, ranking: RatingService) -> None:
         self._vote_repository = vote_repository
         self._character_repository = character_repository
         self._transaction = transaction
+
+        self._rating = ranking
 
     async def vote(self, character_id: CharacterId, voted_by: UserId, now: datetime, reputation: int, perfomance_id: int) -> None:
         async with self._transaction:
@@ -28,11 +31,12 @@ class PerfomanceVoteUseCase:
             if existing_vote is not None:
                 raise AlreadyVotedForPerfomance()
 
+            reputation = self._rating.inc_character_rating(character.reputation, reason=RatingChangeReason.PERFORMANCE, in_agency=character.agency_id is not None)
             self._vote_repository.create(
                 character_id=character_id,
                 vote_time=now,
                 voted_by=voted_by,
-                reputation=reputation,
+                reputation=reputation - character.reputation if reputation >= 1 else reputation,
                 source=VoteSource.REVIEW,
                 perfomance_id=perfomance_id,
             )

@@ -20,8 +20,8 @@ async def catch_command_exception(exception: DomainException | DiscordException,
 
 @plugin.include
 @crescent.catch_event(DomainException, DiscordException)
-async def catch_modal_interaction_event_exception(exception: DomainException, event: hikari.Event) -> None:
-    if not isinstance(event, hikari.ModalInteractionCreateEvent):
+async def catch_interaction_event_exception(exception: DomainException, event: hikari.Event) -> None:
+    if not isinstance(event, (hikari.ModalInteractionCreateEvent, hikari.ComponentInteractionCreateEvent)):
         return
 
     await event.interaction.create_initial_response(

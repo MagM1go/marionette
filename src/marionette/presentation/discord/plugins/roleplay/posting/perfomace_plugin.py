@@ -36,12 +36,12 @@ class PerfomanceCommand:
         as_url = f"https://discord.com/channels/{ctx.guild_id}/{self.perfomance_channel.id}/{self.perfomance_id}"
         await plugin.client.app.rest.create_message(
             self.perfomance_channel.id,
-            component=PerfomancePresenter.present(
+            components=PerfomancePresenter.present(
                 title=self.title,
                 description=self.description,
                 url=as_url,
                 character_id=self.character_id,
-                perfomance_id=self.perfomance_id,
+                perfomance_id=int(self.perfomance_id),
             ),
             flags=hikari.MessageFlag.IS_COMPONENTS_V2,
         )
@@ -51,17 +51,23 @@ class PerfomanceCommand:
 @plugin.include
 @crescent.event
 @inject(lambda: plugin.model.dishka())
-async def on_perfomance_review(event: hikari.ComponentInteractionCreateEvent, usecase: Inject[PerfomanceVoteUseCase]) -> None:
+async def on_perfomance_review(
+    event: hikari.ComponentInteractionCreateEvent,
+    usecase: Inject[PerfomanceVoteUseCase],
+) -> None:
     if event.interaction.type != InteractionType.MESSAGE_COMPONENT:
         return
 
-    if not all(event.interaction.custom_id.startswith(start_id) for start_id in ID_STARTS):
+    if not any(event.interaction.custom_id.startswith(start_id) for start_id in ID_STARTS):
         return
 
-    text_component = event.interaction.message.components[-1]
-    assert isinstance(text_component, hikari.impl.TextDisplayComponentBuilder)
+    text_component = next(
+        component
+        for component in event.interaction.message.components
+        if isinstance(component, hikari.TextDisplayComponent) and "Идентификатор персонажа" in component.content
+    )
 
-    character_id = int(text_component.content.split(":")[-1])
+    character_id = int(text_component.content.split(":")[-1].strip(" *"))
     interaction_id = event.interaction.custom_id.split("_")[0]
 
     await usecase.vote(
@@ -70,4 +76,9 @@ async def on_perfomance_review(event: hikari.ComponentInteractionCreateEvent, us
         now=datetime.now(),
         reputation=ID_STARTS[interaction_id],
         perfomance_id=event.interaction.message.id,
+    )
+    await event.interaction.create_initial_response(
+        response_type=hikari.ResponseType.MESSAGE_CREATE,
+        content="Голос учтён",
+        flags=hikari.MessageFlag.EPHEMERAL,
     )

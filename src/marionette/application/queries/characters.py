@@ -12,5 +12,8 @@ class CharacterQueries:
     async def get_character(self, user_id: UserId, name: str) -> Character | None:
         return await self._repository.get_by_user_id_and_name(user_id, name)
 
+    async def get_character_by_id(self, character_id) -> Character | None:
+        return await self._repository.get_by_character_id(character_id)
+
     async def get_user_characters(self, user_id: UserId) -> Sequence[Character]:
         return await self._repository.get_all_characters_by_user_id(user_id)
