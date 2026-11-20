@@ -22,8 +22,7 @@ ID_STARTS = {"like": 1, "ok": 0, "dislike": -1}
 @crescent.command(
     name="perfomance",
     description="Объявить миру о... чём-либо.",
-    guild=config.discord.guild.main,
-    default_member_permissions=hikari.Permissions.MANAGE_WEBHOOKS,
+    guild=config.discord.guild.main
 )
 class PerfomanceCommand:
     """
