@@ -63,6 +63,7 @@ async def on_perfomance_review(event: hikari.ComponentInteractionCreateEvent, us
 
     character_id = int(text_component.content.split(":")[-1])
     interaction_id = event.interaction.custom_id.split("_")[0]
+    
     await usecase.vote(
         character_id=CharacterId(character_id),
         voted_by=UserId(event.interaction.user.id),
@@ -70,3 +71,5 @@ async def on_perfomance_review(event: hikari.ComponentInteractionCreateEvent, us
         reputation=ID_STARTS[interaction_id],
         perfomance_id=event.interaction.message.id,
     )
+
+    

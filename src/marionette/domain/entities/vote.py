@@ -16,9 +16,7 @@ class VoteSource(StrEnum):
 
 class Vote(Base):
     __tablename__: str = "votes"
-    __table_args__ = (
-        UniqueConstraint("voted_by", "perfomance_id", name="uq_votes_voted_by_perfomance_id"),
-    )
+    __table_args__ = (UniqueConstraint("voted_by", "perfomance_id", name="uq_votes_voted_by_perfomance_id"),)
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     character_id: Mapped[int] = mapped_column(index=True)
@@ -38,3 +36,6 @@ class Vote(Base):
 
     perfomance_id: Mapped[int | None] = mapped_column(BigInteger)
     """Публикация (выступление), за которую отдан голос. `None` для голосов из `/vote`."""
+
+    obtained: Mapped[bool] = mapped_column(default=False, server_default="0")
+    """Была ли выдана репутация за голос или нет."""

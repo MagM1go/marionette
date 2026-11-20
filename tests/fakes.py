@@ -5,14 +5,13 @@ from typing import Self
 
 from marionette.application.protocols.types import AgencyId, CharacterId, UserId
 from marionette.domain.entities.agency import Agency
-from marionette.domain.entities.character import Character, CharacterGender
+from marionette.domain.entities.character import Character, CharacterGender, CharacterStatus
 from marionette.domain.entities.onboarding import OnboardingEvent, OnboardingState, OnboardingStep
 from marionette.domain.entities.staff import Staff, StaffRoles
 from marionette.domain.entities.subscription import Subscription
 from marionette.domain.entities.vote import Vote, VoteSource
 from marionette.domain.permissions.permission import Permission
 from marionette.domain.roles import Roles
-from marionette.domain.entities.character import CharacterStatus
 
 
 class FakeCharacterRepository:
@@ -27,7 +26,7 @@ class FakeCharacterRepository:
         birthday: date | datetime,
         biography: str = "",
         gender: CharacterGender = CharacterGender.FEMALE,
-        image_url: str | None = None
+        image_url: str | None = None,
     ) -> Character:
         birthday_datetime = birthday if isinstance(birthday, datetime) else datetime.combine(birthday, datetime.min.time())
         character = Character(
@@ -43,7 +42,7 @@ class FakeCharacterRepository:
             last_exposed_at=None,
             status=CharacterStatus.MODERATION,
             gender=gender,
-            image_url=""
+            image_url="",
         )
         self.characters.append(character)
         return character
@@ -180,6 +179,7 @@ class FakeVoteRepository:
         reputation: int = 1,
         source: VoteSource = VoteSource.COMMAND,
         perfomance_id: int | None = None,
+        obtained: bool = False,
     ) -> Vote:
         vote = Vote(
             character_id=character_id,
@@ -188,6 +188,7 @@ class FakeVoteRepository:
             reputation=reputation,
             source=source,
             perfomance_id=perfomance_id,
+            obtained=obtained,
         )
         self.votes.append(vote)
         return vote
@@ -229,4 +230,3 @@ class FakeStaffRepository:
 
     async def get_by_user_id(self, user_id: UserId) -> Staff | None:
         return next((i for i in self._staff if i.user_id == user_id), None)
-    

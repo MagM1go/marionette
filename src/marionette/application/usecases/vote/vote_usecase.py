@@ -61,6 +61,7 @@ class VoteUseCase:
                     raise VoteOnCooldown(character.name, VotePolicy.cooldown_remaining(vote=user_command_vote, now=now))
                     
                 user_command_vote.voted_at = now
+                user_command_vote.obtained = True
                 
             character.reputation = increased_reputation
             await self._transaction.commit()

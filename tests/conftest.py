@@ -84,7 +84,7 @@ def character_factory() -> Callable[..., Character]:
             is_in_performance=False,
             last_exposed_at=last_exposed_at,
             status=status,
-            image_url=None
+            image_url=None,
         )
 
     return factory
@@ -117,6 +117,7 @@ def vote_factory() -> Callable[..., Vote]:
         voted_at: datetime | None = None,
         source: VoteSource = VoteSource.COMMAND,
         perfomance_id: int | None = None,
+        obtained: bool = False,
     ) -> Vote:
         return Vote(
             character_id=character_id,
@@ -124,6 +125,7 @@ def vote_factory() -> Callable[..., Vote]:
             voted_at=voted_at or datetime.now(UTC),
             source=source,
             perfomance_id=perfomance_id,
+            obtained=obtained,
         )
 
     return factory

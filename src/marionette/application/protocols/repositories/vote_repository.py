@@ -17,6 +17,7 @@ class VoteRepository(Protocol):
         reputation: int = 1,
         source: VoteSource = VoteSource.COMMAND,
         perfomance_id: int | None = None,
+        obtained: bool = False
     ) -> Vote:
         """Создаёт запись о голосе за персонажа.
 
@@ -27,6 +28,7 @@ class VoteRepository(Protocol):
             reputation: Количество получаемой репутации.
             source: Источник голоса.
             perfomance_id: ID публикации (выступления), за которую отдан голос.
+            obtained: Была ли выдана репутация за голос.
         """
         ...
 
