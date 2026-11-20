@@ -9,7 +9,7 @@ from marionette.domain.entities.character import Character, CharacterGender
 from marionette.domain.entities.onboarding import OnboardingEvent, OnboardingState, OnboardingStep
 from marionette.domain.entities.staff import Staff, StaffRoles
 from marionette.domain.entities.subscription import Subscription
-from marionette.domain.entities.vote import Vote
+from marionette.domain.entities.vote import Vote, VoteSource
 from marionette.domain.permissions.permission import Permission
 from marionette.domain.roles import Roles
 from marionette.domain.entities.character import CharacterStatus
@@ -37,7 +37,7 @@ class FakeCharacterRepository:
             role=role,
             biography=biography,
             birthday=birthday_datetime,
-            rating=0,
+            reputation=0,
             is_active=False,
             is_in_performance=False,
             last_exposed_at=None,
@@ -172,16 +172,31 @@ class FakeVoteRepository:
     def __init__(self, votes: list[Vote] | None = None) -> None:
         self.votes = votes or []
 
-    def create(self, character_id: CharacterId, vote_time: datetime, voted_by: UserId) -> Vote:
-        vote = Vote(character_id=character_id, voted_at=vote_time, voted_by=voted_by)
+    def create(
+        self,
+        character_id: CharacterId,
+        vote_time: datetime,
+        voted_by: UserId,
+        reputation: int = 1,
+        source: VoteSource = VoteSource.COMMAND,
+        perfomance_id: int | None = None,
+    ) -> Vote:
+        vote = Vote(
+            character_id=character_id,
+            voted_at=vote_time,
+            voted_by=voted_by,
+            reputation=reputation,
+            source=source,
+            perfomance_id=perfomance_id,
+        )
         self.votes.append(vote)
         return vote
 
-    async def get_vote_by_character_id(self, character_id: CharacterId) -> Vote | None:
-        for vote in self.votes:
-            if vote.character_id == character_id:
-                return vote
-        return None
+    async def get_votes_by_character_id(self, character_id: CharacterId) -> Sequence[Vote]:
+        return [vote for vote in self.votes if vote.character_id == character_id]
+
+    async def get_vote_by_voter_and_perfomance_id(self, voted_by: UserId, perfomance_id: int) -> Vote | None:
+        return next((vote for vote in self.votes if vote.voted_by == voted_by and vote.perfomance_id == perfomance_id), None)
 
 
 class FakeSubscriptionRepository:

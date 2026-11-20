@@ -16,16 +16,16 @@ async def test_reset_resets_ratings_to_expected_floor_by_band(
 ) -> None:
     character_repo = FakeCharacterRepository(
         [
-            character_factory(id=index + 1, name=f"Character {index}", rating=rating)
-            for index, rating in enumerate(
+            character_factory(id=index + 1, name=f"Character {index}", reputation=reputation)
+            for index, reputation in enumerate(
                 [0, 99, 100, 299, 300, 499, 500, 699, 700, 899, 900, 999, 1000]
             )
         ]
     )
     agency_repo = FakeAgencyRepository(
         [
-            agency_factory(id=index + 1, owner_id=index + 1, name=f"Agency {index}", rating=rating)
-            for index, rating in enumerate([150, 350, 650, 950, 1300])
+            agency_factory(id=index + 1, owner_id=index + 1, name=f"Agency {index}", rating=reputation)
+            for index, reputation in enumerate([150, 350, 650, 950, 1300])
         ]
     )
 
@@ -35,7 +35,7 @@ async def test_reset_resets_ratings_to_expected_floor_by_band(
         transaction=fake_transaction,
     ).reset()
 
-    assert [entity.rating for entity in character_repo.characters] == [
+    assert [entity.reputation for entity in character_repo.characters] == [
         0,
         0,
         25,

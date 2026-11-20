@@ -1,9 +1,8 @@
 from datetime import datetime, timedelta
 
-from marionette.domain.entities.character import Character
+from marionette.domain.entities.character import Character, CharacterStatus
 from marionette.domain.entities.vote import Vote
 from marionette.domain.exceptions import CharacterNotFound
-from marionette.domain.entities.character import CharacterStatus
 
 
 class VotePolicy:
@@ -21,3 +20,4 @@ class VotePolicy:
     @staticmethod
     def cooldown_remaining(vote: Vote, now: datetime) -> timedelta:
         return max((vote.voted_at + VotePolicy.VOTE_COOLDOWN) - now, timedelta(0))
+

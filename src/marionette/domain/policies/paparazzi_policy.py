@@ -32,8 +32,8 @@ class PaparazziPolicy:
 
     @classmethod
     def calculate_character_rating(cls, service: RatingService, character: Character) -> tuple[int, int]:
-        character_new_rating = service.dec_character_rating(rating=character.rating, reason=RatingChangeReason.NEWS_NEGATIVE)
-        character_loss = character.rating - character_new_rating
+        character_new_rating = service.dec_character_rating(rating=character.reputation, reason=RatingChangeReason.NEWS_NEGATIVE)
+        character_loss = character.reputation - character_new_rating
 
         return character_new_rating, character_loss
 
@@ -53,4 +53,4 @@ class PaparazziPolicy:
         if character.agency_id:
             character.agency.rating = PaparazziPolicy.calculate_agency_rating(service, character, character_loss)
 
-        character.rating = character_new_rating
+        character.reputation = character_new_rating

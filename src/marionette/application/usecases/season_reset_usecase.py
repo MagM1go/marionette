@@ -23,13 +23,13 @@ class ResetSeasonRatingUseCase:
         self._agency_repo = agency_repo
         self._transaction = transaction
 
-        self.repos = [self._character_repo, self._agency_repo]
-
     # TODO: N+1?
     async def reset(self) -> None:
         async with self._transaction:
-            for repo in self.repos:
-                for entity in await repo.get_all():  # type: ignore
-                    entity.rating = SeasonResetPolicy.get_reset_rating(entity.rating)
+            for character in await self._character_repo.get_all():
+                character.reputation = SeasonResetPolicy.get_reset_rating(character.reputation)
+
+            for agency in await self._agency_repo.get_all():
+                agency.rating = SeasonResetPolicy.get_reset_rating(agency.rating)
 
             await self._transaction.commit()

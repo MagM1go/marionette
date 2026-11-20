@@ -37,7 +37,7 @@ class CharacterLookupByUserUseCase:
                 role=character.role,
                 biography=character.biography,
                 birthday=character.birthday,
-                rating=character.rating,
+                rating=character.reputation,
                 is_in_location=character.is_active,
                 agency_id=character.agency_id
             )

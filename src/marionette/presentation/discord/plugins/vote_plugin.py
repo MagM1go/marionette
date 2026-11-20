@@ -3,7 +3,7 @@ import hikari
 
 from marionette.application.protocols.types import UserId
 from marionette.application.queries.characters import CharacterQueries
-from marionette.application.usecases.vote_usecase import VoteUseCase
+from marionette.application.usecases.vote.vote_usecase import VoteUseCase
 from marionette.bootstrap.config import config
 from marionette.bootstrap.di.container import CrescentContainer
 from marionette.bootstrap.di.inject import Inject, inject

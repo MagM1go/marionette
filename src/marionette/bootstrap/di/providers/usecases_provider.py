@@ -19,10 +19,12 @@ from marionette.application.usecases.profile.summary_usecase import ProfileSumma
 from marionette.application.usecases.promote_usecase import PromoteStaffUseCase
 from marionette.application.usecases.season_reset_usecase import ResetSeasonRatingUseCase
 from marionette.application.usecases.subscribe_usecase import SubscribeUseCase
-from marionette.application.usecases.vote_usecase import VoteUseCase
+from marionette.application.usecases.vote.perfomance_vote_usecase import PerfomanceVoteUseCase
 from marionette.domain.services.rating_service import RatingService
 from marionette.presentation.discord.ui.onboarding.dispatcher import OnboardingActionDispatcher
 from marionette.presentation.discord.ui.onboarding.step_assets import OnboardingStepAssets
+
+from marionette.application.usecases.vote.vote_usecase import VoteUseCase
 
 
 class UseCaseProvider(Provider):
@@ -45,6 +47,7 @@ class UseCaseProvider(Provider):
     season_reset_usecase = provide(ResetSeasonRatingUseCase)
     register_usecase = provide(RegisterUseCase)
     vote_usecase = provide(VoteUseCase)
+    perfomance_vote_usecase = provide(PerfomanceVoteUseCase)
     approve_usecase = provide(ApproveCharacterUseCase)
     decline_usecase = provide(DeclineCharacterUseCase)
     ban_usecase = provide(BanCharacterUseCase)

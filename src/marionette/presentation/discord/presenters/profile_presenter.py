@@ -33,7 +33,7 @@ class ProfilePresenter:
                 name="Досье",
                 value=f"Дата рождения: <t:{int(character.birthday.timestamp())}:D> ({character.age})\n"
                 + f"Пол персонажа: **{character.gender}**\n"
-                + f"Репутация: **{character.rating}**\n"
+                + f"Репутация: **{character.reputation}**\n"
                 + (f"Агенство: {character.agency} ({character.agency_role})" if character.agency else ""),
                 inline=True,
             )

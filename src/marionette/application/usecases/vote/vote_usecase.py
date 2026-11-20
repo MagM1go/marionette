@@ -4,6 +4,7 @@ from marionette.application.protocols import CharacterRepository, VoteRepository
 from marionette.application.protocols.repositories.subscription_repository import SubscriptionRepository
 from marionette.application.protocols.transaction import Transaction
 from marionette.application.protocols.types import CharacterId, UserId
+from marionette.domain.entities.vote import VoteSource
 from marionette.domain.exceptions import CanNotVoteYourself, MustBeSubscribed, VoteOnCooldown
 from marionette.domain.policies.character_policy import CharacterPolicy
 from marionette.domain.policies.vote_policy import VotePolicy
@@ -28,7 +29,7 @@ class VoteUseCase:
     async def vote_for(self, voted_by: UserId, user_id: UserId, character_name: str, now: datetime) -> None:
         if voted_by == user_id:
             raise CanNotVoteYourself()
-            
+
         async with self._transaction:
             character = await self._character_repository.get_by_user_id_and_name(user_id=user_id, name=character_name)
             CharacterPolicy.ensure_character_exists(character, character_name)
@@ -40,16 +41,26 @@ class VoteUseCase:
             if subscription is None:
                 raise MustBeSubscribed()
 
-            vote = await self._vote_repository.get_vote_by_character_id(character_id=CharacterId(character.id))
-            if vote is not None and VotePolicy.is_on_cooldown(vote=vote, now=now):
-                raise VoteOnCooldown(character.name, VotePolicy.cooldown_remaining(vote=vote, now=now))
-
-            d_rating = self._rating_service.inc_character_rating(rating=5, reason=RatingChangeReason.VOTE, in_agency=character.agency_id is not None)
-            character.rating += d_rating
-            if vote is None:
-                self._vote_repository.create(character_id=CharacterId(character.id), vote_time=now, voted_by=voted_by)
+            votes = await self._vote_repository.get_votes_by_character_id(character_id=CharacterId(character.id))
+            increased_reputation = self._rating_service.inc_character_rating(
+                rating=character.reputation,
+                reason=RatingChangeReason.VOTE,
+                in_agency=character.agency_id is not None,
+            )
+            
+            user_command_vote = next((vote for vote in votes if vote.source == VoteSource.COMMAND), None)
+            if user_command_vote is None:
+                user_command_vote = self._vote_repository.create(
+                    character_id=CharacterId(character.id),
+                    vote_time=now,
+                    voted_by=voted_by,
+                    reputation=increased_reputation - character.reputation,
+                )
             else:
-                vote.voted_at = now
-                vote.voted_by = voted_by
-
+                if VotePolicy.is_on_cooldown(vote=user_command_vote, now=now):
+                    raise VoteOnCooldown(character.name, VotePolicy.cooldown_remaining(vote=user_command_vote, now=now))
+                    
+                user_command_vote.voted_at = now
+                
+            character.reputation = increased_reputation
             await self._transaction.commit()

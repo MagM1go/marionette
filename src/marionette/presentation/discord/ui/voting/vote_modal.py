@@ -6,7 +6,7 @@ import miru
 from miru.context.modal import ModalContext
 
 from marionette.application.protocols.types import UserId
-from marionette.application.usecases.vote_usecase import VoteUseCase
+from marionette.application.usecases.vote.vote_usecase import VoteUseCase
 from marionette.presentation.discord.presenters.vote_presenter import VotePresenter
 from marionette.presentation.discord.ui.wrapper.modal_v2 import ModalV2
 from marionette.presentation.discord.ui.wrapper.string_select_menu import StringSelect

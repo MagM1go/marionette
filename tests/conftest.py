@@ -17,7 +17,7 @@ if str(SRC) not in sys.path:
 
 from marionette.domain.entities.agency import Agency
 from marionette.domain.entities.character import Character, CharacterStatus
-from marionette.domain.entities.vote import Vote
+from marionette.domain.entities.vote import Vote, VoteSource
 from marionette.domain.roles import Roles
 from tests.fakes import (
     FakeAgencyRepository,
@@ -55,7 +55,7 @@ def character_factory() -> Callable[..., Character]:
         id: int = 10,
         user_id: int = 100,
         name: str = "Airi",
-        rating: int = 100,
+        reputation: int = 100,
         entered_channel_id: int | None = None,
         agency: Agency | None = None,
         agency_id: int | None = None,
@@ -77,7 +77,7 @@ def character_factory() -> Callable[..., Character]:
             biography=biography,
             birthday=datetime(2000, 1, 1),
             entered_channel_id=entered_channel_id,
-            rating=rating,
+            reputation=reputation,
             agency=actual_agency,
             agency_id=actual_agency_id,
             is_active=False,
@@ -115,11 +115,15 @@ def vote_factory() -> Callable[..., Vote]:
         character_id: int = 100,
         voted_by: int = 101,
         voted_at: datetime | None = None,
+        source: VoteSource = VoteSource.COMMAND,
+        perfomance_id: int | None = None,
     ) -> Vote:
         return Vote(
             character_id=character_id,
             voted_by=voted_by,
             voted_at=voted_at or datetime.now(UTC),
+            source=source,
+            perfomance_id=perfomance_id,
         )
 
     return factory

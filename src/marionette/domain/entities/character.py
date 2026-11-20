@@ -46,7 +46,7 @@ class Character(Base):
     role: Mapped[Roles] = mapped_column()
     agency_role: Mapped[AgencyRoles | None] = mapped_column(server_default=None)
     biography: Mapped[str] = mapped_column()
-    rating: Mapped[int] = mapped_column(default=0)
+    reputation: Mapped[int] = mapped_column(default=0)
     birthday: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
@@ -72,7 +72,7 @@ class Character(Base):
 
     @t.override
     def __repr__(self) -> str:
-        return f"<Character(id={self.id}, user_id={self.user_id}, name='{self.name}', role={self.role}, is_active={self.is_active}, rating={self.rating})>"
+        return f"<Character(id={self.id}, user_id={self.user_id}, name='{self.name}', role={self.role}, is_active={self.is_active}, rating={self.reputation})>"
 
     @property
     def age(self) -> int:
@@ -100,8 +100,8 @@ class Character(Base):
         return delta.total_seconds() >= PaparazziPolicy.ONE_DAY
 
     def expose_to_paparazzi(self, new_rating: int, exposed_at: datetime) -> int:
-        loss = self.rating - new_rating
-        self.rating = new_rating
+        loss = self.reputation - new_rating
+        self.reputation = new_rating
         self.last_exposed_at = exposed_at
 
         return loss

@@ -59,7 +59,7 @@ async def test_expose_works_after_cooldown_expired(
     result = await usecase.expose(character)
 
     assert result is not None
-    assert character.rating == 100
+    assert character.reputation == 100
     assert fake_transaction.commit_calls == 1
     assert fake_transaction.rollback_calls == 0
 
@@ -73,7 +73,7 @@ async def test_expose_updates_last_exposed_at_timestamp(
 ) -> None:
     character = character_factory(entered_channel_id=777, last_exposed_at=None)
     rating_service = Mock()
-    rating_service.dec_character_rating.return_value = character.rating
+    rating_service.dec_character_rating.return_value = character.reputation
     usecase = PaparazziUseCase(rating_service=rating_service, transaction=fake_transaction)
 
     await usecase.expose(character)
@@ -110,7 +110,7 @@ async def test_expose_updates_character_and_agency_ratings(
 ) -> None:
     agency = agency_factory(rating=400)
     character = character_factory(
-        rating=120,
+        reputation=120,
         entered_channel_id=777,
         agency=agency,
     )
@@ -124,7 +124,7 @@ async def test_expose_updates_character_and_agency_ratings(
     assert result is not None
     assert result.exposed_character_name == "Airi"
     assert result.expose_channel_id == 777
-    assert character.rating == 100
+    assert character.reputation == 100
     assert agency.rating == 392
     rating_service.dec_character_rating.assert_called_once_with(
         rating=120,
