@@ -1,5 +1,5 @@
-import random
 from collections.abc import Callable
+import random
 
 from dishka import Provider, Scope, provide
 
@@ -29,12 +29,12 @@ from marionette.presentation.discord.ui.onboarding.dispatcher import OnboardingA
 from marionette.presentation.discord.ui.onboarding.step_assets import OnboardingStepAssets
 
 
-def get_roll() -> Callable[[int, int], int]:
-    return random.randint
-
-
 class UseCaseProvider(Provider):
     scope = Scope.REQUEST
+
+
+    def get_roll(self) -> Callable[[int, int], int]:
+        return random.randint
 
     roll = provide(get_roll)
     rating_service = provide(RatingService)
