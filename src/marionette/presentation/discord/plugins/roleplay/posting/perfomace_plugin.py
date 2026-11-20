@@ -61,6 +61,14 @@ async def on_perfomance_review(
     if not any(event.interaction.custom_id.startswith(start_id) for start_id in ID_STARTS):
         return
 
+    if event.interaction.member and config.discord.roles.amplua not in event.interaction.member.role_ids:
+        await event.interaction.create_initial_response(
+            response_type=hikari.ResponseType.MESSAGE_CREATE,
+            content=PerfomancePresenter.present_unregistered(),
+            flags=hikari.MessageFlag.EPHEMERAL
+        )
+        return
+
     text_component = next(
         component
         for component in event.interaction.message.components
@@ -79,6 +87,6 @@ async def on_perfomance_review(
     )
     await event.interaction.create_initial_response(
         response_type=hikari.ResponseType.MESSAGE_CREATE,
-        content="Голос учтён",
+        content=PerfomancePresenter.present_okay(),
         flags=hikari.MessageFlag.EPHEMERAL,
     )

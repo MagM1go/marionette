@@ -16,3 +16,11 @@ class PerfomancePresenter:
                 ]
             ),
         ]
+
+    @staticmethod
+    def present_unregistered() -> str:
+        return "Ты кто? Ежели так хочется голосовать, то иди [регистрируйся](https://discord.com/channels/1473362979927101635/1473711993222332477)."
+
+    @staticmethod
+    def present_okay() -> str:
+        return "Голос был, к сожалению или счастью, учтён."
