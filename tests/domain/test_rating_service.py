@@ -1,5 +1,3 @@
-from unittest.mock import patch
-
 from marionette.domain.services.rating_service import (
     AgencyLevel,
     RatingChangeReason,
@@ -36,9 +34,8 @@ def test_can_join_agency_requires_minimum_rating() -> None:
     assert can_join_agency(199, AgencyLevel.B) is False
 
 
-@patch("marionette.domain.services.rating_service.random.randint", return_value=20)
-def test_inc_character_rating_applies_divisor_and_agency_bonus(_: object) -> None:
-    new_rating = RatingService().inc_character_rating(
+def test_inc_character_rating_applies_divisor_and_agency_bonus() -> None:
+    new_rating = RatingService(roll=lambda low, high: 20).inc_character_rating(
         rating=300,
         reason=RatingChangeReason.PERFORMANCE,
         in_agency=True,
@@ -47,9 +44,8 @@ def test_inc_character_rating_applies_divisor_and_agency_bonus(_: object) -> Non
     assert new_rating == 314
 
 
-@patch("marionette.domain.services.rating_service.random.randint", return_value=30)
-def test_dec_agency_rating_applies_divisor_and_level_penalty(_: object) -> None:
-    new_rating = RatingService().dec_agency_rating(
+def test_dec_agency_rating_applies_divisor_and_level_penalty() -> None:
+    new_rating = RatingService(roll=lambda low, high: 30).dec_agency_rating(
         rating=500,
         reason=RatingChangeReason.SCANDAL,
     )

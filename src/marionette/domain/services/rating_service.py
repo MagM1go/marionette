@@ -1,4 +1,5 @@
 import random
+from collections.abc import Callable
 from enum import IntEnum, StrEnum
 
 
@@ -50,10 +51,10 @@ CHARACTER_ONLY_REASONS = {RatingChangeReason.PERFORMANCE}
 
 REASON_WEIGHTS = {
     RatingChangeReason.VOTE: (2, 4),
-    RatingChangeReason.PERFORMANCE: (15, 25),
+    RatingChangeReason.PERFORMANCE: (4, 8),
     RatingChangeReason.NEWS_POSITIVE: (8, 15),
-    RatingChangeReason.NEWS_NEGATIVE: (-12, -6),
-    RatingChangeReason.SCANDAL: (-40, -25),
+    RatingChangeReason.NEWS_NEGATIVE: (-16, -6),
+    RatingChangeReason.SCANDAL: (-60, -25),
 }
 
 RATING_DIVISORS = [
@@ -127,7 +128,13 @@ class RatingService:
     - Новичкам легче расти, топам сложнее (делители)
     - Агентство даёт +12% к приросту, но больше потерь
     - PERFORMANCE доступна только персонажам
+
+    Случайная часть (бросок веса) передаётся аргументом `roll`,
+    по умолчанию random.randint.
     """
+
+    def __init__(self, roll: Callable[[int, int], int] = random.randint) -> None:
+        self._roll = roll
 
     def _calculate_change(
         self,
@@ -139,7 +146,7 @@ class RatingService:
     ) -> int:
         min_w, max_w = min(weight_range), max(weight_range)
         divisor = get_rating_divisor(rating)
-        base = random.randint(min_w, max_w)
+        base = self._roll(min_w, max_w)
 
         if is_increase:
             change = base / divisor

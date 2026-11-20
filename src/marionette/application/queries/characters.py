@@ -1,7 +1,7 @@
 from collections.abc import Sequence
 
 from marionette.application.protocols import CharacterRepository
-from marionette.application.protocols.types import UserId
+from marionette.application.protocols.types import CharacterId, UserId
 from marionette.domain.entities.character import Character
 
 
@@ -12,7 +12,7 @@ class CharacterQueries:
     async def get_character(self, user_id: UserId, name: str) -> Character | None:
         return await self._repository.get_by_user_id_and_name(user_id, name)
 
-    async def get_character_by_id(self, character_id) -> Character | None:
+    async def get_character_by_id(self, character_id: CharacterId) -> Character | None:
         return await self._repository.get_by_character_id(character_id)
 
     async def get_user_characters(self, user_id: UserId) -> Sequence[Character]:
