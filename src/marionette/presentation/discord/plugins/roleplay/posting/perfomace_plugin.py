@@ -43,8 +43,8 @@ class PerfomanceCommand:
                 description=self.description,
                 url=as_url,
                 character_id=self.character_id,
+                perfomance_id=self.perfomance_id,
             ),
-            components=view,
             flags=hikari.MessageFlag.IS_COMPONENTS_V2,
         )
         plugin.model.component_client.start_view(view)
