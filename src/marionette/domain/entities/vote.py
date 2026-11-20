@@ -19,6 +19,7 @@ class Vote(Base):
     __table_args__ = (UniqueConstraint("voted_by", "perfomance_id", name="uq_votes_voted_by_perfomance_id"),)
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    
     character_id: Mapped[int] = mapped_column(index=True)
     """Персонаж, за которого проголосовали"""
 

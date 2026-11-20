@@ -30,7 +30,7 @@ class PerfomanceCommand:
     description = crescent.option(str, "Немного о выступлении")
     character_id = crescent.option(int, "ID персонажа")
     perfomance_id = crescent.option(str, "ID сообщения начала представления")
-    perfomance_channel = crescent.option(hikari.GuildTextChannel, "Канал, куда постить")
+    perfomance_channel = crescent.option(hikari.GuildChannel, "Канал, куда постить")
 
     async def callback(self, ctx: crescent.Context) -> None:
         as_url = f"https://discord.com/channels/{ctx.guild_id}/{self.perfomance_channel.id}/{self.perfomance_id}"
