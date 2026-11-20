@@ -26,7 +26,7 @@ class ApproveCharacterUseCase:
         """Всегда возвращает имя одобренного персонажа"""
 
         async with self._transaction:
-            staff = self._staff_repository.get_by_user_id(user_id=issuer)
+            staff = await self._staff_repository.get_by_user_id(user_id=issuer)
             if not staff:
                 raise InsufficientPermissions()
 
