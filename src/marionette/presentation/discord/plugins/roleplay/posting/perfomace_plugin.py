@@ -11,7 +11,6 @@ from marionette.bootstrap.di.container import CrescentContainer
 from marionette.bootstrap.di.inject import Inject, inject
 from marionette.presentation.discord.plugins.roleplay.posting.posting_group import posting
 from marionette.presentation.discord.presenters.perfomance_presenter import PerfomancePresenter
-from marionette.presentation.discord.ui.posting.perfomance_keyboard import PerfomanceView
 
 plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 
@@ -35,7 +34,6 @@ class PerfomanceCommand:
 
     async def callback(self, ctx: crescent.Context) -> None:
         as_url = f"https://discord.com/channels/{ctx.guild_id}/{self.perfomance_channel.id}/{self.perfomance_id}"
-        view = PerfomanceView(perfomance_id=int(self.perfomance_id))
         await plugin.client.app.rest.create_message(
             self.perfomance_channel.id,
             component=PerfomancePresenter.present(
@@ -47,7 +45,6 @@ class PerfomanceCommand:
             ),
             flags=hikari.MessageFlag.IS_COMPONENTS_V2,
         )
-        plugin.model.component_client.start_view(view)
         await ctx.respond("posted", flags=hikari.MessageFlag.EPHEMERAL)
 
 
