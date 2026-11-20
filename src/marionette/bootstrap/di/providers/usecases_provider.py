@@ -1,3 +1,5 @@
+import random
+
 from dishka import Provider, Scope, provide
 
 from marionette.application.usecases.character.register_character_usecase import RegisterUseCase
@@ -20,16 +22,16 @@ from marionette.application.usecases.promote_usecase import PromoteStaffUseCase
 from marionette.application.usecases.season_reset_usecase import ResetSeasonRatingUseCase
 from marionette.application.usecases.subscribe_usecase import SubscribeUseCase
 from marionette.application.usecases.vote.perfomance_vote_usecase import PerfomanceVoteUseCase
+from marionette.application.usecases.vote.vote_usecase import VoteUseCase
 from marionette.domain.services.rating_service import RatingService
 from marionette.presentation.discord.ui.onboarding.dispatcher import OnboardingActionDispatcher
 from marionette.presentation.discord.ui.onboarding.step_assets import OnboardingStepAssets
-
-from marionette.application.usecases.vote.vote_usecase import VoteUseCase
 
 
 class UseCaseProvider(Provider):
     scope = Scope.REQUEST
 
+    roll = provide(random.randint)
     rating_service = provide(RatingService)
 
     paparazzi_usecase = provide(PaparazziUseCase)
