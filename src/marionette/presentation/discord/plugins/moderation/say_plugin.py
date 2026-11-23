@@ -4,6 +4,7 @@ from hikari.internal import routes
 
 from marionette.bootstrap.config import config
 from marionette.bootstrap.di.container import CrescentContainer
+import orjson
 
 plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 
@@ -20,5 +21,5 @@ class SayCommand:
     json_text = crescent.option(str, "Сырой JSON (hikari)")
 
     async def callback(self, ctx: crescent.Context) -> None:
-        await plugin.app._rest._request(compiled_route=routes.POST_CHANNEL_MESSAGES.compile(channel=self.channel), json=self.json_text)
+        await plugin.app._rest._request(compiled_route=routes.POST_CHANNEL_MESSAGES.compile(channel=self.channel), json=orjson.loads(self.json_text))
         await ctx.respond("👍", flags=hikari.MessageFlag.EPHEMERAL)
