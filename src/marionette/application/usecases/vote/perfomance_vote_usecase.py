@@ -31,7 +31,11 @@ class PerfomanceVoteUseCase:
             if existing_vote is not None:
                 raise AlreadyVotedForPerfomance()
 
-            new_character_reputation = self._rating.inc_character_rating(rating=character.reputation, reason=RatingChangeReason.PERFORMANCE, in_agency=character.agency_id is not None)
+            new_character_reputation = self._rating.inc_character_rating(
+                rating=character.reputation,
+                reason=RatingChangeReason.PERFORMANCE,
+                in_agency=character.agency_id is not None,
+            )
             self._vote_repository.create(
                 character_id=character_id,
                 vote_time=now,
