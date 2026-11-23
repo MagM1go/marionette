@@ -1,3 +1,5 @@
+from typing import Any
+
 import crescent
 import hikari
 import orjson
@@ -22,10 +24,10 @@ class SayCommand:
     json_text = crescent.option(str, "Сырой JSON (hikari)")
 
     async def callback(self, ctx: crescent.Context) -> None:
-        json_load = orjson.loads(self.json_text)
+        json_load: dict[str, Any] = orjson.loads(self.json_text)
         json = JSONObjectBuilder()
 
-        for key, value in json_load:
+        for key, value in json_load.keys():
             json.put(key, value)
 
         await plugin.app._rest._request(compiled_route=routes.POST_CHANNEL_MESSAGES.compile(channel=self.channel), json=json)
