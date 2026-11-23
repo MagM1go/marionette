@@ -53,5 +53,5 @@ class SqlAlchemyVoteRepository(VoteRepository):
     @t.override
     async def get_not_obtained_perfomance_votes(self) -> Sequence[tuple[Character, Vote]]:
         stmt = select(Character, Vote).join(Vote, Vote.character_id == Character.id).where(Vote.source == VoteSource.REVIEW, Vote.obtained.is_(False))
-        result = await self._session.scalars(stmt)
-        return result.all()
+        result = await self._session.execute(stmt)
+        return [(character, vote) for character, vote in result.all()]
