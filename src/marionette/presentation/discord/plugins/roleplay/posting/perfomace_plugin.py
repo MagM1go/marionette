@@ -92,6 +92,7 @@ async def on_perfomance_review(
     )
 
 
+@plugin.include
 @tasks.cronjob("0 */8 * * *", on_startup=True)
 @inject(lambda: plugin.model.dishka())
 async def obtain_cronjob(usecase: Inject[PerfomanceObtainUseCase]) -> None:
