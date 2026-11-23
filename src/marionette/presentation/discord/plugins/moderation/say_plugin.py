@@ -27,7 +27,7 @@ class SayCommand:
         json_load: dict[str, Any] = orjson.loads(self.json_text)
         json = JSONObjectBuilder()
 
-        for key, value in json_load.keys():
+        for key, value in json_load.items():
             json.put(key, value)
 
         await plugin.app._rest._request(compiled_route=routes.POST_CHANNEL_MESSAGES.compile(channel=self.channel), json=json)
