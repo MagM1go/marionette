@@ -4,13 +4,19 @@ import orjson
 from hikari.internal import routes
 from hikari.internal.data_binding import JSONObjectBuilder
 
+from marionette.bootstrap.config import config
 from marionette.bootstrap.di.container import CrescentContainer
 
 plugin = crescent.Plugin[hikari.GatewayBot, CrescentContainer]()
 
 
 @plugin.include
-@crescent.command(name="say", description="Сказать чего-то от имени бота", default_member_permissions=hikari.Permissions.ADMINISTRATOR)
+@crescent.command(
+    name="say",
+    description="Сказать чего-то от имени бота",
+    default_member_permissions=hikari.Permissions.ADMINISTRATOR,
+    guild=config.discord.guild.main,
+)
 class SayCommand:
     channel = crescent.option(str, "ID канала, куда нужно слать")
     json_text = crescent.option(str, "Сырой JSON (hikari)")
