@@ -1,10 +1,6 @@
-from typing import Any
-
 import crescent
 import hikari
-import orjson
 from hikari.internal import routes
-from hikari.internal.data_binding import JSONObjectBuilder
 
 from marionette.bootstrap.config import config
 from marionette.bootstrap.di.container import CrescentContainer
@@ -24,11 +20,5 @@ class SayCommand:
     json_text = crescent.option(str, "Сырой JSON (hikari)")
 
     async def callback(self, ctx: crescent.Context) -> None:
-        json_load: dict[str, Any] = orjson.loads(self.json_text)
-        json = JSONObjectBuilder()
-
-        for key, value in json_load.items():
-            json.put(key, value)
-
-        await plugin.app._rest._request(compiled_route=routes.POST_CHANNEL_MESSAGES.compile(channel=self.channel), json=json)
+        await plugin.app._rest._request(compiled_route=routes.POST_CHANNEL_MESSAGES.compile(channel=self.channel), json=self.json_text)
         await ctx.respond("👍", flags=hikari.MessageFlag.EPHEMERAL)
