@@ -2,9 +2,11 @@ from datetime import datetime
 
 import crescent
 import hikari
+from crescent.ext import tasks
 from hikari.interactions import InteractionType
 
 from marionette.application.protocols import CharacterId, UserId
+from marionette.application.usecases.perfomance_obtain_usecase import PerfomanceObtainUseCase
 from marionette.application.usecases.vote.perfomance_vote_usecase import PerfomanceVoteUseCase
 from marionette.bootstrap.config import config
 from marionette.bootstrap.di.container import CrescentContainer
@@ -63,9 +65,7 @@ async def on_perfomance_review(
 
     if event.interaction.member and config.discord.roles.amplua not in event.interaction.member.role_ids:
         await event.interaction.create_initial_response(
-            response_type=hikari.ResponseType.MESSAGE_CREATE,
-            content=PerfomancePresenter.present_unregistered(),
-            flags=hikari.MessageFlag.EPHEMERAL
+            response_type=hikari.ResponseType.MESSAGE_CREATE, content=PerfomancePresenter.present_unregistered(), flags=hikari.MessageFlag.EPHEMERAL
         )
         return
 
@@ -90,3 +90,9 @@ async def on_perfomance_review(
         content=PerfomancePresenter.present_okay(),
         flags=hikari.MessageFlag.EPHEMERAL,
     )
+
+
+@tasks.cronjob("0 */8 * * *", on_startup=True)
+@inject(lambda: plugin.model.dishka())
+async def obtain_cronjob(usecase: Inject[PerfomanceObtainUseCase]) -> None:
+    await usecase.obtain()

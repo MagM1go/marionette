@@ -14,7 +14,7 @@ dependencies = [
     "dature[yaml]>=1.6.1",
     "dishka>=1.8.0",
     "hikari",
-    "hikari-crescent>=1.4.0",
+    "hikari-crescent[cron]>=1.4.0",
     "hikari-miru>=4.2.0",
     "psycopg[binary,pool]>=3.3.3",
     "redis[asyncio]>=7.2.0",

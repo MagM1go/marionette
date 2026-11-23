@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.14"
 resolution-markers = [
     "python_full_version >= '3.15'",
@@ -329,6 +329,19 @@ wheels = [
 ]
 
 [[package]]
+name = "croniter"
+version = "5.0.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "python-dateutil" },
+    { name = "pytz" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/a7/8c/0656200bfa5c1e90b26f4bb1cc8aecb4a7722f8386ee044bdc2d4efb589e/croniter-5.0.1.tar.gz", hash = "sha256:7d9b1ef25b10eece48fdf29d8ac52f9b6252abff983ac614ade4f3276294019e", size = 57084, upload-time = "2024-10-29T16:30:31.556Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3c/68/34c3d74d2af6ea98ff8a0b50d149cff26e88a3f09817121d1186e9185e97/croniter-5.0.1-py2.py3-none-any.whl", hash = "sha256:eb28439742291f6c10b181df1a5ecf421208b1fc62ef44501daec1780a0b09e9", size = 24149, upload-time = "2024-10-29T16:30:29.769Z" },
+]
+
+[[package]]
 name = "dature"
 version = "1.6.1"
 source = { registry = "https://pypi.org/simple" }
@@ -496,6 +509,12 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/55/3c/899de8b4258c182599a5ff97973876d496be86be0aa75b92396f3e3c5ed4/hikari_crescent-1.4.0-py3-none-any.whl", hash = "sha256:9618c90a438563bb1e34d68dc363cd37f827c42a25a316d9fe7f02f3f3901757", size = 55397, upload-time = "2025-11-13T01:28:48.626Z" },
 ]
 
+[package.optional-dependencies]
+cron = [
+    { name = "croniter" },
+    { name = "types-croniter" },
+]
+
 [[package]]
 name = "hikari-miru"
 version = "4.2.0"
@@ -609,7 +628,7 @@ dependencies = [
     { name = "dature", extra = ["yaml"] },
     { name = "dishka" },
     { name = "hikari" },
-    { name = "hikari-crescent" },
+    { name = "hikari-crescent", extra = ["cron"] },
     { name = "hikari-miru" },
     { name = "psycopg", extra = ["binary", "pool"] },
     { name = "redis" },
@@ -633,7 +652,7 @@ requires-dist = [
     { name = "dature", extras = ["yaml"], specifier = ">=1.6.1" },
     { name = "dishka", specifier = ">=1.8.0" },
     { name = "hikari", git = "https://github.com/mplatypus/hikari.git?branch=feature%2Fmodals-v2" },
-    { name = "hikari-crescent", specifier = ">=1.4.0" },
+    { name = "hikari-crescent", extras = ["cron"], specifier = ">=1.4.0" },
     { name = "hikari-miru", specifier = ">=4.2.0" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.19.1" },
     { name = "nox", marker = "extra == 'dev'", specifier = ">=2026.2.9" },
@@ -997,6 +1016,15 @@ wheels = [
 ]
 
 [[package]]
+name = "pytz"
+version = "2026.6"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/f5/b0/168030b0bfcc334cf09fa3313afdb888d892c8a0027324683d1de0ec277e/pytz-2026.6.tar.gz", hash = "sha256:3b0fc2727707663d6e517936f444fd8a8b240f1fc32f4bf7ee03274245945284", size = 318520, upload-time = "2026-10-29T09:05:47.011Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b6/25/564f3fc5b70c1398d706c51f2b1470d0ea0b1b2f96fee67877b6f5bdf3b6/pytz-2026.6-py2.py3-none-any.whl", hash = "sha256:7fed3fee8fd6bd4a2b7b75a8d56021d0624127bf69bd5691f115db929ac570b3", size = 506321, upload-time = "2026-10-29T09:05:45.14Z" },
+]
+
+[[package]]
 name = "redis"
 version = "8.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1087,6 +1115,15 @@ wheels = [
 [package.optional-dependencies]
 asyncio = [
     { name = "greenlet" },
+]
+
+[[package]]
+name = "types-croniter"
+version = "5.0.1.20250322"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/d9/d7/f02123ebb740a66774050553acb8dda53fc40db7087281c581227a4286f6/types_croniter-5.0.1.20250322.tar.gz", hash = "sha256:0858064a5ec6ea93abcc1dbb7c7235b69df1a3395ce9bb0714123ec8d0c477fe", size = 11046, upload-time = "2025-03-22T02:48:31.255Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/6c/9c/c42a32715305fbc7d36f1999532b0708e535d6242e67d563fe290633508b/types_croniter-5.0.1.20250322-py3-none-any.whl", hash = "sha256:82280f00f1543758e1e4bac9805ca7a27c183e5bf316c7240be73ac459655306", size = 9464, upload-time = "2025-03-22T02:48:30.134Z" },
 ]
 
 [[package]]

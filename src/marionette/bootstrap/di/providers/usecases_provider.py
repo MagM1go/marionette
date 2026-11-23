@@ -1,5 +1,5 @@
-from collections.abc import Callable
 import random
+from collections.abc import Callable
 
 from dishka import Provider, Scope, provide
 
@@ -18,6 +18,7 @@ from marionette.application.usecases.onboarding.move_onboarding_to_rules_usecase
 from marionette.application.usecases.onboarding.reset_onboarding_usecase import OnboardingResetUseCase
 from marionette.application.usecases.onboarding.start_onboarding_usecase import StartOnboardingUseCase
 from marionette.application.usecases.paparazzi_usecase import PaparazziUseCase
+from marionette.application.usecases.perfomance_obtain_usecase import PerfomanceObtainUseCase
 from marionette.application.usecases.profile.summary_usecase import ProfileSummaryUseCase
 from marionette.application.usecases.promote_usecase import PromoteStaffUseCase
 from marionette.application.usecases.season_reset_usecase import ResetSeasonRatingUseCase
@@ -31,7 +32,6 @@ from marionette.presentation.discord.ui.onboarding.step_assets import Onboarding
 
 class UseCaseProvider(Provider):
     scope = Scope.REQUEST
-
 
     def get_roll(self) -> Callable[[int, int], int]:
         return random.randint
@@ -62,3 +62,4 @@ class UseCaseProvider(Provider):
     subscribe_usecase = provide(SubscribeUseCase)
     promote_usecase = provide(PromoteStaffUseCase)
     report_usecase = provide(ReportUseCase)
+    perfomance_obtain_usecase = provide(PerfomanceObtainUseCase)

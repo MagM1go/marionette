@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio.session import AsyncSession
 
 from marionette.application.protocols import VoteRepository
 from marionette.application.protocols.types import CharacterId, UserId
+from marionette.domain.entities.character import Character
 from marionette.domain.entities.vote import Vote, VoteSource
 
 
@@ -48,3 +49,9 @@ class SqlAlchemyVoteRepository(VoteRepository):
         stmt = select(Vote).where(Vote.voted_by == voted_by, Vote.perfomance_id == perfomance_id).limit(1)
         result = await self._session.scalars(stmt)
         return result.first()
+
+    @t.override
+    async def get_not_obtained_perfomance_votes(self) -> Sequence[tuple[Character, Vote]]:
+        stmt = select(Character, Vote).join(Vote, Vote.character_id == Character.id).where(Vote.source == VoteSource.REVIEW, Vote.obtained.is_(False))
+        result = await self._session.scalars(stmt)
+        return result.all()

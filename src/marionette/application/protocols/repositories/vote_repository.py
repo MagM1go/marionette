@@ -3,6 +3,7 @@ from datetime import datetime
 from typing import Protocol
 
 from marionette.application.protocols.types import CharacterId, UserId
+from marionette.domain.entities.character import Character
 from marionette.domain.entities.vote import Vote, VoteSource
 
 
@@ -17,7 +18,7 @@ class VoteRepository(Protocol):
         reputation: int = 1,
         source: VoteSource = VoteSource.COMMAND,
         perfomance_id: int | None = None,
-        obtained: bool = False
+        obtained: bool = False,
     ) -> Vote:
         """Создаёт запись о голосе за персонажа.
 
@@ -39,3 +40,5 @@ class VoteRepository(Protocol):
     async def get_vote_by_voter_and_perfomance_id(self, voted_by: UserId, perfomance_id: int) -> Vote | None:
         """Возвращает голос пользователя за публикацию, если он уже существует."""
         ...
+
+    async def get_not_obtained_perfomance_votes(self) -> Sequence[tuple[Character, Vote]]: ...

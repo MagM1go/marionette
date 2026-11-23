@@ -170,6 +170,7 @@ class FakeOnboardingRepository:
 class FakeVoteRepository:
     def __init__(self, votes: list[Vote] | None = None) -> None:
         self.votes = votes or []
+        self.characters: list[Character] = []
 
     def create(
         self,
@@ -198,6 +199,11 @@ class FakeVoteRepository:
 
     async def get_vote_by_voter_and_perfomance_id(self, voted_by: UserId, perfomance_id: int) -> Vote | None:
         return next((vote for vote in self.votes if vote.voted_by == voted_by and vote.perfomance_id == perfomance_id), None)
+
+    async def get_not_obtained_perfomance_votes(self) -> Sequence[tuple[Character, Vote]]:
+        return [
+            (character, vote) for character, vote in zip(self.characters, self.votes, strict=True) if character.id == vote.character_id and not vote.obtained
+        ]
 
 
 class FakeSubscriptionRepository:
