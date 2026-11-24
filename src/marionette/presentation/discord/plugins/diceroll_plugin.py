@@ -18,8 +18,8 @@ class DIceRollPlugin:
     def parse_roll_rule(self, expression: str) -> tuple[int, int]:
         count, user_roll = expression.split("d", 1)
         # second_arg = self.expression.split("")[1]
-
-        return int(count) or 1, int(user_roll)
+        # 
+        return int(count) if count.isdigit() else 1, int(user_roll)
 
     async def callback(self, ctx: crescent.Context) -> None:
         rolls = self.parse_roll_rule(self.expression)
