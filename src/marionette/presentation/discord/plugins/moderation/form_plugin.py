@@ -39,7 +39,8 @@ class ApproveCommand:
         character_owner = context.guild.get_member(self.user_id)
         if character_owner is None:
             raise MemberNotFound()
-            
+
+        await context.defer()
         ids = list(map(int, self.biography.split(",")))
         messages_content: list[str] = [(await context.channel.fetch_message(id)).content for id in ids]  # type: ignore
 
